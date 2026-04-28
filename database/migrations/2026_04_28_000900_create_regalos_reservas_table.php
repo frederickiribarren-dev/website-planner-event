@@ -1,0 +1,37 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('regalos_reservas', function (Blueprint $table) {
+            $table->binary('id')->default('uuid_to_bin(uuid(),1)')->primary();
+            $table->binary('regalo_id')->index('idx_reservas_regalo');
+            $table->binary('invitado_id')->index('idx_reservas_invitado');
+            $table->integer('cantidad_reservada')->nullable()->default(1);
+            $table->string('comprobante_url', 500)->nullable();
+            $table->timestamp('fecha_reserva')->nullable()->useCurrent();
+            $table->timestamp('created_at')->nullable()->useCurrent();
+            $table->timestamp('updated_at')->useCurrentOnUpdate()->nullable();
+
+            $table->unique(['regalo_id', 'invitado_id'], 'uk_reserva_regalo_invitado');
+            $table->foreign(['invitado_id'], 'fk_reserva_invitado')->references(['id'])->on('invitados')->onUpdate('no action')->onDelete('cascade');
+            $table->foreign(['regalo_id'], 'fk_reserva_regalo')->references(['id'])->on('regalos')->onUpdate('no action')->onDelete('cascade');
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('regalos_reservas');
+    }
+};
