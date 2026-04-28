@@ -13,8 +13,13 @@ return new class extends Migration
     {
         Schema::create('configuracion_usuario', function (Blueprint $table) {
             $table->binary('usuario_id')->primary();
+            $table->boolean('notificaciones_push')->nullable()->default(true);
             $table->boolean('notificaciones_email')->nullable()->default(true);
-            $table->char('idioma', 2)->nullable()->default('es');
+            $table->char('idioma', 5)->nullable()->default('es-CL');
+            $table->string('timezone', 50)->nullable()->default('America/Santiago');
+            $table->timestamp('created_at')->nullable()->useCurrent();
+            $table->timestamp('updated_at')->useCurrentOnUpdate()->nullable();
+            $table->foreign(['usuario_id'], 'fk_conf_usuario')->references(['id'])->on('usuarios')->onUpdate('no action')->onDelete('cascade');
         });
     }
 

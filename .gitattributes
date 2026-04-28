@@ -1,11 +1,33 @@
+# Normalizar texto a LF en el repositorio
 * text=auto eol=lf
 
+# Forzar LF para archivos SQL y lockfiles
+*.sql text eol=lf
+composer.lock text eol=lf
+package-lock.json text eol=lf
+yarn.lock text eol=lf
+
+# Tipos de archivos y drivers de diff (opcional)
 *.blade.php diff=html
 *.css diff=css
 *.html diff=html
 *.md diff=markdown
 *.php diff=php
 
+# Marcar binarios para evitar tratamiento como texto
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.zip binary
+*.tar.gz binary
+
+# Ignorar en export (git archive)
 /.github export-ignore
 CHANGELOG.md export-ignore
 .styleci.yml export-ignore
+
+# Evitar que node_modules y vendor se incluyan en export
+node_modules/ export-ignore
+vendor/ export-ignore
