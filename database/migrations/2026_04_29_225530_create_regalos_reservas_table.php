@@ -19,11 +19,9 @@ return new class extends Migration
             $table->string('comprobante_url', 500)->nullable();
             $table->timestamp('fecha_reserva')->nullable()->useCurrent();
             $table->timestamp('created_at')->nullable()->useCurrent();
-            $table->timestamp('updated_at')->useCurrentOnUpdate()->nullable();
+            $table->timestamp('updated_at')->useCurrentOnUpdate()->nullable()->useCurrent();
 
-            $table->unique(['regalo_id', 'invitado_id'], 'uk_reserva_regalo_invitado');
-            $table->foreign(['invitado_id'], 'fk_reserva_invitado')->references(['id'])->on('invitados')->onUpdate('no action')->onDelete('cascade');
-            $table->foreign(['regalo_id'], 'fk_reserva_regalo')->references(['id'])->on('regalos')->onUpdate('no action')->onDelete('cascade');
+            $table->unique(['regalo_id', 'invitado_id'], 'regalo_id');
         });
     }
 

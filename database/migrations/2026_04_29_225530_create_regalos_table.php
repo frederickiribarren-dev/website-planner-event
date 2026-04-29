@@ -16,7 +16,7 @@ return new class extends Migration
             $table->binary('evento_id')->index('idx_regalos_evento');
             $table->binary('categoria_id')->nullable()->index('idx_regalos_categoria');
             $table->string('nombre_regalo', 200);
-            $table->text('descripcion')->nullable();
+            $table->longText('descripcion')->nullable();
             $table->enum('prioridad', ['Baja', 'Media', 'Alta', 'Urgente'])->nullable()->default('Media');
             $table->string('link_referencia', 500)->nullable();
             $table->decimal('precio_estimado', 12)->nullable();
@@ -25,10 +25,8 @@ return new class extends Migration
             $table->enum('estado', ['Disponible', 'Reservado_Parcial', 'Completado'])->nullable()->default('Disponible');
             $table->string('imagen_portada_url', 500)->nullable();
             $table->timestamp('created_at')->nullable()->useCurrent();
-            $table->timestamp('updated_at')->useCurrentOnUpdate()->nullable();
+            $table->timestamp('updated_at')->useCurrentOnUpdate()->nullable()->useCurrent();
             $table->softDeletes();
-            $table->foreign(['categoria_id'], 'fk_regalos_categoria')->references(['id'])->on('categorias_regalos')->onUpdate('no action')->onDelete('set null');
-            $table->foreign(['evento_id'], 'fk_regalos_evento')->references(['id'])->on('eventos')->onUpdate('no action')->onDelete('cascade');
         });
     }
 

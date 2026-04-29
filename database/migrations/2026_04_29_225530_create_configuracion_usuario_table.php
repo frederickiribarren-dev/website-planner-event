@@ -18,8 +18,7 @@ return new class extends Migration
             $table->char('idioma', 5)->nullable()->default('es-CL');
             $table->string('timezone', 50)->nullable()->default('America/Santiago');
             $table->timestamp('created_at')->nullable()->useCurrent();
-            $table->timestamp('updated_at')->useCurrentOnUpdate()->nullable();
-            $table->foreign(['usuario_id'], 'fk_conf_usuario')->references(['id'])->on('usuarios')->onUpdate('no action')->onDelete('cascade');
+            $table->timestamp('updated_at')->useCurrentOnUpdate()->nullable()->useCurrent();
         });
     }
 
