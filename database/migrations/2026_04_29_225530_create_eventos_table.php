@@ -21,12 +21,12 @@ return new class extends Migration
             $table->string('ubicacion_nombre')->nullable();
             $table->double('lat')->nullable();
             $table->double('lng')->nullable();
-            $table->text('mensaje_invitacion')->nullable();
+            $table->longText('mensaje_invitacion')->nullable();
             $table->string('color_tema', 7)->nullable()->default('#60A5FA');
             $table->enum('estado', ['Borrador', 'Publicado', 'Finalizado', 'Cancelado'])->nullable()->default('Borrador');
             $table->string('imagen_portada_url', 500)->nullable();
             $table->timestamp('created_at')->nullable()->useCurrent();
-            $table->timestamp('updated_at')->useCurrentOnUpdate()->nullable();
+            $table->timestamp('updated_at')->useCurrentOnUpdate()->nullable()->useCurrent();
             $table->softDeletes();
 
             $table->index(['lat', 'lng'], 'idx_eventos_lat_lng');

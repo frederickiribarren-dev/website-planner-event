@@ -22,12 +22,11 @@ return new class extends Migration
             $table->enum('estado_asistencia', ['Sin responder', 'Confirmado', 'Rechazado'])->nullable()->default('Sin responder');
             $table->integer('cantidad_adultos')->nullable()->default(1);
             $table->integer('cantidad_ninos')->nullable()->default(0);
-            $table->text('alergias_notas')->nullable();
+            $table->longText('alergias_notas')->nullable();
             $table->dateTime('fecha_confirmacion')->nullable();
             $table->timestamp('created_at')->nullable()->useCurrent();
-            $table->timestamp('updated_at')->useCurrentOnUpdate()->nullable();
+            $table->timestamp('updated_at')->useCurrentOnUpdate()->nullable()->useCurrent();
             $table->softDeletes();
-            $table->foreign(['evento_id'], 'fk_invitados_evento')->references(['id'])->on('eventos')->onUpdate('no action')->onDelete('cascade');
         });
     }
 

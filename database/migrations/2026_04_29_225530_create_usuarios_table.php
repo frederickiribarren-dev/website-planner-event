@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('imagen_portada_url', 500)->nullable();
             $table->dateTime('ultimo_login')->nullable();
             $table->timestamp('created_at')->nullable()->useCurrent();
-            $table->timestamp('updated_at')->useCurrentOnUpdate()->nullable();
+            $table->timestamp('updated_at')->useCurrentOnUpdate()->nullable()->useCurrent();
             $table->softDeletes();
 
             $table->index(['email'], 'idx_usuarios_email');

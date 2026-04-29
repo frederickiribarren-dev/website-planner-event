@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('nombre', 100)->unique('nombre');
             $table->string('icono_url')->nullable();
             $table->timestamp('created_at')->nullable()->useCurrent();
-            $table->timestamp('updated_at')->useCurrentOnUpdate()->nullable();
+            $table->timestamp('updated_at')->useCurrentOnUpdate()->nullable()->useCurrent();
         });
     }
 

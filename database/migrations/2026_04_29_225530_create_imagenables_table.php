@@ -18,10 +18,7 @@ return new class extends Migration
             $table->binary('regalo_id')->nullable()->index('idx_imagenables_regalo');
             $table->string('descripcion')->nullable();
             $table->timestamp('created_at')->nullable()->useCurrent();
-            $table->timestamp('updated_at')->useCurrentOnUpdate()->nullable();
-            $table->foreign(['evento_id'], 'fk_imagenables_evento')->references(['id'])->on('eventos')->onUpdate('no action')->onDelete('cascade');
-            $table->foreign(['regalo_id'], 'fk_imagenables_regalo')->references(['id'])->on('regalos')->onUpdate('no action')->onDelete('cascade');
-            $table->foreign(['usuario_id'], 'fk_imagenables_usuario')->references(['id'])->on('usuarios')->onUpdate('no action')->onDelete('cascade');
+            $table->timestamp('updated_at')->useCurrentOnUpdate()->nullable()->useCurrent();
         });
     }
 

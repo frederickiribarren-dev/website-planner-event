@@ -19,7 +19,7 @@ DROP TABLE IF EXISTS usuarios;
 CREATE TABLE usuarios (
     id BINARY(16) PRIMARY KEY DEFAULT (UUID_TO_BIN(UUID(), 1)),
     nombre VARCHAR(100) NOT NULL,
-    email VARCHAR(255) NOT NULL UNIQUE KEY `email`,
+    email VARCHAR(255) NOT NULL UNIQUE,
     password_hash VARCHAR(255) NOT NULL,
     telefono VARCHAR(20) NULL,
     estado ENUM('Activo', 'Suspendido', 'Eliminado') NULL DEFAULT 'Activo',
@@ -34,7 +34,7 @@ CREATE TABLE usuarios (
 -- 2. Tabla de Categorías de Regalos (Base)
 CREATE TABLE categorias_regalos (
     id BINARY(16) PRIMARY KEY DEFAULT (UUID_TO_BIN(UUID(), 1)),
-    nombre VARCHAR(100) NOT NULL UNIQUE KEY `nombre`,
+    nombre VARCHAR(100) NOT NULL UNIQUE,
     icono_url VARCHAR(255) NULL,
     created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
@@ -44,7 +44,7 @@ CREATE TABLE categorias_regalos (
 CREATE TABLE eventos (
     id BINARY(16) PRIMARY KEY DEFAULT (UUID_TO_BIN(UUID(), 1)),
     usuario_id BINARY(16) NOT NULL,
-    slug VARCHAR(100) NOT NULL UNIQUE KEY `slug`,
+    slug VARCHAR(100) NOT NULL UNIQUE,
     nombre_bebe VARCHAR(100) NULL,
     genero_bebe ENUM('Niño', 'Niña', 'Sorpresa', 'Múltiple') NOT NULL,
     fecha_evento DATETIME NOT NULL,
@@ -82,7 +82,7 @@ CREATE TABLE invitados (
     nombre VARCHAR(100) NOT NULL,
     email VARCHAR(255) NULL,
     telefono VARCHAR(20) NULL,
-    token_acceso VARCHAR(64) NULL UNIQUE KEY `token_acceso`,
+    token_acceso VARCHAR(64) NULL UNIQUE,
     estado_invitacion ENUM('Pendiente', 'Enviado', 'Leído', 'Error') NULL DEFAULT 'Pendiente',
     estado_asistencia ENUM('Sin responder', 'Confirmado', 'Rechazado') NULL DEFAULT 'Sin responder',
     cantidad_adultos INT NULL DEFAULT 1,
@@ -158,7 +158,7 @@ CREATE TABLE regalos_reservas (
     updated_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     KEY `idx_reservas_regalo` (`regalo_id`),
     KEY `idx_reservas_invitado` (`invitado_id`),
-    UNIQUE KEY `uk_reserva_regalo_invitado` (`regalo_id`, `invitado_id`),
+    UNIQUE (`regalo_id`, `invitado_id`),
     CONSTRAINT `fk_reserva_regalo` FOREIGN KEY (`regalo_id`) REFERENCES `regalos` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
     CONSTRAINT `fk_reserva_invitado` FOREIGN KEY (`invitado_id`) REFERENCES `invitados` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -197,3 +197,4 @@ CREATE TABLE imagenes (
     KEY `idx_imagenes_primary` (`imagenable_id`, `is_primary`),
     CONSTRAINT `fk_imagenes_imagenable` FOREIGN KEY (`imagenable_id`) REFERENCES `imagenables` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+

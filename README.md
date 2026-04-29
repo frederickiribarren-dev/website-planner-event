@@ -37,8 +37,9 @@ La organización de eventos sociales, especialmente baby showers, enfrenta dific
 - PHP 8.2 o superior
 - Composer
 - Node.js y npm
-- Base de datos (MySQL, PostgreSQL, etc.)
+- Base de datos (MySQL, PostgreSQL, etc.) se usara: MySQL
 - Laravel 12
+- Tailwind CSS (CSS framework)
 
 ### Pasos
 1. **Clona el Repositorio**:
@@ -80,6 +81,10 @@ La organización de eventos sociales, especialmente baby showers, enfrenta dific
 6. **Ejecuta Migraciones**:
    ```
    php artisan migrate
+   ```
+   ```
+   php artisan migrate:generate & del /Q database\migrations\*_add_foreign_keys_to_*.php 
+   para generar las base de datos sin foreign keys
    ```
 
 7. **Compila Assets**:

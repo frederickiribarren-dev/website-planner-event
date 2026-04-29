@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('auditoria_eventos', function (Blueprint $table) {
-            $table->bigIncrements('id');
+            $table->bigInteger('id', true);
             $table->binary('evento_id')->index('idx_auditoria_evento');
             $table->enum('entidad_tipo', ['EVENTO', 'INVITADO', 'REGALO', 'RESERVA'])->nullable();
             $table->binary('entidad_id');
@@ -22,7 +22,6 @@ return new class extends Migration
             $table->timestamp('created_at')->nullable()->useCurrent();
 
             $table->index(['entidad_tipo', 'entidad_id'], 'idx_auditoria_entidad');
-            $table->foreign(['evento_id'], 'fk_auditoria_evento')->references(['id'])->on('eventos')->onUpdate('no action')->onDelete('cascade');
         });
     }
 

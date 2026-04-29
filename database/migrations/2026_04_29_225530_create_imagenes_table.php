@@ -22,10 +22,9 @@ return new class extends Migration
             $table->json('metadata')->nullable();
             $table->boolean('is_primary')->nullable()->default(false);
             $table->timestamp('created_at')->nullable()->useCurrent();
-            $table->timestamp('updated_at')->useCurrentOnUpdate()->nullable();
+            $table->timestamp('updated_at')->useCurrentOnUpdate()->nullable()->useCurrent();
 
             $table->index(['imagenable_id', 'is_primary'], 'idx_imagenes_primary');
-            $table->foreign(['imagenable_id'], 'fk_imagenes_imagenable')->references(['id'])->on('imagenables')->onUpdate('no action')->onDelete('cascade');
         });
     }
 
