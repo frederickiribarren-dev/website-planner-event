@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.public')
 
 @section('content')
 <section class="min-h-[calc(100vh-100px)] bg-gray-50/50 py-16 lg:py-24">
