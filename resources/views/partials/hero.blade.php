@@ -19,7 +19,7 @@
                 </p>
                 
                 <div class="flex flex-wrap items-center gap-4">
-                    <x-button href="/registro">Comenzar Ahora</x-button>
+                    <x-button onclick="openModal('registerModal')">Comenzar Ahora</x-button>
                 </div>
             </div>
 
