@@ -14,17 +14,14 @@
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
-    <body class="font-sans text-gray-900 antialiased">
-        <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100">
-            <div>
-                <a href="/">
-                    <x-application-logo class="w-20 h-20 fill-current text-gray-500" />
-                </a>
-            </div>
-
-            <div class="w-full sm:max-w-md mt-6 px-6 py-4 bg-white shadow-md overflow-hidden sm:rounded-lg">
-                {{ $slot }}
-            </div>
-        </div>
-    </body>
+    <body class="font-sans text-slate-900 antialiased min-h-screen relative overflow-x-hidden">
+    <!-- Imagen de fondo con Overlay para mejorar legibilidad -->
+    <div class="fixed inset-0 z-0 mask-repeat-space">
+        <img src="{{ asset('img/fondo-login.jpg') }}" class="w-full h-full object-cover" alt="Background">
+        <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-[2px]"></div>
+    </div>
+    <!-- Contenido -->
+    <div class="relative z-10 min-h-screen flex flex-col sm:justify-center items-center py-10 p-4">
+        {{ $slot }}
+    </div>
 </html>
