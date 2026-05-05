@@ -28,11 +28,15 @@
                 <div class="grid grid-cols-2 gap-4 md:gap-6">
                     
                     <div class="col-span-1 row-span-2 bg-gray-100 rounded-3xl overflow-hidden shadow-sm min-h-[300px] md:min-h-[450px]">
-                        <img src="{{ asset('img/image-hero-one.jpg') }}" alt="Decoración de Baby Shower" class="w-full h-full object-contain">
+                        <img src="{{ asset('img/hero-img/image-hero-one.jpg') }}" alt="Decoración de Baby Shower" class="w-full h-full object-contain">
                     </div>
-                    
-                    <div class="col-span-1 row-span-1 bg-gray-100 rounded-3xl overflow-hidden shadow-sm min-h-[140px] md:min-h-[215px]">
-                        <img src="{{ asset('img/image-hero-two.jpg') }}" alt="Detalles del evento" class="w-full h-full object-cover">
+                    <!-- segundo div como carrousel se pueden agregar otras imagenes respetando el orden -->
+                    <div class="col-span-1 row-span-1 bg-gray-100 rounded-3xl overflow-hidden shadow-sm min-h-[140px] md:min-h-[215px] relative">
+                        <div id="hero-carousel" class="w-full h-full relative">
+                            <img src="{{ asset('img/hero-img/image-hero-two.jpg') }}" alt="Detalles del evento 1" class="absolute inset-0 w-full h-full object-cover transition-all duration-1000 opacity-100 hover:scale-105" data-carousel-ite    m>
+                            <img src="{{ asset('img/hero-img/image-hero-three.jpg') }}" alt="Detalles del evento 2" class="absolute inset-0 w-full h-full object-cover transition-all duration-1000 opacity-0 hover:scale-105" data-carousel-item>
+                            <img src="{{ asset('img/hero-img/image-hero-four.jpg') }}" alt="Detalles del evento 3" class="absolute inset-0 w-full h-full object-cover transition-all duration-1000 opacity-0 hover:scale-105" data-carousel-item>
+                        </div>
                     </div>
                     
                     <div class="col-span-1 row-span-1 bg-gray-50 rounded-3xl border border-gray-100 shadow-sm min-h-[140px] md:min-h-[215px] flex items-center justify-center">
@@ -40,6 +44,21 @@
                     </div>
                 </div>
             </div>
+
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    const slides = document.querySelectorAll('[data-carousel-item]');
+                    let currentSlide = 0;
+
+                    function nextSlide() {
+                        slides[currentSlide].classList.replace('opacity-100', 'opacity-0');
+                        currentSlide = (currentSlide + 1) % slides.length;
+                        slides[currentSlide].classList.replace('opacity-0', 'opacity-100');
+                    }
+
+                    setInterval(nextSlide, 3000);
+                });
+            </script>
         </div>
     </div>
 </section>
