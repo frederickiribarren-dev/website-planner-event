@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -108,4 +107,11 @@ class User extends Authenticatable
             ],
         );
     }
+
+    public function eventos()
+    {
+        return $this->hasMany(Evento::class, 'usuario_id');
+    }
+
+    
 }
