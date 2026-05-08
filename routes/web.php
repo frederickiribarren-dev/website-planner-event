@@ -24,6 +24,17 @@ Route::middleware('auth')->group(function () {
 
 Route::middleware('auth', 'verified')->group(function () {
     Route::resource('eventos', EventoController::class);
+    Route::get('/invitados/creacion', function() {
+        return view('invitados.creacion-invitacion');
+    })->name('invitados.creacion');
+
+    Route::get('/configuracion', function() {
+        return view('profile.configuration');
+    })->name('configuracion');
+
+    Route::get('/regalos', function() {
+        return view('regalos.creacion-lista-regalos');
+    })->name('regalos.index');
 });
 
 

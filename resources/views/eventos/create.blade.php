@@ -2,9 +2,6 @@
 <x-app-layout>
     <x-slot name="header">
         <div class="flex items-center gap-4">
-            <a href="{{ route('eventos.index') }}" class="text-gray-400 hover:text-cyan-700 transition">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-            </a>
             <h2 class="font-bold text-2xl text-gray-800 leading-tight">
                 {{ __('Crear Nuevo Evento') }}
             </h2>
@@ -85,63 +82,10 @@
                                 placeholder="Ej: Salón Las Palmeras">
                             @error('ubicacion_nombre') <p class="mt-2 text-xs text-red-500 font-medium">{{ $message }}</p> @enderror
                         </div>
-                        <div class="flex gap-4">
-                            <div class="w-1/2">
-                                <label for="lat" class="block text-sm font-bold text-gray-700 mb-2">Latitud (opcional)</label>
-                                <input type="text" name="lat" id="lat" value="{{ old('lat') }}"
-                                    class="w-full bg-gray-50 border-none rounded-2xl px-6 py-4 focus:ring-2 focus:ring-cyan-600 focus:bg-white transition text-gray-900 placeholder-gray-400"
-                                    placeholder="Latitud">
-                                @error('lat') <p class="mt-2 text-xs text-red-500 font-medium">{{ $message }}</p> @enderror
-                            </div>
-                            <div class="w-1/2">
-                                <label for="lng" class="block text-sm font-bold text-gray-700 mb-2">Longitud (opcional)</label>
-                                <input type="text" name="lng" id="lng" value="{{ old('lng') }}"
-                                    class="w-full bg-gray-50 border-none rounded-2xl px-6 py-4 focus:ring-2 focus:ring-cyan-600 focus:bg-white transition text-gray-900 placeholder-gray-400"
-                                    placeholder="Longitud">
-                                @error('lng') <p class="mt-2 text-xs text-red-500 font-medium">{{ $message }}</p> @enderror
-                            </div>
-                        </div>
                     </div>
-
-                    <div>
-                        <label for="mensaje_invitacion" class="block text-sm font-bold text-gray-700 mb-2">Mensaje de invitación (opcional)</label>
-                        <textarea name="mensaje_invitacion" id="mensaje_invitacion" rows="3"
-                            class="w-full bg-gray-50 border-none rounded-2xl px-6 py-4 focus:ring-2 focus:ring-cyan-600 focus:bg-white transition text-gray-900 placeholder-gray-400"
-                            placeholder="Escribe un mensaje especial para tus invitados...">{{ old('mensaje_invitacion') }}</textarea>
-                        @error('mensaje_invitacion') <p class="mt-2 text-xs text-red-500 font-medium">{{ $message }}</p> @enderror
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <div>
-                            <label for="color_tema" class="block text-sm font-bold text-gray-700 mb-2">Color del tema (opcional)</label>
-                            <input type="color" name="color_tema" id="color_tema" value="{{ old('color_tema', '#60A5FA') }}"
-                                class="w-16 h-12 p-0 border-none rounded-2xl focus:ring-2 focus:ring-cyan-600 focus:bg-white transition">
-                            @error('color_tema') <p class="mt-2 text-xs text-red-500 font-medium">{{ $message }}</p> @enderror
-                        </div>
-                        <div>
-                            <label for="estado" class="block text-sm font-bold text-gray-700 mb-2">Estado del evento</label>
-                            <select name="estado" id="estado"
-                                class="w-full bg-gray-50 border-none rounded-2xl px-6 py-4 focus:ring-2 focus:ring-cyan-600 focus:bg-white transition text-gray-900">
-                                <option value="Borrador" {{ old('estado')=='Borrador' ? 'selected' : '' }}>Borrador</option>
-                                <option value="Publicado" {{ old('estado')=='Publicado' ? 'selected' : '' }}>Publicado</option>
-                                <option value="Finalizado" {{ old('estado')=='Finalizado' ? 'selected' : '' }}>Finalizado</option>
-                                <option value="Cancelado" {{ old('estado')=='Cancelado' ? 'selected' : '' }}>Cancelado</option>
-                            </select>
-                            @error('estado') <p class="mt-2 text-xs text-red-500 font-medium">{{ $message }}</p> @enderror
-                        </div>
-                    </div>
-
-                    <div>
-                        <label for="imagen_portada_url" class="block text-sm font-bold text-gray-700 mb-2">URL de imagen de portada (opcional)</label>
-                        <input type="text" name="imagen_portada_url" id="imagen_portada_url" value="{{ old('imagen_portada_url') }}"
-                            class="w-full bg-gray-50 border-none rounded-2xl px-6 py-4 focus:ring-2 focus:ring-cyan-600 focus:bg-white transition text-gray-900 placeholder-gray-400"
-                            placeholder="https://...">
-                        @error('imagen_portada_url') <p class="mt-2 text-xs text-red-500 font-medium">{{ $message }}</p> @enderror
-                    </div>
-
                     <div class="pt-4">
                         <button type="submit" class="w-full bg-cyan-800 hover:bg-cyan-900 text-white font-bold py-4 px-8 rounded-full shadow-lg shadow-cyan-900/20 transition-all transform hover:scale-[1.02] active:scale-95">
-                            {{ __('Guardar Evento y Continuar') }}
+                            {{ __('Continuar') }}
                         </button>
                     </div>
                 </form>
