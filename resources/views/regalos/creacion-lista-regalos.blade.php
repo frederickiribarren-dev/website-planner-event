@@ -87,8 +87,8 @@
                     <button onclick="filterCategory('Accesorios')" class="category-btn px-6 py-2 rounded-xl text-sm font-bold text-slate-500 hover:bg-slate-50 transition-all whitespace-nowrap">Accesorios</button>
                     <button onclick="filterCategory('Grupales')" class="category-btn px-6 py-2 rounded-xl text-sm font-bold text-slate-500 hover:bg-slate-50 transition-all whitespace-nowrap">Grupales</button>
                 </div>
-                <button onclick="changeView('review')" class="px-6 h-[48px] bg-slate-800 text-white text-sm font-bold rounded-xl hover:bg-slate-900 transition-all flex items-center gap-2 shadow-sm">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                <button onclick="changeView('review')" class="px-6 h-[48px] bg-slate-100 border border-slate-200 text-slate-600 text-sm font-bold rounded-xl hover:bg-slate-200 transition-all flex items-center gap-2 shadow-sm">
+                    <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                     Ver seleccionados (<span id="selectedCount">0</span>)
                 </button>
             </div>
@@ -101,8 +101,8 @@
 
         <!-- VISTA REVISIÓN -->
         <div id="viewReview" class="view-section">
-            <div class="mb-8 flex items-center justify-between">
-                <button onclick="changeView('selection')" class="flex items-center gap-2 text-cyan-600 font-bold hover:text-cyan-700 transition-colors">
+            <div class="mb-8 flex items-center justify-center relative min-h-[40px]">
+                <button onclick="changeView('selection')" class="absolute left-0 flex items-center gap-2 text-cyan-600 font-bold hover:text-cyan-700 transition-colors">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
                     Seguir seleccionando
                 </button>
@@ -110,7 +110,7 @@
             </div>
 
             <!-- Barra de Categorías en Resumen -->
-            <div class="flex bg-white p-1 rounded-2xl border border-slate-100 shadow-sm overflow-x-auto max-w-full mb-8">
+            <div class="flex bg-white p-1 rounded-2xl border border-slate-100 shadow-sm overflow-x-auto max-w-full mb-8 w-fit">
                 <button onclick="filterReviewCategory('Ropa')" class="rev-category-btn active px-6 py-2.5 rounded-xl text-sm font-bold transition-all whitespace-nowrap bg-cyan-700 text-white">Ropa</button>
                 <button onclick="filterReviewCategory('Utensilios')" class="rev-category-btn px-6 py-2.5 rounded-xl text-sm font-bold text-slate-500 hover:bg-slate-50 transition-all whitespace-nowrap">Utensilios</button>
                 <button onclick="filterReviewCategory('Accesorios')" class="rev-category-btn px-6 py-2.5 rounded-xl text-sm font-bold text-slate-500 hover:bg-slate-50 transition-all whitespace-nowrap">Accesorios</button>

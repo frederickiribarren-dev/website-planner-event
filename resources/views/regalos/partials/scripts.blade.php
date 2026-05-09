@@ -15,6 +15,7 @@
     let currentCategory = 'Ropa';
     let currentReviewCategory = 'Ropa';
     let currentItemForModal = null;
+    let editingListId = null; // Para saber si estamos editando una lista existente
 
     // MODAL CREAR REGALO
     function openCreateGiftModal() {
@@ -339,20 +340,46 @@
             return;
         }
 
-        savedLists.push({
-            id: Date.now(),
-            name: name,
-            items: [...selectedItems],
-            date: new Date().toLocaleDateString()
-        });
+        if (editingListId) {
+            const idx = savedLists.findIndex(l => l.id === editingListId);
+            if (idx > -1) {
+                savedLists[idx].items = [...selectedItems];
+                showToast('¡Lista actualizada con éxito!', 'success');
+            }
+        } else {
+            savedLists.push({
+                id: Date.now(),
+                name: name,
+                items: [...selectedItems],
+                date: new Date().toLocaleDateString()
+            });
+            showToast('¡Lista guardada con éxito!', 'success');
+        }
 
         // Limpiar todo
         selectedItems = [];
         nameInput.value = '';
-        showToast('¡Lista guardada con éxito!', 'success');
+        nameInput.disabled = false;
+        editingListId = null;
         updateCounter();
         renderSavedLists();
         changeView('initial');
+    }
+
+    function editList(id) {
+        const list = savedLists.find(l => l.id === id);
+        if (!list) return;
+
+        editingListId = id;
+        selectedItems = [...list.items];
+        
+        const nameInput = document.getElementById('listNameInput');
+        nameInput.value = list.name;
+        nameInput.disabled = true; // No permitir editar el nombre
+
+        updateCounter();
+        changeView('selection');
+        showToast('Modo edición activado', 'success');
     }
 
     function deleteList(id) {
@@ -387,7 +414,8 @@
                     </td>
                     <td class="px-6 py-4 text-right">
                         <div class="flex items-center justify-end gap-2">
-                            <button onclick="viewListDetails(${list.id})" class="px-4 py-2 bg-slate-100 text-slate-700 text-xs font-bold rounded-xl hover:bg-cyan-600 hover:text-white transition-all">Ver lista</button>
+                            <button onclick="viewListDetails(${list.id})" class="px-4 py-2 bg-slate-100 text-cyan-700 text-xs font-bold rounded-xl hover:bg-cyan-600 hover:text-white transition-all">Ver lista</button>
+                            <button onclick="editList(${list.id})" class="px-4 py-2 bg-white border border-slate-200 text-slate-600 text-xs font-bold rounded-xl hover:border-cyan-500 hover:text-cyan-600 transition-all">Editar</button>
                             <button onclick="deleteList(${list.id})" class="p-2 bg-red-50 text-red-400 hover:text-red-600 rounded-xl transition-all">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                             </button>
@@ -501,6 +529,15 @@
         headerActions.innerHTML = '';
 
         if (view === 'initial') {
+            editingListId = null;
+            const nameInput = document.getElementById('listNameInput');
+            if (nameInput) {
+                nameInput.value = '';
+                nameInput.disabled = false;
+            }
+            selectedItems = [];
+            updateCounter();
+
             if (savedLists.length > 0) {
                 headerActions.innerHTML = `
                     <button onclick="changeView('selection')" class="px-6 py-2.5 bg-cyan-700 hover:bg-cyan-800 text-white font-bold rounded-full transition-all flex items-center gap-2">

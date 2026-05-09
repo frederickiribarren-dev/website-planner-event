@@ -101,7 +101,7 @@
                         </div>
                         
                         <div class="pt-4">
-                            <x-button type="submit" class="w-full justify-center py-4 text-lg">
+                            <x-button type="submit" class="w-full justify-center py-4 text-lg" variant="tertiary">
                                 Enviar Mensaje
                             </x-button>
                         </div>

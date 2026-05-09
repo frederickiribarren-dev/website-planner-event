@@ -1,5 +1,5 @@
 @props([
-    'variant' => 'primary', // Opciones: primary, secondary, outline
+    'variant' => 'primary', // Opciones: primary, secondary,tertiary,login, outline
     'href' => null          // Si se envía, se renderiza como <a>
 ])
 
@@ -9,9 +9,11 @@
     
     // Variantes de diseño (Adaptadas a los colores de tu proyecto)
     $variants = [
-        'primary' => 'bg-cyan-700 text-white hover:bg-cyan-800 hover:shadow-lg hover:shadow-cyan-100',
+        'primary' => 'bg-teal-600 text-white hover:bg-teal-700 hover:shadow-lg hover:shadow-teal-100',
         'secondary' => 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:shadow-md',
-        'outline' => 'bg-transparent border-2 border-cyan-500 text-cyan-600 hover:bg-cyan-50',
+        'tertiary' => 'bg-transparent border-2 border-cyan-600 text-cyan-700 hover:bg-cyan-50',
+        'login' => 'bg-cyan-600 text-white hover:bg-cyan-700',
+        'outline' => 'bg-transparent border-2 border-teal-500 text-teal-600 hover:bg-teal-50',
         'danger' => 'bg-red-600 text-white hover:bg-red-700 hover:shadow-lg hover:shadow-red-100',
     ];
 

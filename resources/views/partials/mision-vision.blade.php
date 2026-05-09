@@ -14,7 +14,8 @@
             <h2 class="text-4xl md:text-5xl lg:text-6xl font-extrabold text-slate-900 mb-8 tracking-tight">
                 Nuestro Propósito
             </h2> 
-            <div class="w-24 h-1 bg-gradient-to-r from-teal-200 to-amber-200 mx-auto rounded-full mb-10"></div>
+            <!-- este div sirve de linea como aparecen en las secciones si desea agregar descomentar -->
+            <div class="w-24 h-1 bg-gradient-to-r from-teal-200 to-amber-200 mx-auto rounded-full mb-10"></div> 
             <p class="text-xl md:text-2xl text-slate-600 leading-relaxed font-light italic mb-12">
                 "Acompañamos a cada familia en la dulce espera, creando un espacio digital donde el amor y la organización se unen para celebrar la vida."
             </p>
@@ -35,7 +36,7 @@
                         </div>
 
                         <div class="text-left px-4 lg:px-0 mb-16 lg:mb-12">
-                            <p class="text-lg lg:text-xl text-slate-600 leading-loose">
+                            <p class="text-lg lg:text-xl text-slate-600 leading-loose ">
                                 Facilitar la creación de momentos inolvidables. Nuestra misión es quitar el peso de la logística para que los padres puedan enfocarse en lo que realmente importa: <span class="text-teal-600 font-medium italic">la alegría de recibir a un nuevo integrante en la familia.</span>
                             </p>
                         </div>
@@ -55,7 +56,7 @@
 
             <!-- SECCIÓN: VISIÓN -->
             <div class="reveal-on-scroll">
-                <div class="flex flex-col-reverse lg:flex-row items-center lg:gap-32">
+                <div class="flex flex-col lg:flex-row items-center lg:gap-32">
                     <div class="w-full lg:w-1/2 order-2 lg:order-1">
                         <div class="relative group">
                             <div class="absolute -bottom-6 -left-6 w-32 h-32 bg-[radial-gradient(#fbbf24_2px,transparent_2px)] [background-size:16px_16px] opacity-20 transition-transform duration-500 group-hover:scale-110"></div>
