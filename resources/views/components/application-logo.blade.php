@@ -1,5 +1,5 @@
 <div {{ $attributes->merge(['class' => 'flex items-center gap-3']) }}>
-    <div class="w-12 h-12 bg-cyan-600 rounded-xl flex items-center justify-center text-white font-bold text-2xl shadow-lg shadow-cyan-200">
+    <div class="w-12 h-12 bg-cyan-600 rounded-xl flex items-center justify-center text-white font-bold text-2xl">
         P 
     </div>
     

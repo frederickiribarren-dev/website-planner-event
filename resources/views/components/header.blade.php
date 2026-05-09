@@ -3,19 +3,20 @@
     <div class="max-w-full mx-auto px-6 sm:px-10 flex items-center justify-between h-16">
         
         <div class="flex items-center gap-3">
-                <div class="w-8 h-8 bg-cyan-600 rounded-lg flex items-center justify-center text-white font-bold">
-                    P 
-                </div>
-                
-                <span class="text-lg font-black bg-gradient-to-r from-cyan-600 to-cyan-400 bg-clip-text text-transparent tracking-tight hidden sm:block">
-                    Planificador de eventos
-                </span>
+                <x-application-logo />
         </div>
 
-        <div class="flex items-center">
-           <x-button onclick="openModal('loginModal')">
-                Inicio de Sesión
-           </x-button>
+        <div class="flex items-center gap-4">
+           @auth
+               <a href="{{ route('dashboard') }}" class="inline-flex items-center px-6 py-2.5 bg-cyan-600 border border-transparent rounded-full font-bold text-xs text-white uppercase tracking-widest hover:bg-cyan-700 active:bg-cyan-900 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 transition ease-in-out duration-150 shadow-md shadow-cyan-900/10">
+                   Ir a Dashboard
+               </a>
+           @else
+               <x-button variant="login" onclick="openModal('loginModal')">
+                    Inicio de Sesión
+               </x-button>
+           @endauth
+        </div>
            
             <a href="#" class="sm:hidden flex items-center justify-center w-10 h-10 bg-cyan-100 rounded-full text-cyan-600 border-2 border-cyan-500">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">

@@ -17,7 +17,7 @@ class EventoController extends Controller
         //Traer eventos del usuario autenticado
         $user = Auth::user();
         $eventos = $user && $user->eventos ? $user->eventos : collect();
-        return view('eventos.index', compact('eventos'));
+        return view('eventos.invitaciones', compact('eventos'));
     }
 
     /**
@@ -101,6 +101,9 @@ class EventoController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $evento = Auth::user()->eventos()->findOrFail($id);
+        $evento->update(['estado' => 'Cancelado']);
+
+        return redirect()->route('eventos.index')->with('status', 'Evento cancelado exitosamente.');
     }
 }

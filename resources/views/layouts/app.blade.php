@@ -18,8 +18,6 @@
             @include('partials.sidebar')
 
             <div class="flex-1 flex flex-col h-screen overflow-y-auto">
-                
-                @include('layouts.navigation')
 
                 @isset($header)
                     <header class="bg-white border-b border-gray-100">
