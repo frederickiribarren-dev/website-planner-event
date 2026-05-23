@@ -26,7 +26,7 @@
             <div class="bg-slate-50/50 px-8 py-6 sm:flex sm:flex-row-reverse sm:px-10 gap-3">
                 <form id="confirmCancelForm" method="POST" class="w-full sm:w-auto">
                     @csrf
-                    @method('DELETE')
+                    @method('PATCH')
                     <button type="submit" class="inline-flex w-full justify-center rounded-2xl bg-red-500 px-8 py-4 text-xs font-black uppercase tracking-widest text-white shadow-lg shadow-red-200 hover:bg-red-600 transition-all focus:outline-none sm:w-auto">
                         Sí, cancelar evento
                     </button>

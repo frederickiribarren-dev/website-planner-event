@@ -22,7 +22,22 @@
     </x-slot>
 
     <div class="py-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
+        @if(session('success'))
+            <div class="mb-6 px-6 py-4 bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-3xl">
+                {{ session('success') }}
+            </div>
+        @endif
+
+        @if($errors->any())
+            <div class="mb-6 px-6 py-4 bg-red-50 border border-red-200 text-red-700 rounded-3xl">
+                <ul class="list-disc list-inside text-sm">
+                    @foreach($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
         <!-- VISTA 1: LISTAS DE INVITADOS (Principal) -->
         <div id="view-lists" class="view-content space-y-8">
             <div class="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden">
@@ -37,27 +52,41 @@
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-50">
-                            <tr class="hover:bg-slate-50/30 transition-colors group">
-                                <td class="px-8 py-5">
-                                    <div class="flex items-center gap-3">
-                                        <p class="font-bold text-slate-700">Familia Directa</p>
-                                    </div>
-                                </td>
-                                <td class="px-8 py-5">
-                                    <span class="px-4 py-1.5 bg-slate-100 text-slate-600 rounded-full text-[10px] font-black uppercase tracking-widest">Familia</span>
-                                </td>
-                                <td class="px-8 py-5">
-                                    <p class="text-sm text-slate-500 font-medium">Baby Shower Liam</p>
-                                </td>
-                                <td class="px-8 py-5 text-right space-x-2 whitespace-nowrap">
-                                    <button class="px-4 py-2 bg-slate-100 text-cyan-700 text-xs font-bold rounded-xl hover:bg-cyan-600 hover:text-white transition-all">Ver lista</button>
-                                    <button class="px-4 py-2 bg-white border border-slate-200 text-slate-600 text-xs font-bold rounded-xl hover:border-cyan-500 hover:text-cyan-600 transition-all">Editar</button>
-                                    <button  class="p-2 bg-red-50 text-red-400 hover:text-red-600 rounded-xl transition-all">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                                    </button>
-                                </td>
-                            </tr>
-                            <!-- Otras filas similares... -->
+                            @php $totalLists = $eventos->sum(fn($evento) => $evento->listasInvitados->count()); @endphp
+                            @if($totalLists === 0)
+                                <tr>
+                                    <td colspan="4" class="px-8 py-10 text-center text-slate-500">Aún no tienes listas de invitados. Crea una nueva lista en la pestaña de creación.</td>
+                                </tr>
+                            @else
+                                @foreach($eventos as $evento)
+                                    @foreach($evento->listasInvitados as $lista)
+                                        <tr class="hover:bg-slate-50/30 transition-colors group">
+                                            <td class="px-8 py-5">
+                                                <div class="flex items-center gap-3">
+                                                    <p class="font-bold text-slate-700">{{ $lista->nombre }}</p>
+                                                </div>
+                                            </td>
+                                            <td class="px-8 py-5">
+                                                <span class="px-4 py-1.5 bg-slate-100 text-slate-600 rounded-full text-[10px] font-black uppercase tracking-widest">{{ $lista->categoria ?? 'Sin categoría' }}</span>
+                                            </td>
+                                            <td class="px-8 py-5">
+                                                <p class="text-sm text-slate-500 font-medium">{{ $evento->nombre_bebe }}</p>
+                                            </td>
+                                            <td class="px-8 py-5 text-right space-x-2 whitespace-nowrap">
+                                                <button class="px-4 py-2 bg-slate-100 text-cyan-700 text-xs font-bold rounded-xl hover:bg-cyan-600 hover:text-white transition-all">Ver lista</button>
+                                                <button class="px-4 py-2 bg-white border border-slate-200 text-slate-600 text-xs font-bold rounded-xl hover:border-cyan-500 hover:text-cyan-600 transition-all">Editar</button>
+                                                <button class="p-2 bg-red-50 text-red-400 hover:text-red-600 rounded-xl transition-all" onclick="if(confirm('¿Estás seguro de eliminar esta lista? Esta acción no se puede deshacer.')) document.getElementById('delete-form-{{ $lista->id }}').submit();">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                                </button>
+                                                <form id="delete-form-{{ $lista->id }}" action="{{ route('listas-invitados.destroy', $lista->id) }}" method="POST" class="hidden">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                @endforeach
+                            @endif
                         </tbody>
                     </table>
                 </div>
@@ -78,14 +107,20 @@
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-50">
-                            <tr class="hover:bg-slate-50/30 transition-colors">
-                                <td class="px-8 py-5"><p class="font-bold text-slate-700">Baby Shower Liam</p></td>
-                                <td class="px-8 py-5"><p class="text-sm text-slate-500">15 de Mayo, 2024</p></td>
-                                <td class="px-8 py-5"><span class="px-3 py-1 bg-cyan-50 text-cyan-700 rounded-full text-xs font-bold">45 Personas</span></td>
-                                <td class="px-8 py-5 text-right">
-                                    <button onclick="showEventDetail('Baby Shower Liam')" class="text-xs font-bold text-cyan-600 hover:text-cyan-700 uppercase tracking-widest underline decoration-2 underline-offset-4">Ver Invitados</button>
-                                </td>
-                            </tr>
+                            @forelse($eventos as $evento)
+                                <tr class="hover:bg-slate-50/30 transition-colors">
+                                    <td class="px-8 py-5"><p class="font-bold text-slate-700">{{ $evento->nombre_bebe }}</p></td>
+                                    <td class="px-8 py-5"><p class="text-sm text-slate-500">{{ $evento->fecha_evento }}</p></td>
+                                    <td class="px-8 py-5"><span class="px-3 py-1 bg-cyan-50 text-cyan-700 rounded-full text-xs font-bold">{{ $evento->listasInvitados->sum('invitados_count') ?? 0 }} Personas</span></td>
+                                    <td class="px-8 py-5 text-right">
+                                        <button onclick="showEventDetail({{ $evento->id }})" class="text-xs font-bold text-cyan-600 hover:text-cyan-700 uppercase tracking-widest underline decoration-2 underline-offset-4">Ver Invitados</button>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="4" class="px-8 py-10 text-center text-slate-500">Aún no hay eventos para mostrar. Crea tu primer evento desde el panel principal.</td>
+                                </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>
@@ -120,7 +155,7 @@
                     </table>
                 </div>
                 <div class="p-6 bg-slate-50/50 border-t border-slate-100 flex justify-between items-center">
-                    <p class="text-xs text-slate-400 font-bold uppercase tracking-widest">Mostrando 45 invitados confirmados</p>
+                    <p id="detail-summary" class="text-xs text-slate-400 font-bold uppercase tracking-widest">Mostrando 0 invitados confirmados</p>
                     <div class="flex gap-2">
                         <button class="w-8 h-8 flex items-center justify-center rounded-lg bg-white border border-slate-200 text-slate-400 hover:text-cyan-600 transition-all shadow-sm disabled:opacity-50 text-xs font-bold">1</button>
                         <button class="w-8 h-8 flex items-center justify-center rounded-lg bg-cyan-600 text-white shadow-lg shadow-cyan-900/20 text-xs font-bold">2</button>
@@ -134,40 +169,53 @@
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
                 <!-- Formulario -->
                 <div class="lg:col-span-4 space-y-6">
-                    <div class="bg-white rounded-[2.5rem] p-8 border border-slate-100 shadow-sm space-y-8">
-                        <div>
-                            <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-4 italic">Nombre de la Lista</label>
-                            <input type="text" id="list_name" placeholder="Ej: Amigos de la Infancia" class="w-full bg-slate-50 border-none rounded-2xl px-6 py-4 focus:ring-2 focus:ring-cyan-600 transition text-sm font-medium mb-6">
-                            
-                            <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-4 italic">Categoría</label>
-                            <select id="list_category" class="w-full bg-slate-50 border-none rounded-2xl px-6 py-4 focus:ring-2 focus:ring-cyan-600 transition text-sm font-medium text-slate-600">
-                                <option value="">Seleccionar Categoría...</option>
-                                <option value="Familia">Familia</option>
-                                <option value="Amigos">Amigos</option>
-                                <option value="Trabajo">Trabajo</option>
-                                <option value="Otros">Otros</option>
-                            </select>
-                        </div>
-                        
-                        <div class="pt-6 border-t border-slate-50 space-y-4">
-                            <label class="cursor-pointer w-full flex items-center justify-center gap-3 px-6 py-4 bg-emerald-50 text-emerald-600 border border-emerald-100 font-bold rounded-2xl hover:bg-emerald-100 transition-all text-xs uppercase tracking-widest">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
-                                Importar Lista
-                                <input type="file" id="import_list" class="hidden" accept=".xlsx,.csv">
-                            </label>
-                            <p class="text-center text-[10px] text-slate-400 font-bold uppercase tracking-widest">O añade manualmente:</p>
-                        </div>
+                    <form id="createListForm" method="POST" action="{{ route('invitados.creacion.store') }}">
+                        @csrf
+                        <input type="hidden" id="guests_json" name="guests_json">
+                        <div class="bg-white rounded-[2.5rem] p-8 border border-slate-100 shadow-sm space-y-8">
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-4 italic">Evento</label>
+                                <select id="evento_select" name="evento_id" class="w-full bg-slate-50 border-none rounded-2xl px-6 py-4 focus:ring-2 focus:ring-cyan-600 transition text-sm font-medium text-slate-600 mb-6">
+                                    @forelse($eventos as $evento)
+                                        <option value="{{ $evento->id }}" {{ $loop->first ? 'selected' : '' }}>{{ $evento->nombre_bebe }} - {{ $evento->fecha_evento }}</option>
+                                    @empty
+                                        <option value="">No hay eventos disponibles</option>
+                                    @endforelse
+                                </select>
 
-                        <div class="space-y-4">
-                            <input type="text" id="manual_name" placeholder="Nombre completo" class="w-full bg-slate-50 border-none rounded-2xl px-6 py-3 focus:ring-2 focus:ring-cyan-600 transition text-sm">
-                            <input type="email" id="manual_email" placeholder="Correo electrónico" class="w-full bg-slate-50 border-none rounded-2xl px-6 py-3 focus:ring-2 focus:ring-cyan-600 transition text-sm">
-                            <input type="tel" id="manual_phone" placeholder="Número de contacto" class="w-full bg-slate-50 border-none rounded-2xl px-6 py-3 focus:ring-2 focus:ring-cyan-600 transition text-sm">
-                            <button onclick="addGuestManual()" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-4 rounded-2xl transition-all shadow-lg flex items-center justify-center gap-2 text-xs uppercase tracking-widest">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                                Agregar a la lista
-                            </button>
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-4 italic">Nombre de la Lista</label>
+                                <input type="text" id="list_name" name="list_name" placeholder="Ej: Amigos de la Infancia" class="w-full bg-slate-50 border-none rounded-2xl px-6 py-4 focus:ring-2 focus:ring-cyan-600 transition text-sm font-medium mb-6">
+                                
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-4 italic">Categoría</label>
+                                <select id="list_category" name="list_category" class="w-full bg-slate-50 border-none rounded-2xl px-6 py-4 focus:ring-2 focus:ring-cyan-600 transition text-sm font-medium text-slate-600">
+                                    <option value="">Seleccionar Categoría...</option>
+                                    <option value="Familia">Familia</option>
+                                    <option value="Amigos">Amigos</option>
+                                    <option value="Trabajo">Trabajo</option>
+                                    <option value="Otros">Otros</option>
+                                </select>
+                            </div>
+                            
+                            <div class="pt-6 border-t border-slate-50 space-y-4">
+                                <label class="cursor-pointer w-full flex items-center justify-center gap-3 px-6 py-4 bg-emerald-50 text-emerald-600 border border-emerald-100 font-bold rounded-2xl hover:bg-emerald-100 transition-all text-xs uppercase tracking-widest">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                                    Importar Lista
+                                    <input type="file" id="import_list" class="hidden" accept=".xlsx,.csv">
+                                </label>
+                                <p class="text-center text-[10px] text-slate-400 font-bold uppercase tracking-widest">O añade manualmente:</p>
+                            </div>
+
+                            <div class="space-y-4">
+                                <input type="text" id="manual_name" placeholder="Nombre completo" class="w-full bg-slate-50 border-none rounded-2xl px-6 py-3 focus:ring-2 focus:ring-cyan-600 transition text-sm">
+                                <input type="email" id="manual_email" placeholder="Correo electrónico" class="w-full bg-slate-50 border-none rounded-2xl px-6 py-3 focus:ring-2 focus:ring-cyan-600 transition text-sm">
+                                <input type="tel" id="manual_phone" placeholder="Número de contacto" class="w-full bg-slate-50 border-none rounded-2xl px-6 py-3 focus:ring-2 focus:ring-cyan-600 transition text-sm">
+                                <button type="button" onclick="addGuestManual()" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-4 rounded-2xl transition-all shadow-lg flex items-center justify-center gap-2 text-xs uppercase tracking-widest">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                                    Agregar a la lista
+                                </button>
+                            </div>
                         </div>
-                    </div>
+                    </form>
                 </div>
 
                 <!-- Tabla Temporal -->
@@ -202,8 +250,34 @@
 
     </div>
 
+    @php
+        $eventsData = $eventos->map(function ($evento) {
+            return [
+                'id' => $evento->id,
+                'name' => $evento->nombre_bebe,
+                'date' => $evento->fecha_evento,
+                'lists' => $evento->listasInvitados->map(function ($lista) {
+                    return [
+                        'name' => $lista->nombre,
+                        'category' => $lista->categoria,
+                        'guests' => $lista->invitados->map(function ($invitado) {
+                            return [
+                                'name' => $invitado->nombre,
+                                'contact' => $invitado->email ?: $invitado->telefono,
+                                'inv' => $invitado->estado_invitacion ?? 'Pendiente',
+                                'status' => $invitado->estado_asistencia ?? 'Sin responder',
+                            ];
+                        })->toArray(),
+                    ];
+                })->toArray(),
+            ];
+        })->toArray();
+    @endphp
+
     <script>
         let tempGuests = [];
+        let selectedEventId = {!! optional($eventos->first())->id ?? 'null' !!};
+        const eventsData = @json($eventsData);
 
         function showView(view) {
             document.querySelectorAll('.view-content').forEach(v => v.classList.add('hidden'));
@@ -237,33 +311,43 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        function showEventDetail(eventName) {
+        function showEventDetail(eventId) {
+            const event = eventsData.find(e => e.id === eventId);
+            if (!event) return;
+
+            selectedEventId = eventId;
+            document.getElementById('evento_id').value = eventId;
+
             document.querySelectorAll('.view-content').forEach(v => v.classList.add('hidden'));
             document.getElementById('view-event-detail').classList.remove('hidden');
-            document.getElementById('detail-event-name').innerText = eventName;
-            
-            // Simular carga de invitados
+            document.getElementById('detail-event-name').innerText = event.name;
+            const eventoSelect = document.getElementById('evento_select');
+            if (eventoSelect) {
+                eventoSelect.value = eventId;
+            }
+
             const body = document.getElementById('event-guests-body');
             body.innerHTML = '';
-            const dummyData = [
-                { name: 'Juan Pérez', contact: 'juan@email.com', inv: 'Invitación enviada', status: 'Confirmado', origin: 'Familia' },
-                { name: 'María García', contact: 'maria@email.com', inv: 'Pendiente', status: 'No confirmado', origin: 'Trabajo' },
-                { name: 'Carlos Ruiz', contact: '600123456', inv: 'Invitación enviada', status: 'Confirmado', origin: 'Amigos' }
-            ];
+            let totalGuests = 0;
 
-            dummyData.forEach(g => {
-                const row = document.createElement('tr');
-                row.className = 'hover:bg-slate-50/50 transition-colors';
-                const statusColor = g.status === 'Confirmado' ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-400';
-                row.innerHTML = `
-                    <td class="px-8 py-5 text-sm font-bold text-slate-700">${g.name}</td>
-                    <td class="px-8 py-5 text-xs text-slate-500 font-medium">${g.contact}</td>
-                    <td class="px-8 py-5"><span class="px-3 py-1 bg-cyan-50 text-cyan-700 rounded-full text-[10px] font-black uppercase tracking-widest">${g.inv}</span></td>
-                    <td class="px-8 py-5"><span class="px-3 py-1 ${statusColor} rounded-full text-[10px] font-black uppercase tracking-widest">${g.status}</span></td>
-                    <td class="px-8 py-5"><span class="px-3 py-1 bg-slate-100 text-slate-500 rounded-full text-[10px] font-black uppercase tracking-widest">${g.origin}</span></td>
-                `;
-                body.appendChild(row);
+            event.lists.forEach(list => {
+                list.guests.forEach(g => {
+                    totalGuests += 1;
+                    const row = document.createElement('tr');
+                    row.className = 'hover:bg-slate-50/50 transition-colors';
+                    const statusColor = g.status === 'Confirmado' ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-400';
+                    row.innerHTML = `
+                        <td class="px-8 py-5 text-sm font-bold text-slate-700">${g.name}</td>
+                        <td class="px-8 py-5 text-xs text-slate-500 font-medium">${g.contact}</td>
+                        <td class="px-8 py-5"><span class="px-3 py-1 bg-cyan-50 text-cyan-700 rounded-full text-[10px] font-black uppercase tracking-widest">${g.inv}</span></td>
+                        <td class="px-8 py-5"><span class="px-3 py-1 ${statusColor} rounded-full text-[10px] font-black uppercase tracking-widest">${g.status}</span></td>
+                        <td class="px-8 py-5"><span class="px-3 py-1 bg-slate-100 text-slate-500 rounded-full text-[10px] font-black uppercase tracking-widest">${list.category || 'Sin categoría'}</span></td>
+                    `;
+                    body.appendChild(row);
+                });
             });
+
+            document.getElementById('detail-summary').innerText = `Mostrando ${totalGuests} invitados confirmados`;
         }
 
         function addGuestManual() {
@@ -273,12 +357,10 @@
 
             if (!name) return alert('El nombre es obligatorio');
 
-            tempGuests.unshift({ id: Date.now(), name, contact: email || phone || '---' });
-            
+            tempGuests.unshift({ id: Date.now(), name, email, phone, contact: email || phone || '---' });
             document.getElementById('manual_name').value = '';
             document.getElementById('manual_email').value = '';
             document.getElementById('manual_phone').value = '';
-            
             renderTempGuests();
         }
 
@@ -291,7 +373,7 @@
             const body = document.getElementById('temp-guests-body');
             const count = document.getElementById('temp-count');
             body.innerHTML = '';
-            
+
             tempGuests.forEach(g => {
                 const row = document.createElement('tr');
                 row.className = 'hover:bg-slate-50/50 transition-colors';
@@ -299,7 +381,7 @@
                     <td class="px-8 py-4 text-sm font-bold text-slate-700">${g.name}</td>
                     <td class="px-8 py-4 text-xs text-slate-500">${g.contact}</td>
                     <td class="px-8 py-4 text-right">
-                        <button onclick="removeTempGuest(${g.id})" class="p-2 text-slate-300 hover:text-red-500 transition-colors">
+                        <button type="button" onclick="removeTempGuest(${g.id})" class="p-2 text-slate-300 hover:text-red-500 transition-colors">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                         </button>
                     </td>
@@ -311,12 +393,21 @@
 
         function saveList() {
             if (tempGuests.length === 0) return alert('Añade al menos un invitado');
-            alert('Lista guardada correctamente');
-            showView('lists');
-            tempGuests = [];
-            renderTempGuests();
+
+            const eventoSelect = document.getElementById('evento_select');
+            if (!eventoSelect || !eventoSelect.value) {
+                return alert('Selecciona un evento antes de guardar la lista.');
+            }
+
+            const guestsPayload = tempGuests.map(g => ({ name: g.name, email: g.email, phone: g.phone }));
+            document.getElementById('guests_json').value = JSON.stringify(guestsPayload);
+            document.getElementById('createListForm').submit();
         }
     </script>
+
+    @include('invitados.partials.modal-seleccion')
+    @include('invitados.partials.modal-manual')
+    @include('invitados.partials.modal-importar')
 
     <style>
         .view-content { animation: fadeIn 0.4s ease-out; }

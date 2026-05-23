@@ -94,6 +94,11 @@ class EventoController extends Controller
     public function update(Request $request, string $id)
     {
         //
+        $evento = Auth::user()->eventos()->findOrFail($id);
+        $evento->update(['estado' => 'Cancelado']);
+
+        return redirect()->route('eventos.index')->with('status', 'Evento cancelado exitosamente.');
+
     }
 
     /**
@@ -101,9 +106,11 @@ class EventoController extends Controller
      */
     public function destroy(string $id)
     {
+        //Eliminar evento
         $evento = Auth::user()->eventos()->findOrFail($id);
-        $evento->update(['estado' => 'Cancelado']);
+        $evento->delete();
 
-        return redirect()->route('eventos.index')->with('status', 'Evento cancelado exitosamente.');
+        return redirect()->route('eventos.index')->with('status', 'Evento eliminado exitosamente.');
+
     }
 }

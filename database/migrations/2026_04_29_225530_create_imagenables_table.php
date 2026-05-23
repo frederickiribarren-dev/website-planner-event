@@ -12,10 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('imagenables', function (Blueprint $table) {
-            $table->binary('id')->default('uuid_to_bin(uuid(),1)')->primary();
-            $table->binary('usuario_id')->nullable()->index('idx_imagenables_usuario');
-            $table->binary('evento_id')->nullable()->index('idx_imagenables_evento');
-            $table->binary('regalo_id')->nullable()->index('idx_imagenables_regalo');
+            $table->id()->primary();
+            $table->bigInteger('usuario_id')->unsigned()->nullable()->index('idx_imagenables_usuario');
+            $table->bigInteger('evento_id')->unsigned()->nullable()->index('idx_imagenables_evento');
+            $table->bigInteger('regalo_id')->unsigned()->nullable()->index('idx_imagenables_regalo');
             $table->string('descripcion')->nullable();
             $table->timestamp('created_at')->nullable()->useCurrent();
             $table->timestamp('updated_at')->useCurrentOnUpdate()->nullable()->useCurrent();

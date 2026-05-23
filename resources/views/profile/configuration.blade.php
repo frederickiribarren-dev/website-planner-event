@@ -37,11 +37,11 @@
                         <div class="flex-1 w-full space-y-4">
                             <div>
                                 <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Nombre Completo</label>
-                                <input type="text" value="pepito alphonce" class="w-full px-4 py-3 rounded-2xl border-slate-100 bg-slate-50 focus:border-cyan-500 focus:ring-cyan-500 transition-all font-medium text-slate-700">
+                                <input type="text" value="ejemplo nombre" class="w-full px-4 py-3 rounded-2xl border-slate-100 bg-slate-50 focus:border-cyan-500 focus:ring-cyan-500 transition-all font-medium text-slate-700">
                             </div>
                             <div>
                                 <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Correo Electrónico</label>
-                                <input type="email" value="triculotia@putitas.com" class="w-full px-4 py-3 rounded-2xl border-slate-100 bg-slate-50 focus:border-cyan-500 focus:ring-cyan-500 transition-all font-medium text-slate-700">
+                                <input type="email" value="ejemplo@dominio.com" class="w-full px-4 py-3 rounded-2xl border-slate-100 bg-slate-50 focus:border-cyan-500 focus:ring-cyan-500 transition-all font-medium text-slate-700">
                             </div>
                         </div>
                     </div>

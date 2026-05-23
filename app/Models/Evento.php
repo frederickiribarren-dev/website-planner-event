@@ -26,4 +26,19 @@ class Evento extends Model
     {
         return $this->belongsTo(User::class, 'usuario_id');
     }
+
+    public function regalos()
+    {
+        return $this->hasMany(Regalo::class, 'evento_id');
+    }
+
+    public function invitados()
+    {
+        return $this->hasMany(Invitado::class, 'evento_id');
+    }
+
+    public function listasInvitados()
+    {
+        return $this->hasMany(ListaInvitado::class, 'evento_id');
+    }
 }

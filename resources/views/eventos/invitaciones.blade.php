@@ -70,7 +70,7 @@
                                     Ver Invitación
                                 </a>
                                 
-                                <button type="button" onclick="openCancelModal('{{ route('eventos.destroy', $evento->id) }}')" class="w-full flex items-center justify-center py-4 bg-white border border-red-100 text-red-500 text-[10px] font-black uppercase tracking-widest rounded-2xl hover:bg-red-50 transition-all">
+                                <button type="button" onclick="openCancelModal('{{ route('eventos.update', $evento->id) }}')" class="w-full flex items-center justify-center py-4 bg-white border border-red-100 text-red-500 text-[10px] font-black uppercase tracking-widest rounded-2xl hover:bg-red-50 transition-all">
                                     Cancelar Evento
                                 </button>
                             </div>

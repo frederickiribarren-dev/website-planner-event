@@ -12,9 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('regalos', function (Blueprint $table) {
-            $table->binary('id')->default('uuid_to_bin(uuid(),1)')->primary();
-            $table->binary('evento_id')->index('idx_regalos_evento');
-            $table->binary('categoria_id')->nullable()->index('idx_regalos_categoria');
+            $table->id()->primary();
+            $table->bigInteger('evento_id')->unsigned()->index('idx_regalos_evento');
+            $table->bigInteger('categoria_id')->unsigned()->nullable()->index('idx_regalos_categoria');
             $table->string('nombre_regalo', 200);
             $table->longText('descripcion')->nullable();
             $table->enum('prioridad', ['Baja', 'Media', 'Alta', 'Urgente'])->nullable()->default('Media');
