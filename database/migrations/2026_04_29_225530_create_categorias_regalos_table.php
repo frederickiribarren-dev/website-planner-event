@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('categorias_regalos', function (Blueprint $table) {
             $table->id()->primary();
-            $table->string('nombre', 100)->unique('nombre');
+            $table->enum('nombre', ['Ropa', 'Utensilios', 'Accesorios', 'Grupal'])->unique('nombre');
             $table->string('icono_url')->nullable();
             $table->timestamp('created_at')->nullable()->useCurrent();
             $table->timestamp('updated_at')->useCurrentOnUpdate()->nullable()->useCurrent();
