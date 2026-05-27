@@ -31,7 +31,7 @@ CREATE TABLE usuarios (
 -- 2. Tabla de Categorías de Regalos (Base)
 CREATE TABLE categorias_regalos (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(100) NOT NULL UNIQUE,
+    nombre ENUM('Ropa', 'Utensilios', 'Accesorios', 'Grupal') NOT NULL UNIQUE,
     icono_url VARCHAR(255) NULL,
     created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
