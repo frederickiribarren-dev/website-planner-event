@@ -77,7 +77,8 @@ class EventoController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $evento = Auth::user()->eventos()->with(['invitados', 'listasInvitados', 'regalos'])->findOrFail($id);
+        return view('eventos.show', compact('evento'));
     }
 
     /**
