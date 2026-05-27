@@ -3,10 +3,10 @@
     <x-slot name="header">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-                <h2 class="font-black text-3xl text-slate-800 leading-tight tracking-tight">
+                <h2 class="text-3xl font-black text-slate-800 tracking-tight">
                     {{ __('Gestión de Invitaciones') }}
                 </h2>
-                <p class="text-slate-500 text-sm font-medium">Control centralizado de tus eventos y estados.</p>
+                <p class="text-slate-600 font-medium mt-1">Control centralizado de tus eventos y estados.</p>
             </div>
             {{-- Botón eliminado porque ya está en el sidebar --}}
         </div>
@@ -20,10 +20,7 @@
                         <svg class="w-10 h-10 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
                     </div>
                     <h3 class="text-xl font-black text-slate-800 mb-2">Aún no tienes invitaciones</h3>
-                    <p class="text-slate-500 mb-8 max-w-sm mx-auto font-medium">Crea tu evento para empezar a generar invitaciones personalizadas.</p>
-                    <a href="{{ route('eventos.create') }}" class="inline-flex items-center gap-2 px-8 py-4 bg-slate-900 text-white text-xs font-black uppercase tracking-[0.2em] rounded-2xl hover:bg-teal-600 transition-all shadow-xl shadow-slate-200">
-                        Comenzar Ahora
-                    </a>
+                    <p class="text-slate-500 mb-8 max-w-sm mx-auto font-medium">Una vez creado el evento, las invitaciones se podrán visualizar aquí.</p>
                 </div>
             @else
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

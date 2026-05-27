@@ -3,10 +3,10 @@
     <x-slot name="header">
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
-                <h2 id="view-title" class="font-bold text-3xl text-slate-800 leading-tight italic">
+                <h2 id="view-title" class="text-3xl font-black text-slate-800 tracking-tight">
                     Listas de Invitados
                 </h2>
-                <p id="view-subtitle" class="text-sm text-slate-500 mt-1 font-medium">Gestiona tus grupos de invitados de forma organizada.</p>
+                <p id="view-subtitle" class="text-slate-600 font-medium mt-1">Gestiona tus grupos de invitados de forma organizada.</p>
             </div>
             <div class="flex flex-wrap gap-3">
                 <button id="btn-toggle-view" onclick="showView('events')" class="inline-flex items-center justify-center px-6 py-3 rounded-full text-xs font-bold transition-all transform active:scale-95 bg-white border border-slate-200 text-slate-500 hover:text-cyan-600 hover:border-cyan-200 gap-2 shadow-sm uppercase tracking-widest" aria-label="Cambiar vista">

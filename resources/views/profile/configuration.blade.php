@@ -2,10 +2,10 @@
     <x-slot name="header">
         <div class="flex items-center justify-between">
             <div>
-                <h2 class="font-bold text-2xl text-slate-800 leading-tight">
+                <h2 class="text-3xl font-black text-slate-800 tracking-tight">
                     {{ __('Configuración') }}
                 </h2>
-                <p class="text-sm text-slate-500 mt-1">Personaliza tu experiencia y los detalles de tu evento.</p>
+                <p class="text-slate-600 font-medium mt-1">Personaliza tu experiencia y los detalles de tu evento.</p>
             </div>
             <button class="px-6 py-2 bg-cyan-700 hover:bg-cyan-800 text-white font-semibold rounded-full transition-all transform active:scale-95">
                 Guardar Cambios

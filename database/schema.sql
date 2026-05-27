@@ -1,7 +1,3 @@
--- Database Schema for Website Planner Event
--- Generated from Laravel Migrations
--- This schema can be imported directly into phpMyAdmin
-
 -- Drop tables if they exist (in reverse order of dependencies)
 DROP TABLE IF EXISTS imagenes;
 DROP TABLE IF EXISTS imagenables;
@@ -10,6 +6,7 @@ DROP TABLE IF EXISTS regalos_historial_cambios;
 DROP TABLE IF EXISTS auditoria_eventos;
 DROP TABLE IF EXISTS regalos;
 DROP TABLE IF EXISTS invitados;
+DROP TABLE IF EXISTS listas_invitados;
 DROP TABLE IF EXISTS configuracion_usuario;
 DROP TABLE IF EXISTS eventos;
 DROP TABLE IF EXISTS categorias_regalos;
@@ -17,7 +14,7 @@ DROP TABLE IF EXISTS usuarios;
 
 -- 1. Tabla de Usuarios (Base)
 CREATE TABLE usuarios (
-    id BINARY(16) PRIMARY KEY DEFAULT (UUID_TO_BIN(UUID(), 1)),
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
     email VARCHAR(255) NOT NULL UNIQUE,
     password_hash VARCHAR(255) NOT NULL,
@@ -33,7 +30,7 @@ CREATE TABLE usuarios (
 
 -- 2. Tabla de Categorías de Regalos (Base)
 CREATE TABLE categorias_regalos (
-    id BINARY(16) PRIMARY KEY DEFAULT (UUID_TO_BIN(UUID(), 1)),
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL UNIQUE,
     icono_url VARCHAR(255) NULL,
     created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
@@ -42,15 +39,13 @@ CREATE TABLE categorias_regalos (
 
 -- 3. Tabla de Eventos (Depende de usuarios)
 CREATE TABLE eventos (
-    id BINARY(16) PRIMARY KEY DEFAULT (UUID_TO_BIN(UUID(), 1)),
-    usuario_id BINARY(16) NOT NULL,
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    usuario_id BIGINT UNSIGNED NOT NULL,
     slug VARCHAR(100) NOT NULL UNIQUE,
     nombre_bebe VARCHAR(100) NULL,
     genero_bebe ENUM('Niño', 'Niña', 'Sorpresa', 'Múltiple') NOT NULL,
     fecha_evento DATETIME NOT NULL,
     ubicacion_nombre VARCHAR(255) NULL,
-    lat DOUBLE NULL,
-    lng DOUBLE NULL,
     mensaje_invitacion LONGTEXT NULL,
     color_tema VARCHAR(7) NULL DEFAULT '#60A5FA',
     estado ENUM('Borrador', 'Publicado', 'Finalizado', 'Cancelado') NULL DEFAULT 'Borrador',
@@ -59,13 +54,12 @@ CREATE TABLE eventos (
     updated_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     deleted_at TIMESTAMP NULL,
     KEY `idx_eventos_usuario` (`usuario_id`),
-    KEY `idx_eventos_lat_lng` (`lat`, `lng`),
     CONSTRAINT `fk_eventos_usuario` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- 4. Tabla de Configuración del Usuario (Depende de usuarios)
 CREATE TABLE configuracion_usuario (
-    usuario_id BINARY(16) PRIMARY KEY,
+    usuario_id BIGINT UNSIGNED PRIMARY KEY,
     notificaciones_push BOOLEAN NULL DEFAULT 1,
     notificaciones_email BOOLEAN NULL DEFAULT 1,
     idioma CHAR(5) NULL DEFAULT 'es-CL',
@@ -75,10 +69,24 @@ CREATE TABLE configuracion_usuario (
     CONSTRAINT `fk_conf_usuario` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- 5. Tabla de Invitados (Depende de eventos)
+-- 5. Tabla de Listas de Invitados (Depende de eventos)
+CREATE TABLE listas_invitados (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    evento_id BIGINT UNSIGNED NOT NULL,
+    nombre VARCHAR(150) NOT NULL,
+    categoria TEXT NULL,
+    created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    deleted_at TIMESTAMP NULL,
+    KEY `idx_listas_invitados_evento` (`evento_id`),
+    CONSTRAINT `fk_listas_invitados_evento` FOREIGN KEY (`evento_id`) REFERENCES `eventos` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 6. Tabla de Invitados (Depende de eventos y listas_invitados)
 CREATE TABLE invitados (
-    id BINARY(16) PRIMARY KEY DEFAULT (UUID_TO_BIN(UUID(), 1)),
-    evento_id BINARY(16) NOT NULL,
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    evento_id BIGINT UNSIGNED NOT NULL,
+    lista_invitado_id BIGINT UNSIGNED NULL,
     nombre VARCHAR(100) NOT NULL,
     email VARCHAR(255) NULL,
     telefono VARCHAR(20) NULL,
@@ -93,14 +101,16 @@ CREATE TABLE invitados (
     updated_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     deleted_at TIMESTAMP NULL,
     KEY `idx_invitados_evento` (`evento_id`),
-    CONSTRAINT `fk_invitados_evento` FOREIGN KEY (`evento_id`) REFERENCES `eventos` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION
+    KEY `idx_invitados_lista` (`lista_invitado_id`),
+    CONSTRAINT `fk_invitados_evento` FOREIGN KEY (`evento_id`) REFERENCES `eventos` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
+    CONSTRAINT `fk_invitados_lista_invitado` FOREIGN KEY (`lista_invitado_id`) REFERENCES `listas_invitados` (`id`) ON DELETE SET NULL ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- 6. Tabla de Regalos (Depende de eventos y categorias_regalos)
+-- 7. Tabla de Regalos (Depende de eventos y categorias_regalos)
 CREATE TABLE regalos (
-    id BINARY(16) PRIMARY KEY DEFAULT (UUID_TO_BIN(UUID(), 1)),
-    evento_id BINARY(16) NOT NULL,
-    categoria_id BINARY(16) NULL,
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    evento_id BIGINT UNSIGNED NOT NULL,
+    categoria_id BIGINT UNSIGNED NULL,
     nombre_regalo VARCHAR(200) NOT NULL,
     descripcion LONGTEXT NULL,
     prioridad ENUM('Baja', 'Media', 'Alta', 'Urgente') NULL DEFAULT 'Media',
@@ -119,25 +129,25 @@ CREATE TABLE regalos (
     CONSTRAINT `fk_regalos_categoria` FOREIGN KEY (`categoria_id`) REFERENCES `categorias_regalos` (`id`) ON DELETE SET NULL ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- 7. Tabla de Auditoría de Eventos (Depende de eventos)
+-- 8. Tabla de Auditoría de Eventos (Depende de eventos)
 CREATE TABLE auditoria_eventos (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    evento_id BINARY(16) NOT NULL,
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    evento_id BIGINT UNSIGNED NOT NULL,
     entidad_tipo ENUM('EVENTO', 'INVITADO', 'REGALO', 'RESERVA') NULL,
-    entidad_id BINARY(16) NOT NULL,
+    entidad_id BIGINT UNSIGNED NULL,
     accion ENUM('CREAR', 'ACTUALIZAR', 'ELIMINAR', 'CONFIRMACION') NULL,
     detalle_cambio JSON NULL,
-    usuario_operador BINARY(16) NULL,
+    usuario_operador BIGINT UNSIGNED NULL,
     created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
     KEY `idx_auditoria_evento` (`evento_id`),
     KEY `idx_auditoria_entidad` (`entidad_tipo`, `entidad_id`),
     CONSTRAINT `fk_auditoria_evento` FOREIGN KEY (`evento_id`) REFERENCES `eventos` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- 8. Tabla de Historial de Cambios de Regalos (Depende de regalos)
+-- 9. Tabla de Historial de Cambios de Regalos (Depende de regalos)
 CREATE TABLE regalos_historial_cambios (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    regalo_id BINARY(16) NOT NULL,
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    regalo_id BIGINT UNSIGNED NOT NULL,
     campo_modificado VARCHAR(100) NULL,
     valor_anterior LONGTEXT NULL,
     valor_nuevo LONGTEXT NULL,
@@ -146,11 +156,11 @@ CREATE TABLE regalos_historial_cambios (
     CONSTRAINT `fk_historial_regalo` FOREIGN KEY (`regalo_id`) REFERENCES `regalos` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- 9. Tabla de Reservas de Regalos (Depende de regalos e invitados)
+-- 10. Tabla de Reservas de Regalos (Depende de regalos e invitados)
 CREATE TABLE regalos_reservas (
-    id BINARY(16) PRIMARY KEY DEFAULT (UUID_TO_BIN(UUID(), 1)),
-    regalo_id BINARY(16) NOT NULL,
-    invitado_id BINARY(16) NOT NULL,
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    regalo_id BIGINT UNSIGNED NOT NULL,
+    invitado_id BIGINT UNSIGNED NOT NULL,
     cantidad_reservada INT NULL DEFAULT 1,
     comprobante_url VARCHAR(500) NULL,
     fecha_reserva TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
@@ -163,12 +173,12 @@ CREATE TABLE regalos_reservas (
     CONSTRAINT `fk_reserva_invitado` FOREIGN KEY (`invitado_id`) REFERENCES `invitados` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- 10. Tabla de Imagenables (Polimórfica) (Depende de usuarios, eventos y regalos)
+-- 11. Tabla de Imagenables (Polimórfica) (Depende de usuarios, eventos y regalos)
 CREATE TABLE imagenables (
-    id BINARY(16) PRIMARY KEY DEFAULT (UUID_TO_BIN(UUID(), 1)),
-    usuario_id BINARY(16) NULL,
-    evento_id BINARY(16) NULL,
-    regalo_id BINARY(16) NULL,
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    usuario_id BIGINT UNSIGNED NULL,
+    evento_id BIGINT UNSIGNED NULL,
+    regalo_id BIGINT UNSIGNED NULL,
     descripcion VARCHAR(255) NULL,
     created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -180,10 +190,10 @@ CREATE TABLE imagenables (
     CONSTRAINT `fk_imagenables_regalo` FOREIGN KEY (`regalo_id`) REFERENCES `regalos` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- 11. Tabla de Imágenes (Depende de imagenables)
+-- 12. Tabla de Imágenes (Depende de imagenables)
 CREATE TABLE imagenes (
-    id BINARY(16) PRIMARY KEY DEFAULT (UUID_TO_BIN(UUID(), 1)),
-    imagenable_id BINARY(16) NOT NULL,
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    imagenable_id BIGINT UNSIGNED NOT NULL,
     url VARCHAR(500) NOT NULL,
     nombre_archivo VARCHAR(255) NULL,
     alt_text VARCHAR(255) NULL,
@@ -197,4 +207,3 @@ CREATE TABLE imagenes (
     KEY `idx_imagenes_primary` (`imagenable_id`, `is_primary`),
     CONSTRAINT `fk_imagenes_imagenable` FOREIGN KEY (`imagenable_id`) REFERENCES `imagenables` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
