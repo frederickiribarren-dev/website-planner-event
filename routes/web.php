@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\EventoController;
 use App\Http\Controllers\InvitadoController;
 use App\Http\Controllers\ListaInvitadoController;
+use App\Http\Controllers\RegaloController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -53,9 +54,7 @@ Route::middleware('auth', 'verified')->group(function () {
         return view('profile.configuration');
     })->name('configuracion');
 
-    Route::get('/regalos', function() {
-        return view('regalos.creacion-lista-regalos');
-    })->name('regalos.index');
+    Route::get('/regalos', [RegaloController::class, 'index'])->name('regalos.index');
 });
 
 

@@ -1,14 +1,27 @@
 <script>
-    const giftItems = [
-        { id: 1, name: 'Conjunto Algodón Orgánico', category: 'Ropa', description: 'Suave algodón 100% orgánico ideal para recién nacidos.', img: '/C:/Users/frede/.gemini/antigravity/brain/c4708be9-5831-402f-969e-662284c5d4df/baby_clothes_gift_1778200658377.png' },
-        { id: 2, name: 'Pack de Bodies (3 unidades)', category: 'Ropa', description: 'Bodies de manga corta con cierres automáticos.', img: '/C:/Users/frede/.gemini/antigravity/brain/c4708be9-5831-402f-969e-662284c5d4df/baby_clothes_gift_1778200658377.png' },
-        { id: 3, name: 'Set Biberones Pro', category: 'Utensilios', description: 'Sistema anti-cólicos avanzado para una alimentación tranquila.', img: '/C:/Users/frede/.gemini/antigravity/brain/c4708be9-5831-402f-969e-662284c5d4df/baby_bottle_set_1778200680488.png' },
-        { id: 4, name: 'Esterilizador Eléctrico', category: 'Utensilios', description: 'Esteriliza hasta 6 biberones en solo 5 minutos.', img: '/C:/Users/frede/.gemini/antigravity/brain/c4708be9-5831-402f-969e-662284c5d4df/baby_bottle_set_1778200680488.png' },
-        { id: 5, name: 'Sonajero Madera', category: 'Accesorios', description: 'Madera natural pulida, segura para morder y jugar.', img: '/C:/Users/frede/.gemini/antigravity/brain/c4708be9-5831-402f-969e-662284c5d4df/baby_rattle_toy_1778200699425.png' },
-        { id: 6, name: 'Manta de Crochet', category: 'Accesorios', description: 'Hecha a mano con lana hipoalergénica de alta calidad.', img: '/C:/Users/frede/.gemini/antigravity/brain/c4708be9-5831-402f-969e-662284c5d4df/baby_rattle_toy_1778200699425.png' },
-        { id: 7, name: 'Coche de Paseo Luxury', category: 'Grupales', description: 'Suspensión premium y plegado ultra compacto.', img: '/C:/Users/frede/.gemini/antigravity/brain/c4708be9-5831-402f-969e-662284c5d4df/baby_stroller_luxury_1778200759339.png' },
-        { id: 8, name: 'Cuna Pro Inteligente', category: 'Grupales', description: 'Control de temperatura y música relajante integrada.', img: '/C:/Users/frede/.gemini/antigravity/brain/c4708be9-5831-402f-969e-662284c5d4df/baby_stroller_luxury_1778200759339.png' }
-    ];
+    // 1. Carga segura del JSON desde el controlador de Laravel
+    const dataCategorias = @json($categorias ?? []);
+    
+    // Mantendremos una lista plana dinámica en memoria de TODOS los regalos para facilitar búsquedas por ID
+    let giftItems = [];
+
+    // Función interna para aplanar el JSON y sincronizarlo con el estado del script
+    function sincronizarGiftItems() {
+        giftItems = [];
+        Object.keys(dataCategorias).forEach(catName => {
+            dataCategorias[catName].forEach(item => {
+                giftItems.push({
+                    id: item.id,
+                    name: item.nombre,
+                    category: catName, // Mapeamos la clave como categoría
+                    description: item.descripcion,
+                    img: item.imagen_portada_url || 'https://placehold.co/600x400/f1f5f9/94a3b8?text=Regalo'
+                });
+            });
+        });
+    }
+    // Inicializamos la lista plana al cargar
+    sincronizarGiftItems();
 
     let selectedItems = [];
     let savedLists = [];
@@ -55,15 +68,23 @@
             return;
         }
 
-        const newGift = {
-            id: Date.now(), // ID temporal
-            name: name,
-            category: cat,
-            description: desc,
-            img: img
+        // Si la categoría no existe en nuestro objeto JSON dinámico, la creamos
+        if (!dataCategorias[cat]) {
+            dataCategorias[cat] = [];
+        }
+
+        // Estructura idéntica al JSON original para consistencia
+        const newGiftRaw = {
+            id: Date.now(), // ID temporal único
+            nombre: name,
+            descripcion: desc,
+            imagen_portada_url: img,
+            created_at: new Date().toISOString().split('T')[0]
         };
 
-        giftItems.unshift(newGift); // Agregar al inicio
+        dataCategorias[cat].unshift(newGiftRaw); // Agregar al inicio de su categoría real
+        sincronizarGiftItems(); // Sincronizar lista plana
+        
         showToast('Regalo creado y añadido al catálogo', 'success');
         
         // Cambiar a la categoría del regalo creado para que se vea
@@ -73,13 +94,23 @@
 
     function changeView(view) {
         document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
-        document.getElementById('view' + view.charAt(0).toUpperCase() + view.slice(1)).classList.add('active');
+        const targetView = document.getElementById('view' + view.charAt(0).toUpperCase() + view.slice(1));
+        if (targetView) targetView.classList.add('active');
         
         const headerActions = document.getElementById('headerActions');
-        headerActions.innerHTML = '';
+        if (headerActions) headerActions.innerHTML = '';
 
         if (view === 'initial') {
-            if (savedLists.length > 0) {
+            editingListId = null;
+            const nameInput = document.getElementById('listNameInput');
+            if (nameInput) {
+                nameInput.value = '';
+                nameInput.disabled = false;
+            }
+            selectedItems = [];
+            updateCounter();
+
+            if (savedLists.length > 0 && headerActions) {
                 headerActions.innerHTML = `
                     <button onclick="changeView('selection')" class="px-6 py-2.5 bg-cyan-700 hover:bg-cyan-800 text-white font-bold rounded-full transition-all flex items-center gap-2">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
@@ -89,7 +120,7 @@
             }
         }
 
-        if (view === 'selection' || view === 'review') {
+        if ((view === 'selection' || view === 'review') && headerActions) {
             headerActions.innerHTML = `
                 <button onclick="saveCurrentList()" class="px-6 py-2 bg-cyan-700 hover:bg-cyan-800 text-white font-bold rounded-full transition-all">
                     Guardar lista
@@ -99,12 +130,23 @@
 
         if (view === 'selection') renderGrid();
         if (view === 'review') renderReview();
+        if (view === 'listDetails') {
+            if (headerActions) {
+                headerActions.innerHTML = `
+                    <button onclick="changeView('initial')" class="px-6 py-2.5 bg-slate-100 text-slate-700 font-bold rounded-full hover:bg-slate-200 transition-all flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                        Volver a mis listas
+                    </button>
+                `;
+            }
+            renderDetailGrid();
+        }
     }
 
     function filterCategory(cat) {
         currentCategory = cat;
         document.querySelectorAll('.category-btn').forEach(btn => {
-            if (btn.innerText === cat) {
+            if (btn.innerText.trim() === cat) {
                 btn.classList.add('bg-cyan-700', 'text-white');
                 btn.classList.remove('text-slate-500', 'hover:bg-slate-50');
             } else {
@@ -118,7 +160,7 @@
     function filterReviewCategory(cat) {
         currentReviewCategory = cat;
         document.querySelectorAll('.rev-category-btn').forEach(btn => {
-            if (btn.innerText === cat) {
+            if (btn.innerText.trim() === cat) {
                 btn.classList.add('bg-cyan-700', 'text-white');
                 btn.classList.remove('text-slate-500', 'hover:bg-slate-50');
             } else {
@@ -131,16 +173,25 @@
 
     function renderGrid() {
         const grid = document.getElementById('itemsGrid');
+        if (!grid) return;
         grid.innerHTML = '';
         
-        giftItems.filter(i => i.category === currentCategory).forEach(item => {
+        // Obtenemos los regalos mapeados de la categoría seleccionada desde la lista plana limpia
+        const itemsFiltrados = giftItems.filter(i => i.category === currentCategory);
+
+        if (itemsFiltrados.length === 0) {
+            grid.innerHTML = `<div class="col-span-full py-10 text-center"><p class="text-slate-400 italic">No hay productos en la categoría ${currentCategory}.</p></div>`;
+            return;
+        }
+        
+        itemsFiltrados.forEach(item => {
             const isSelected = selectedItems.find(s => s.id === item.id);
             const card = document.createElement('div');
             card.className = `bg-white rounded-3xl border-2 transition-all overflow-hidden ${isSelected ? 'border-cyan-500 shadow-lg shadow-cyan-50' : 'border-slate-100'}`;
             
             card.innerHTML = `
                 <div class="h-48 overflow-hidden relative">
-                    <img src="${item.img}" class="w-full h-full object-cover">
+                    <img src="${item.img}" alt="${item.name}" class="w-full h-full object-cover">
                     ${isSelected ? `
                         <div class="absolute top-4 right-4 bg-cyan-600 text-white p-1.5 rounded-full shadow-lg">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
@@ -171,6 +222,7 @@
 
     function openGiftModal(id) {
         const item = giftItems.find(i => i.id === id);
+        if (!item) return;
         const isSelected = selectedItems.find(s => s.id === id);
         currentItemForModal = item;
 
@@ -211,7 +263,7 @@
             link2: document.getElementById('m_link2').value,
             link3: document.getElementById('m_link3').value,
             qty: document.getElementById('m_qty').value,
-            gifted: false // Para saber si ya ha sido regalado
+            gifted: false
         };
 
         if (isSelectedIdx > -1) {
@@ -232,16 +284,16 @@
         const icon = document.getElementById('toastIcon');
         const message = document.getElementById('toastMessage');
         
-        // Limpiar clases previas
+        if(!toast || !icon || !message) return;
+        
         toast.classList.remove('bg-emerald-600', 'bg-red-600', 'bg-amber-500');
         
-        // Configurar por tipo
         if (type === 'success') {
             toast.classList.add('bg-emerald-600');
             icon.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>';
         } else if (type === 'error') {
             toast.classList.add('bg-red-600');
-            icon.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>';
+            icon.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>';
         } else if (type === 'warning') {
             toast.classList.add('bg-amber-500');
             icon.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>';
@@ -272,7 +324,6 @@
         if (!grid) return;
         
         grid.innerHTML = '';
-
         const filteredSelected = selectedItems.filter(s => s.category === currentReviewCategory);
 
         if (filteredSelected.length === 0) {
@@ -291,7 +342,7 @@
             
             card.innerHTML = `
                 <div class="h-44 overflow-hidden relative">
-                    <img src="${item.img}" class="w-full h-full object-cover">
+                    <img src="${item.img}" class="w-full h-full object-cover" alt="${item.name}">
                     <div class="absolute top-4 left-4 flex flex-col gap-2">
                         <span class="bg-slate-900/80 backdrop-blur-md text-white px-3 py-1.5 rounded-full text-[11px] font-bold flex items-center gap-2 shadow-xl border border-white/10">
                             ${icon}
@@ -332,11 +383,11 @@
         }
 
         const nameInput = document.getElementById('listNameInput');
-        const name = nameInput.value.trim();
+        const name = nameInput ? nameInput.value.trim() : '';
 
         if (!name) {
             showToast('Por favor, dale un nombre a tu lista antes de guardar.', 'error');
-            nameInput.focus();
+            if(nameInput) nameInput.focus();
             return;
         }
 
@@ -356,10 +407,11 @@
             showToast('¡Lista guardada con éxito!', 'success');
         }
 
-        // Limpiar todo
+        if (nameInput) {
+            nameInput.value = '';
+            nameInput.disabled = false;
+        }
         selectedItems = [];
-        nameInput.value = '';
-        nameInput.disabled = false;
         editingListId = null;
         updateCounter();
         renderSavedLists();
@@ -374,8 +426,10 @@
         selectedItems = [...list.items];
         
         const nameInput = document.getElementById('listNameInput');
-        nameInput.value = list.name;
-        nameInput.disabled = true; // No permitir editar el nombre
+        if (nameInput) {
+            nameInput.value = list.name;
+            nameInput.disabled = true;
+        }
 
         updateCounter();
         changeView('selection');
@@ -393,7 +447,7 @@
         const body = document.getElementById('savedListsBody');
         const emptyState = document.getElementById('emptyState');
         
-        if (!container || !body) return;
+        if (!container || !body || !emptyState) return;
         
         if (savedLists.length > 0) {
             emptyState.classList.add('hidden');
@@ -438,14 +492,15 @@
         const list = savedLists.find(l => l.id === id);
         if (!list) return;
 
-        document.getElementById('detailListName').innerText = list.name;
+        const detailNameElement = document.getElementById('detailListName');
+        if (detailNameElement) detailNameElement.innerText = list.name;
         changeView('listDetails');
     }
 
     function filterDetailCategory(cat) {
         currentDetailCategory = cat;
         document.querySelectorAll('.det-category-btn').forEach(btn => {
-            if (btn.innerText === cat) {
+            if (btn.innerText.trim() === cat) {
                 btn.classList.add('bg-cyan-700', 'text-white');
                 btn.classList.remove('text-slate-500', 'hover:bg-slate-50');
             } else {
@@ -473,29 +528,20 @@
             const card = document.createElement('div');
             card.className = 'bg-white rounded-[2rem] border border-slate-100 overflow-hidden flex flex-col h-full shadow-sm';
             
-            // Simulación de lógica de disponibilidad para el ejemplo
-            const totalNeeded = parseInt(item.qty);
-            const taken = Math.floor(Math.random() * (totalNeeded + 1)); // Simulación
+            const totalNeeded = parseInt(item.qty) || 1;
+            const taken = 0; // Estado inicial por defecto sin simulación errática
             const remaining = totalNeeded - taken;
             
             let statusHtml = '';
             if (totalNeeded === 1) {
-                if (taken === 1) {
-                    statusHtml = `<span class="px-3 py-1 bg-slate-100 text-slate-400 text-[10px] font-black uppercase rounded-full">No disponible</span>`;
-                } else {
-                    statusHtml = `<span class="px-3 py-1 bg-emerald-50 text-emerald-600 text-[10px] font-black uppercase rounded-full border border-emerald-100">Libre</span>`;
-                }
+                statusHtml = `<span class="px-3 py-1 bg-emerald-50 text-emerald-600 text-[10px] font-black uppercase rounded-full border border-emerald-100">Libre</span>`;
             } else {
-                if (remaining === 0) {
-                    statusHtml = `<span class="px-3 py-1 bg-slate-100 text-slate-400 text-[10px] font-black uppercase rounded-full">Agotado</span>`;
-                } else {
-                    statusHtml = `<span class="px-3 py-1 bg-cyan-50 text-cyan-600 text-[10px] font-black uppercase rounded-full border border-cyan-100">${remaining} de ${totalNeeded} disponibles</span>`;
-                }
+                statusHtml = `<span class="px-3 py-1 bg-cyan-50 text-cyan-600 text-[10px] font-black uppercase rounded-full border border-cyan-100">${remaining} de ${totalNeeded} disponibles</span>`;
             }
 
             card.innerHTML = `
                 <div class="h-44 overflow-hidden relative">
-                    <img src="${item.img}" class="w-full h-full object-cover">
+                    <img src="${item.img}" class="w-full h-full object-cover" alt="${item.name}">
                     <div class="absolute bottom-4 left-4">
                         ${statusHtml}
                     </div>
@@ -508,7 +554,7 @@
                         <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">${item.category}</span>
                         <div class="flex gap-1">
                             ${Array.from({length: totalNeeded}).map((_, i) => `
-                                <div class="w-2 h-2 rounded-full ${i < (totalNeeded - remaining) ? 'bg-slate-200' : 'bg-cyan-500'}"></div>
+                                <div class="w-2 h-2 rounded-full bg-cyan-500"></div>
                             `).join('')}
                         </div>
                     </div>
@@ -518,54 +564,8 @@
         });
     }
 
-    // ACTUALIZAR changeView para soportar la nueva vista
-    const originalChangeView = changeView;
-    changeView = function(view) {
-        document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
-        const targetView = document.getElementById('view' + view.charAt(0).toUpperCase() + view.slice(1));
-        if (targetView) targetView.classList.add('active');
-        
-        const headerActions = document.getElementById('headerActions');
-        headerActions.innerHTML = '';
-
-        if (view === 'initial') {
-            editingListId = null;
-            const nameInput = document.getElementById('listNameInput');
-            if (nameInput) {
-                nameInput.value = '';
-                nameInput.disabled = false;
-            }
-            selectedItems = [];
-            updateCounter();
-
-            if (savedLists.length > 0) {
-                headerActions.innerHTML = `
-                    <button onclick="changeView('selection')" class="px-6 py-2.5 bg-cyan-700 hover:bg-cyan-800 text-white font-bold rounded-full transition-all flex items-center gap-2">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                        Nueva lista
-                    </button>
-                `;
-            }
-        }
-
-        if (view === 'selection' || view === 'review') {
-            headerActions.innerHTML = `
-                <button onclick="saveCurrentList()" class="px-6 py-2 bg-cyan-700 hover:bg-cyan-800 text-white font-bold rounded-full transition-all">
-                    Guardar lista
-                </button>
-            `;
-        }
-
-        if (view === 'selection') renderGrid();
-        if (view === 'review') renderReview();
-        if (view === 'listDetails') {
-            headerActions.innerHTML = `
-                <button onclick="changeView('initial')" class="px-6 py-2.5 bg-slate-100 text-slate-700 font-bold rounded-full hover:bg-slate-200 transition-all flex items-center gap-2">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-                    Volver a mis listas
-                </button>
-            `;
-            renderDetailGrid();
-        }
-    };
+    // Inicialización del DOM
+    document.addEventListener('DOMContentLoaded', () => {
+        renderGrid();
+    });
 </script>
