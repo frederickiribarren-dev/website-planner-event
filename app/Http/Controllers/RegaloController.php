@@ -11,7 +11,12 @@ class RegaloController extends Controller
      */
     public function index()
     {
-        //
+        $jsonPath = resource_path('data/item-regalos.json');
+        $jsonData = json_decode(file_get_contents($jsonPath), true);
+
+        return view('regalos.creacion-lista-regalos', [
+            'categorias' => $jsonData['categorias'] ?? []
+        ]);
     }
 
     /**
