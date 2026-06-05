@@ -1,59 +1,314 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Website Planner Event
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Un sitio web para planificar eventos sociales, especialmente baby showers, desarrollado con Laravel 12.
 
-## About Laravel
+## Descripción
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Esta aplicación permite a los usuarios planificar eventos de manera organizada, gestionando invitados, regalos y configuraciones personales. Incluye un sistema de base de datos para almacenar información de usuarios, eventos, invitados y regalos, facilitando la coordinación y evitando problemas comunes en la organización de eventos.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Propósito del Proyecto
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### Qué Hace
+- **Planificación de Eventos**: Permite crear y gestionar eventos sociales como baby showers.
+- **Gestión de Invitados**: Envío de invitaciones, seguimiento de confirmaciones y control de asistencia.
+- **Gestión de Regalos**: Registro de regalos deseados, sugerencias para invitados y seguimiento de entregas para evitar duplicados o regalos innecesarios.
+- **Configuraciones Personales**: Opciones para personalizar la experiencia del usuario.
 
-## Learning Laravel
+### Por Qué Existe
+La organización de eventos sociales, especialmente baby showers, enfrenta dificultades técnicas que afectan a organizadores e invitados. La falta de un sistema estructurado provoca regalos poco útiles, gestión informal de invitados y caos general.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+### Problema que Resuelve
+#### Descripción del Problema Técnico
+- **Regalos**: Invitados entregan obsequios innecesarios, repetidos o poco prácticos. Los futuros padres reciben artículos que no se ajustan a sus necesidades.
+- **Gestión de Invitados**: Invitaciones enviadas por canales informales (mensajes, llamadas, redes sociales), con escasa trazabilidad y evidencia de confirmación. Ausencia de invitados por falta de claridad.
+- **Impacto**:
+  - **Técnico**: Falta de trazabilidad en confirmaciones y regalos; información dispersa en múltiples canales.
+  - **Operacional**: Desorganización en planificación, aumento de carga de trabajo y riesgo de errores; ausencia de invitados.
+  - **Económico**: Gastos en regalos inútiles; costos adicionales en logística y compras de último minuto.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+#### Importancia de Resolverlo
+- **Mejora la Experiencia**: Reduce frustración para organizadores e invitados.
+- **Eficiencia**: Centraliza información, facilita coordinación.
+- **Ahorro**: Evita gastos innecesarios en regalos y logística.
 
-## Laravel Sponsors
+## Instalación
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### Requisitos Previos
+- PHP 8.2 o superior
+- Composer
+- Node.js y npm
+- Base de datos (MySQL, PostgreSQL, etc.) se usara: MySQL
+- Laravel 12
+- Tailwind CSS (CSS framework)
 
-### Premium Partners
+### Pasos
+1. **Clona el Repositorio**:
+   ```
+   git clone https://github.com/frederickiribarren-dev/website-planner-event.git
+   cd website-planner-event
+   ```
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+2. **Instala Dependencias de PHP**:
+   ```
+   composer install
+   ```
 
-## Contributing
+3. **Instala Dependencias de JavaScript**:
+   ```
+   npm install
+   ```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+4. **Configura el Entorno**:
+   - Copia `.env.example` a `.env`:
+     ```
+     cp .env.example .env
+     ```
+   - Edita `.env` con tus credenciales de base de datos:
+     ```
+     DB_CONNECTION=mysql
+     DB_HOST=127.0.0.1
+     DB_PORT=3306
+     DB_DATABASE=website_planner_event
+     DB_USERNAME=tu_usuario
+     DB_PASSWORD=tu_contraseña
+     ```
 
-## Code of Conduct
+5. **Genera Clave de Aplicación**:
+   ```
+   php artisan key:generate
+   ```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+6. **Ejecuta Migraciones**:
+   ```
+   php artisan migrate
+   ```
+   ```
+   php artisan migrate:generate & del /Q database\migrations\*_add_foreign_keys_to_*.php 
+   para generar las base de datos sin foreign keys
+   ```
 
-## Security Vulnerabilities
+7. **Compila Assets**:
+   ```
+   npm run build
+   ```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+8. **Inicia el Servidor**:
+   ```
+   php artisan serve
+   ```
+   Accede en `http://localhost:8000`.
 
-## License
+## Uso
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+- Regístrate como usuario.
+- Crea un evento desde el panel.
+- Agrega invitados y especifica regalos deseados.
+- Envía invitaciones y sigue confirmaciones.
+- Gestiona regalos para evitar duplicados.
+
+## Estructura del Proyecto
+
+### Carpetas Principales
+- `app/`: Código de la aplicación (Modelos, Controladores, etc.).
+- `database/`: Migraciones, factories y seeders.
+- `public/`: Archivos públicos (CSS, JS, imágenes).
+- `resources/`: Vistas, assets no compilados.
+- `routes/`: Definición de rutas.
+- `tests/`: Pruebas unitarias y de funcionalidad.
+
+### Archivos Principales
+- `composer.json`: Dependencias PHP.
+- `package.json`: Dependencias JS.
+- `artisan`: Comando CLI de Laravel.
+- `vite.config.js`: Configuración de Vite.
+
+### Ejemplos de Configuración
+- `.env`: Variables de entorno (base de datos, mail, etc.).
+- `config/app.php`: Configuración general de la app.
+
+## Contribución
+
+### Normas para Enviar Cambios
+- Crea una rama para tu feature: `git checkout -b feature/nueva-funcionalidad`.
+- Realiza commits descriptivos.
+- Envía un Pull Request con descripción detallada.
+
+### Estándares de Código
+- Sigue PSR-12 para PHP.
+- Usa ESLint para JS.
+- Ejecuta `php artisan pint` para formateo.
+
+### Reportar Errores
+- Abre un issue en GitHub con descripción, pasos para reproducir y entorno.
+
+## Información Adicional
+
+### Licencia
+Este proyecto está bajo la Licencia MIT.
+
+### Créditos
+- Desarrollado por:
+  - Frederick Iribarren Barraza
+  - Camila Meyer Zúñiga
+  - Franco Zúñiga Martínez
+- Basado en Laravel Framework.
+
+### Enlaces
+- [Documentación de Laravel](https://laravel.com/docs)
+- [Wiki del Proyecto](https://github.com/frederickiribarren-dev/website-planner-event/wiki) (si aplica)
+
+---
+
+# Website Planner Event
+
+A website for planning social events, especially baby showers, built with Laravel 12.
+
+## Description
+
+This application allows users to plan events in an organized manner, managing guests, gifts, and personal configurations. It includes a database system to store information about users, events, guests, and gifts, facilitating coordination and avoiding common problems in event organization.
+
+## Project Purpose
+
+### What It Does
+- **Event Planning**: Allows creating and managing social events like baby showers.
+- **Guest Management**: Sending invitations, tracking confirmations, and controlling attendance.
+- **Gift Management**: Recording desired gifts, suggestions for guests, and tracking deliveries to avoid duplicates or unnecessary gifts.
+- **Personal Configurations**: Options to customize the user experience.
+
+### Why It Exists
+The organization of social events, especially baby showers, faces technical difficulties that affect organizers and guests. The lack of a structured system causes useless gifts, informal guest management, and general chaos.
+
+### Problem It Solves
+#### Technical Problem Description
+- **Gifts**: Guests deliver unnecessary, repeated, or impractical gifts. Future parents receive items that do not fit their real needs.
+- **Guest Management**: Invitations sent through informal channels (messages, calls, social networks), with scarce traceability and evidence of confirmation. Absence of guests due to lack of clarity.
+- **Impact**:
+  - **Technical**: Lack of traceability in confirmations and gifts; information scattered across multiple channels.
+  - **Operational**: Disorganization in planning, increased workload and error risk; absence of guests.
+  - **Economic**: Expenses on useless gifts; additional costs in logistics and last-minute purchases.
+
+#### Importance of Solving It
+- **Improves Experience**: Reduces frustration for organizers and guests.
+- **Efficiency**: Centralizes information, facilitates coordination.
+- **Savings**: Avoids unnecessary expenses on gifts and logistics.
+
+## Installation
+
+### Prerequisites
+- PHP 8.2 or higher
+- Composer
+- Node.js and npm
+- Database (MySQL, PostgreSQL, etc.)
+- Laravel 12
+
+### Steps
+1. **Clone the Repository**:
+   ```
+   git clone https://github.com/frederickiribarren-dev/website-planner-event.git
+   cd website-planner-event
+   ```
+
+2. **Install PHP Dependencies**:
+   ```
+   composer install
+   ```
+
+3. **Install JavaScript Dependencies**:
+   ```
+   npm install
+   ```
+
+4. **Configure the Environment**:
+   - Copy `.env.example` to `.env`:
+     ```
+     cp .env.example .env
+     ```
+   - Edit `.env` with your database credentials:
+     ```
+     DB_CONNECTION=mysql
+     DB_HOST=127.0.0.1
+     DB_PORT=3306
+     DB_DATABASE=name_base_datos
+     DB_USERNAME=your_username
+     DB_PASSWORD=your_password
+     ```
+
+5. **Generate Application Key**:
+   ```
+   php artisan key:generate
+   ```
+
+6. **Run Migrations**:
+   ```
+   php artisan migrate
+   ```
+
+7. **Compile Assets**:
+   ```
+   npm run build
+   ```
+
+8. **Start the Server**:
+   ```
+   php artisan serve
+   ```
+   Access at `http://localhost:8000`.
+
+## Usage
+
+- Register as a user.
+- Create an event from the dashboard.
+- Add guests and specify desired gifts.
+- Send invitations and track confirmations.
+- Manage gifts to avoid duplicates.
+
+## Project Structure
+
+### Main Folders
+- `app/`: Application code (Models, Controllers, etc.).
+- `database/`: Migrations, factories, and seeders.
+- `public/`: Public files (CSS, JS, images).
+- `resources/`: Views, uncompiled assets.
+- `routes/`: Route definitions.
+- `tests/`: Unit and feature tests.
+
+### Main Files
+- `composer.json`: PHP dependencies.
+- `package.json`: JS dependencies.
+- `artisan`: Laravel CLI command.
+- `vite.config.js`: Vite configuration.
+
+### Configuration Examples
+- `.env`: Environment variables (database, mail, etc.).
+- `config/app.php`: General app configuration.
+
+## Contribution
+
+### Guidelines for Submitting Changes
+- Create a branch for your feature: `git checkout -b feature/new-functionality`.
+- Make descriptive commits.
+- Send a Pull Request with detailed description.
+
+### Code Standards
+- Follow PSR-12 for PHP.
+- Use ESLint for JS.
+- Run `php artisan pint` for formatting.
+
+### Reporting Bugs
+- Open an issue on GitHub with description, reproduction steps, and environment.
+
+## Additional Information
+
+### License
+This project is under the MIT License.
+
+### Credits
+- Developed by:
+  - Frederick Iribarren Barraza
+  - Camila Meyer Zúñiga
+  - Franco Zúñiga Martínez
+- Based on Laravel Framework.
+
+### Links
+- [Laravel Documentation](https://laravel.com/docs)
+- [Project Wiki](https://github.com/frederickiribarren-dev/website-planner-event/wiki) (if applicable)

@@ -1,0 +1,299 @@
+{
+    "categorias": {
+        "Ropa": [
+            {
+                "id": 1,
+                "nombre": "Boddy manga corta",
+                "descripcion": "Boddy de algodón para el bebé, cómodo y fácil de poner",
+                "imagen_portada_url": "img/regalos/ropa/boddy-manga-corta.png",
+                "created_at": "2026-05-27"
+            },
+            {
+                "id": 2,
+                "nombre": "Boddy manga larga",
+                "descripcion": "Boddy de algodón para el bebé, cómodo y fácil de poner",
+                "imagen_portada_url": "img/regalos/ropa/boddy-manga-larga.png",
+                "created_at": "2026-05-27"
+            },
+            {
+                "id": 3,
+                "nombre": "Pijama entero",
+                "descripcion": "Con broches delanteros y pies cubiertos",
+                "imagen_portada_url": "",
+                "created_at": "2026-05-27"
+            },
+            {
+                "id": 4,
+                "nombre": "Pantalones con pies",
+                "descripcion": "También conocidos como ranitas, cómodos para el cambio de pañales",
+                "imagen_portada_url": "",
+                "created_at": "2026-05-27"
+            },
+            {
+                "id": 5,
+                "nombre": "Guantes",
+                "descripcion": "Guantes de algodón, evita que se arañe la cara",
+                "imagen_portada_url": "",
+                "created_at": "2026-05-27"
+            },
+            {
+                "id": 6,
+                "nombre": "Calcetas",
+                "descripcion": "Calcetas de algodón, esencial para no perder calor",
+                "imagen_portada_url": "",
+                "created_at": "2026-05-27"
+            },
+            {
+                "id": 7,
+                "nombre": "Gorro",
+                "descripcion": "Gorro de algodón, ayuda a mantener el calor",
+                "imagen_portada_url": "",
+                "created_at": "2026-05-27"
+            },
+            {
+                "id": 8,
+                "nombre": "Conjunto de primera puesta",
+                "descripcion": "Conjunto de primera puesta, incluye boddy, pantalone y gorro",
+                "imagen_portada_url": "",
+                "created_at": "2026-05-27"
+            },
+            {
+                "id": 9,
+                "nombre": "Zapatitos de primera puesta",
+                "descripcion": "Zapatitos blanditos para el bebé, no aprietan sus deditos",
+                "imagen_portada_url": "",
+                "created_at": "2026-05-27"
+            }
+        ],
+        "Utensilios": [
+            {
+                "id": 10,
+                "nombre": "Pañales desechables",
+                "descripcion": "Para evitar accidentes, es mejor tener siempre a mano",
+                "imagen_portada_url": "",
+                "created_at": "2026-05-27"
+            },
+            {
+                "id": 11,
+                "nombre": "Toallitas húmedas",
+                "descripcion": "Para limpiar la colita del bebé",
+                "imagen_portada_url": "",
+                "created_at": "2026-05-27"
+            },
+            {
+                "id": 12,
+                "nombre": "Crema para coseduras",
+                "descripcion": "Para irritación en la zona del pañal",
+                "imagen_portada_url": "",
+                "created_at": "2026-05-27"
+            },
+            {
+                "id": 13,
+                "nombre": "Jabón y Shampoo",
+                "descripcion": "Kit de aseo para el bebé",
+                "imagen_portada_url": "",
+                "created_at": "2026-05-27"
+            },
+            {
+                "id": 14,
+                "nombre": "Mamadera",
+                "descripcion": "Esenciales para alimentar al bebé",
+                "imagen_portada_url": "",
+                "created_at": "2026-05-27"
+            },
+            {
+                "id": 15,
+                "nombre": "Esterilizador de mamadera",
+                "descripcion": "Para mantener las mamaderas libres de gérmenes",
+                "imagen_portada_url": "",
+                "created_at": "2026-05-27"
+            },
+            {
+                "id": 16,
+                "nombre": "Kit de aseo",
+                "descripcion": "Un básico para la higiene diaria",
+                "imagen_portada_url": "",
+                "created_at": "2026-05-27"
+            },
+            {
+                "id": 17,
+                "nombre": "Aspirador nasal",
+                "descripcion": "Para facilitar la respiración del bebé",
+                "imagen_portada_url": "",
+                "created_at": "2026-05-27"
+            },
+            {
+                "id": 18,
+                "nombre": "Termometro digital",
+                "descripcion": "Para controlar la temperatura del bebé",
+                "imagen_portada_url": "",
+                "created_at": "2026-05-27"
+            },
+            {
+                "id": 19,
+                "nombre": "Disco absorbente",
+                "descripcion": "Para evitar accidentes, es mejor tener siempre a mano",
+                "imagen_portada_url": "",
+                "created_at": "2026-05-27"
+            }
+        ],
+        "Accesorios": [
+            {
+                "id": 20,
+                "nombre": "Manta de muselina (Tuto)",
+                "descripcion": "Mantas de muselina, también conocidas como tutos, son suaves y transpirables.",
+                "imagen_portada_url": "",
+                "created_at": "2026-05-27"
+            },
+            {
+                "id": 21,
+                "nombre": "Bebero de algodon",
+                "descripcion": "Protectores para la baba y la leche",
+                "imagen_portada_url": "",
+                "created_at": "2026-05-27"
+            },
+            {
+                "id": 22,
+                "nombre": "Toalla con capucha",
+                "descripcion": "Felpa suave para el secado después de la ducha",
+                "imagen_portada_url": "",
+                "created_at": "2026-05-27"
+            },
+            {
+                "id": 23,
+                "nombre": "Mochila Pañalera",
+                "descripcion": "Bolso de viaje con bolsillos térmicos",
+                "imagen_portada_url": "",
+                "created_at": "2026-05-27"
+            },
+            {
+                "id": 24,
+                "nombre": "Cojin de lactancia",
+                "descripcion": "Soporte ergonómico para apoyar al bebé al alimentarlo",
+                "imagen_portada_url": "",
+                "created_at": "2026-05-27"
+            },
+            {
+                "id": 25,
+                "nombre": "Cambiador portatil",
+                "descripcion": "Funda impermeable para cambios de pañal fuera de casa",
+                "imagen_portada_url": "",
+                "created_at": "2026-05-27"
+            },
+            {
+                "id": 26,
+                "nombre": "Fular o Mochila de porteo",
+                "descripcion": "Sistema ergonómico para llevar al bebé pegado al pecho",
+                "imagen_portada_url": "",
+                "created_at": "2026-05-27"
+            },
+            {
+                "id": 27,
+                "nombre": "Gimnasio de actividades",
+                "descripcion": "Manta texturizada con arco de juguetes colgantes",
+                "imagen_portada_url": "",
+                "created_at": "2026-05-27"
+            },
+            {
+                "id": 28,
+                "nombre": "Máquina de ruido blanco",
+                "descripcion": "Dispositivo portátil para ayudar a conciliar el sueño",
+                "imagen_portada_url": "",
+                "created_at": "2026-05-27"
+            },
+            {
+                "id": 29,
+                "nombre": "Juguetes sensoriales",
+                "descripcion": "Sonajeros suaves y mordederos ligeros",
+                "imagen_portada_url": "",
+                "created_at": "2026-05-27"
+            },
+            {
+                "id": 30,
+                "nombre": "Lámpara de noche",
+                "descripcion": "Luz tenue para mudas y tomas nocturnas",
+                "imagen_portada_url": "",
+                "created_at": "2026-05-27"
+            },
+            {
+                "id": 31,
+                "nombre": "Chupete con cadena",
+                "descripcion": "Chupetes anatómicos de silicona con cadena protectora",
+                "imagen_portada_url": "",
+                "created_at": "2026-05-27"
+            }
+        ],
+        "Grupales": [
+            {
+                "id": 32,
+                "nombre": "Sistema de viaje",
+                "descripcion": "El coche de paseo incluye silla de auto",
+                "imagen_portada_url": "",
+                "created_at": "2026-05-27"
+            },
+            {
+                "id": 33,
+                "nombre": "Cuna de colecho",
+                "descripcion": "estructura regulable para adosar a la cama de los padres",
+                "imagen_portada_url": "",
+                "created_at": "2026-05-27"
+            },
+            {
+                "id": 34,
+                "nombre": "Monitor con cámara",
+                "descripcion": "Babycam con Wi-Fi, visión nocturna y audio",
+                "imagen_portada_url": "",
+                "created_at": "2026-05-27"
+            },
+            {
+                "id": 35,
+                "nombre": "Extractor de lecha Eléctrico",
+                "descripcion": "Modelo doble o inalámbrico manos libres",
+                "imagen_portada_url": "",
+                "created_at": "2026-05-27"
+            },
+            {
+                "id": 36,
+                "nombre": "Hamaca o columpio",
+                "descripcion": "Silla con balanceo automático y música relajante",
+                "imagen_portada_url": "",
+                "created_at": "2026-05-27"
+            },
+            {
+                "id": 37,
+                "nombre": "Preparador de mamaderas",
+                "descripcion": "Máquina que mezcla la fórmula a la temperatura justa y sin grumos.",
+                "imagen_portada_url": "",
+                "created_at": "2026-05-27"
+            },
+            {
+                "id": 38,
+                "nombre": "Comoda mudadora",
+                "descripcion": "Mueble cojonero con la altura ideal para cambiar al bebé.",
+                "imagen_portada_url": "",
+                "created_at": "2026-05-27"
+            },
+            {
+                "id": 39,
+                "nombre": "cuna de viaje plegable",
+                "descripcion": "Corral transportable con doble nivel para viajes",
+                "imagen_portada_url": "",
+                "created_at": "2026-05-27"
+            },
+            {
+                "id": 40,
+                "nombre": "silla de comer",
+                "descripcion": "Silla alta que se adapta desde los 6 meses hasta los 3 años",
+                "imagen_portada_url": "",
+                "created_at": "2026-05-27"
+            },
+            {
+                "id": 41,
+                "nombre": "Colchón de Cuna",
+                "descripcion": "Colchón de cuna con tecnología antiahogo y funda lavable",
+                "imagen_portada_url": "",
+                "created_at": "2026-05-27"
+            }
+        ]
+    }
+}
