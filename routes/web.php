@@ -59,4 +59,13 @@ Route::middleware('auth', 'verified')->group(function () {
 
 
 
+// Rutas Demo para el Dashboard de Invitado
+Route::get('/invitado', function() {
+    return view('invitacionDashboard.confirmacion');
+})->name('invitado.confirmacion');
+
+Route::get('/invitado/regalos', function() {
+    return view('invitacionDashboard.mesa-regalos');
+})->name('invitado.regalos');
+
 require __DIR__.'/auth.php';
