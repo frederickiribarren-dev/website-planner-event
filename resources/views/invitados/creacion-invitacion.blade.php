@@ -52,26 +52,38 @@
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-50">
-                            @php $totalLists = $eventos->sum(fn($evento) => $evento->listasInvitados->count()); @endphp
-                            @if($totalLists === 0)
+                            @php
+                                // Get all lists: from events and standalone (without event)
+                                $allListas = collect();
+                                foreach($eventos as $evento) {
+                                    $allListas = $allListas->merge($evento->listasInvitados);
+                                }
+                                // Add standalone lists (evento_id = null)
+                                $standaloneListasQuery = \App\Models\ListaInvitado::where('evento_id', null)->get();
+                                $allListas = $allListas->merge($standaloneListasQuery);
+                            @endphp
+                            @if($allListas->isEmpty())
                                 <tr>
                                     <td colspan="4" class="px-8 py-10 text-center text-slate-500">Aún no tienes listas de invitados. Crea una nueva lista en la pestaña de creación.</td>
                                 </tr>
                             @else
-                                @foreach($eventos as $evento)
-                                    @foreach($evento->listasInvitados as $lista)
-                                        <tr class="hover:bg-slate-50/30 transition-colors group">
-                                            <td class="px-8 py-5">
-                                                <div class="flex items-center gap-3">
-                                                    <p class="font-bold text-slate-700">{{ $lista->nombre }}</p>
-                                                </div>
-                                            </td>
-                                            <td class="px-8 py-5">
-                                                <span class="px-4 py-1.5 bg-slate-100 text-slate-600 rounded-full text-[10px] font-black uppercase tracking-widest">{{ $lista->categoria ?? 'Sin categoría' }}</span>
-                                            </td>
-                                            <td class="px-8 py-5">
-                                                <p class="text-sm text-slate-500 font-medium">{{ $evento->nombre_bebe }}</p>
-                                            </td>
+                                @foreach($allListas as $lista)
+                                    <tr class="hover:bg-slate-50/30 transition-colors group">
+                                        <td class="px-8 py-5">
+                                            <div class="flex items-center gap-3">
+                                                <p class="font-bold text-slate-700">{{ $lista->nombre }}</p>
+                                            </div>
+                                        </td>
+                                        <td class="px-8 py-5">
+                                            <span class="px-4 py-1.5 bg-slate-100 text-slate-600 rounded-full text-[10px] font-black uppercase tracking-widest">{{ $lista->categoria ?? 'Sin categoría' }}</span>
+                                        </td>
+                                        <td class="px-8 py-5">
+                                            @if($lista->evento_id)
+                                                <p class="text-sm text-slate-500 font-medium">{{ $lista->evento->nombre_bebe ?? 'Evento no encontrado' }}</p>
+                                            @else
+                                                <span class="px-3 py-1 bg-amber-50 text-amber-600 rounded-full text-[10px] font-black uppercase tracking-widest">Sin evento</span>
+                                            @endif
+                                        </td>
                                             <td class="px-8 py-5 text-right space-x-2 whitespace-nowrap">
                                                 <button class="px-4 py-2 bg-slate-100 text-cyan-700 text-xs font-bold rounded-xl hover:bg-cyan-600 hover:text-white transition-all">Ver lista</button>
                                                 <button class="px-4 py-2 bg-white border border-slate-200 text-slate-600 text-xs font-bold rounded-xl hover:border-cyan-500 hover:text-cyan-600 transition-all">Editar</button>
@@ -82,9 +94,8 @@
                                                     @csrf
                                                     @method('DELETE')
                                                 </form>
-                                            </td>
-                                        </tr>
-                                    @endforeach
+                                        </td>
+                                    </tr>
                                 @endforeach
                             @endif
                         </tbody>
@@ -174,12 +185,12 @@
                         <input type="hidden" id="guests_json" name="guests_json">
                         <div class="bg-white rounded-[2.5rem] p-8 border border-slate-100 shadow-sm space-y-8">
                             <div>
-                                <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-4 italic">Evento</label>
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-4 italic">Evento (Opcional)</label>
                                 <select id="evento_select" name="evento_id" class="w-full bg-slate-50 border-none rounded-2xl px-6 py-4 focus:ring-2 focus:ring-cyan-600 transition text-sm font-medium text-slate-600 mb-6">
+                                    <option value="">Sin evento (Lista independiente)</option>
                                     @forelse($eventos as $evento)
-                                        <option value="{{ $evento->id }}" {{ $loop->first ? 'selected' : '' }}>{{ $evento->nombre_bebe }} - {{ $evento->fecha_evento }}</option>
+                                        <option value="{{ $evento->id }}">{{ $evento->nombre_bebe }} - {{ $evento->fecha_evento }}</option>
                                     @empty
-                                        <option value="">No hay eventos disponibles</option>
                                     @endforelse
                                 </select>
 
@@ -250,34 +261,29 @@
 
     </div>
 
-    @php
-        $eventsData = $eventos->map(function ($evento) {
-            return [
-                'id' => $evento->id,
-                'name' => $evento->nombre_bebe,
-                'date' => $evento->fecha_evento,
-                'lists' => $evento->listasInvitados->map(function ($lista) {
-                    return [
-                        'name' => $lista->nombre,
-                        'category' => $lista->categoria,
-                        'guests' => $lista->invitados->map(function ($invitado) {
-                            return [
-                                'name' => $invitado->nombre,
-                                'contact' => $invitado->email ?: $invitado->telefono,
-                                'inv' => $invitado->estado_invitacion ?? 'Pendiente',
-                                'status' => $invitado->estado_asistencia ?? 'Sin responder',
-                            ];
-                        })->toArray(),
-                    ];
-                })->toArray(),
-            ];
-        })->toArray();
-    @endphp
-
     <script>
         let tempGuests = [];
         let selectedEventId = {!! optional($eventos->first())->id ?? 'null' !!};
-        const eventsData = @json($eventsData);
+        const eventsData = {!! json_encode($eventos->map(function($evento) {
+            return [
+                'id' => $evento->id,
+                'name' => $evento->nombre_bebe,
+                'lists' => $evento->listasInvitados->map(function($lista) {
+                    return [
+                        'id' => $lista->id,
+                        'category' => $lista->categoria,
+                        'guests' => $lista->invitados->map(function($guest) {
+                            return [
+                                'name' => $guest->nombre,
+                                'contact' => $guest->email ?: $guest->telefono ?: '---',
+                                'status' => $guest->estado_asistencia ?: 'Sin responder',
+                                'inv' => $guest->estado_invitacion ?: 'Pendiente'
+                            ];
+                        })->all()
+                    ];
+                })->all()
+            ];
+        })->all()) !!};
 
         function showView(view) {
             document.querySelectorAll('.view-content').forEach(v => v.classList.add('hidden'));
@@ -394,9 +400,9 @@
         function saveList() {
             if (tempGuests.length === 0) return alert('Añade al menos un invitado');
 
-            const eventoSelect = document.getElementById('evento_select');
-            if (!eventoSelect || !eventoSelect.value) {
-                return alert('Selecciona un evento antes de guardar la lista.');
+            const listName = document.getElementById('list_name').value.trim();
+            if (!listName) {
+                return alert('Ingresa un nombre para la lista.');
             }
 
             const guestsPayload = tempGuests.map(g => ({ name: g.name, email: g.email, phone: g.phone }));

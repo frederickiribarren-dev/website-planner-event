@@ -1,5 +1,5 @@
 <!-- MODAL CREAR REGALO PERSONALIZADO -->
-<div id="modalCreateGift" class="fixed inset-0 z-[60] overflow-y-auto" style="display: none;">
+<div id="modalCreateGift" class="fixed inset-0 z-[60] overflow-y-auto hidden" style="">
     <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
         <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" onclick="closeCreateGiftModal()"></div>
         <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
@@ -33,7 +33,7 @@
                     <div class="space-y-4">
                         <div>
                             <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Nombre</label>
-                            <input type="text" id="n_name" placeholder="Ej. Monitor de Bebé" class="w-full px-4 py-3 rounded-xl border-slate-100 bg-slate-50 focus:border-cyan-500 focus:ring-cyan-500 transition-all text-sm font-bold">
+                            <input type="text" id="n_name" placeholder="Ej. Monitor de Bebé" class="w-full px-4 py-3 rounded-xl border-slate-100 bg-slate-50 focus:border-cyan-500 focus:ring-cyan-500 transition-all text-sm font-bold" required>
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Categoría</label>
@@ -41,12 +41,26 @@
                                 <option value="Ropa">Ropa</option>
                                 <option value="Utensilios">Utensilios</option>
                                 <option value="Accesorios">Accesorios</option>
-                                <option value="Grupales">Grupales</option>
+                                <option value="Grupal">Grupal</option>
                             </select>
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Descripción</label>
                             <textarea id="n_desc" placeholder="Breve descripción..." rows="3" class="w-full px-4 py-3 rounded-xl border-slate-100 bg-slate-50 focus:border-cyan-500 focus:ring-cyan-500 transition-all text-sm font-medium resize-none"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Precio Estimado (opcional)</label>
+                            <input type="number" id="giftPrice" step="0.01" min="0" placeholder="$" class="w-full px-4 py-3 rounded-xl border-slate-100 bg-slate-50 focus:border-cyan-500 focus:ring-cyan-500 transition-all text-sm font-medium">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Cantidad</label>
+                            <input type="number" id="giftQty" min="1" value="1" class="w-full px-4 py-3 rounded-xl border-slate-100 bg-slate-50 focus:border-cyan-500 focus:ring-cyan-500 transition-all text-sm font-medium">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Links de Referencia</label>
+                            <input type="url" id="giftLink1" placeholder="Link 1 (Amazon, MercadoLibre...)" class="w-full px-4 py-2 mb-2 rounded-xl border-slate-100 bg-slate-50 focus:border-cyan-500 focus:ring-cyan-500 transition-all text-sm font-medium">
+                            <input type="url" id="giftLink2" placeholder="Link 2 (opcional)" class="w-full px-4 py-2 mb-2 rounded-xl border-slate-100 bg-slate-50 focus:border-cyan-500 focus:ring-cyan-500 transition-all text-sm font-medium">
+                            <input type="url" id="giftLink3" placeholder="Link 3 (opcional)" class="w-full px-4 py-2 rounded-xl border-slate-100 bg-slate-50 focus:border-cyan-500 focus:ring-cyan-500 transition-all text-sm font-medium">
                         </div>
                     </div>
                 </div>

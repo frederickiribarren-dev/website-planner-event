@@ -8,6 +8,13 @@
                 <p id="view-subtitle" class="text-slate-600 font-medium mt-1">Gestiona los regalos que tus invitados pueden elegir.</p>
             </div>
             <div class="flex flex-wrap gap-3">
+                <button onclick="document.getElementById('modalCreateGift').classList.remove('hidden')"
+                    class="inline-flex items-center justify-center px-6 py-3 rounded-full text-xs font-bold transition-all transform active:scale-95 bg-white border border-slate-200 text-slate-500 hover:text-amber-600 hover:border-amber-200 gap-2 shadow-sm uppercase tracking-widest">
+                    <span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                    </span>
+                    <span>Crear regalo</span>
+                </button>
                 <button id="btn-toggle-view" onclick="showView('catalogo')"
                     class="inline-flex items-center justify-center px-6 py-3 rounded-full text-xs font-bold transition-all transform active:scale-95 bg-white border border-slate-200 text-slate-500 hover:text-cyan-600 hover:border-cyan-200 gap-2 shadow-sm uppercase tracking-widest">
                     <span id="btn-toggle-icon">
@@ -79,7 +86,24 @@
                         <div>
                             <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-3">Nombre de la Lista</label>
                             <input type="text" id="listNameInput" placeholder="Ej. Regalos Baby Shower"
-                                class="w-full bg-slate-50 border-none rounded-2xl px-6 py-4 focus:ring-2 focus:ring-cyan-600 transition text-sm font-medium text-slate-700">
+                                class="w-full bg-slate-50 border-none rounded-2xl px-6 py-4 focus:ring-2 focus:ring-cyan-600 transition text-sm font-medium text-slate-700" required>
+                        </div>
+
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-3">Descripción (opcional)</label>
+                            <textarea id="listDescInput" placeholder="Detalles sobre esta lista de regalos..."
+                                class="w-full bg-slate-50 border-none rounded-2xl px-6 py-4 focus:ring-2 focus:ring-cyan-600 transition text-sm font-medium text-slate-700 resize-none" rows="2"></textarea>
+                        </div>
+
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-3">Asignar a Evento (opcional)</label>
+                            <select id="listEventoInput" class="w-full bg-slate-50 border-none rounded-2xl px-6 py-4 focus:ring-2 focus:ring-cyan-600 transition text-sm font-medium text-slate-700">
+                                <option value="">Sin evento (lista independiente)</option>
+                                @forelse($eventos ?? [] as $evento)
+                                    <option value="{{ $evento->id }}">{{ $evento->nombre_bebe }} - {{ $evento->fecha_evento }}</option>
+                                @empty
+                                @endforelse
+                            </select>
                         </div>
 
                         <div class="pt-4 border-t border-slate-50">
@@ -88,7 +112,7 @@
                                 <button onclick="filterCreateCategory('Ropa')" class="create-cat-btn px-4 py-3 rounded-2xl text-sm font-bold transition-all text-left bg-cyan-700 text-white">Ropa</button>
                                 <button onclick="filterCreateCategory('Utensilios')" class="create-cat-btn px-4 py-3 rounded-2xl text-sm font-bold transition-all text-left text-slate-500 hover:bg-slate-50">Utensilios</button>
                                 <button onclick="filterCreateCategory('Accesorios')" class="create-cat-btn px-4 py-3 rounded-2xl text-sm font-bold transition-all text-left text-slate-500 hover:bg-slate-50">Accesorios</button>
-                                <button onclick="filterCreateCategory('Grupales')" class="create-cat-btn px-4 py-3 rounded-2xl text-sm font-bold transition-all text-left text-slate-500 hover:bg-slate-50">Grupales</button>
+                                <button onclick="filterCreateCategory('Grupal')" class="create-cat-btn px-4 py-3 rounded-2xl text-sm font-bold transition-all text-left text-slate-500 hover:bg-slate-50">Grupal</button>
                             </div>
                         </div>
 

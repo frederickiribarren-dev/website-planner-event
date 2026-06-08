@@ -41,4 +41,10 @@ class Evento extends Model
     {
         return $this->hasMany(ListaInvitado::class, 'evento_id');
     }
+
+    public function listasRegalos()
+    {
+        return $this->hasMany(ListaRegalo::class, 'evento_id');
+    }
+    
 }

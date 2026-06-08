@@ -298,14 +298,144 @@
             if (nameInput) nameInput.focus();
             return;
         }
-        if (editingListId) {
-            const idx = savedLists.findIndex(l => l.id === editingListId);
-            if (idx > -1) { savedLists[idx].items = [...selectedItems]; showToast('¡Lista actualizada!', 'success'); }
-        } else {
-            savedLists.push({ id: Date.now(), name, items: [...selectedItems], date: new Date().toLocaleDateString() });
-            showToast('¡Lista guardada con éxito!', 'success');
+
+        // Recopilar IDs de regalos seleccionados
+        const regalosIds = selectedItems.map(item => item.id);
+
+        // Preparar datos para enviar al backend
+        const payload = {
+            nombre: name,
+            descripcion: document.getElementById('listDescInput')?.value || '',
+            evento_id: document.getElementById('listEventoInput')?.value || null,
+            regalos_ids: regalosIds,
+        };
+
+        // Enviar al backend vía POST
+        fetch('{{ route("listas-regalos.store") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
+            },
+            body: JSON.stringify(payload)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showToast('¡Lista guardada con éxito!', 'success');
+                // Limpiar estado
+                editingListId = null;
+                selectedItems = [];
+                if (nameInput) { nameInput.value = ''; nameInput.disabled = false; }
+                showView('lists');
+                // Recargar la página para mostrar la lista guardada
+                setTimeout(() => window.location.reload(), 1500);
+            } else {
+                showToast(data.message || 'Error al guardar la lista.', 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showToast('Error de conexión al guardar la lista.', 'error');
+        });
+    }
+
+    // ─── CREAR REGALO PERSONALIZADO ────────────────────────────────────────────
+    function createNewGift() {
+        const name = document.getElementById('n_name')?.value.trim();
+        const cat = document.getElementById('n_cat')?.value;
+        const desc = document.getElementById('n_desc')?.value.trim();
+        const img = document.getElementById('newGiftPreview')?.src;
+
+        if (!name) {
+            showToast('Ingresa un nombre para el regalo.', 'error');
+            return;
         }
-        showView('lists');
+
+        const payload = {
+            nombre_regalo: name,
+            descripcion: desc || '',
+            categoria: cat || 'Otros',
+            link_referencia: document.getElementById('giftLink1')?.value || '',
+            link_referencia_2: document.getElementById('giftLink2')?.value || '',
+            link_referencia_3: document.getElementById('giftLink3')?.value || '',
+            precio_estimado: document.getElementById('giftPrice')?.value || null,
+            cantidad_solicitada: document.getElementById('giftQty')?.value || 1,
+            imagen_portada_url: img || '',
+        };
+
+        fetch('{{ route("regalos.store") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
+            },
+            body: JSON.stringify(payload)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showToast('¡Regalo personalizado creado!', 'success');
+                // Limpiar formulario
+                document.getElementById('n_name').value = '';
+                document.getElementById('n_desc').value = '';
+                document.getElementById('newGiftPreview').src = '';
+                document.getElementById('newGiftPreview').classList.add('hidden');
+                document.getElementById('newGiftPlaceholder').classList.remove('hidden');
+                // Cerrar modal
+                closeCreateGiftModal();
+                // Agregar el nuevo regalo a la lista de items
+                const newItem = {
+                    id: data.gift.id,
+                    name: data.gift.nombre_regalo,
+                    category: payload.categoria,
+                    description: data.gift.descripcion,
+                    img: data.gift.imagen_portada_url || 'https://placehold.co/400x300/f1f5f9/94a3b8?text=Nuevo+Regalo'
+                };
+                giftItems.push(newItem);
+                renderCreateGrid();
+            } else {
+                showToast(data.message || 'Error al crear el regalo.', 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showToast('Error de conexión al crear el regalo.', 'error');
+        });
+    }
+
+    function previewNewGiftImg(input) {
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const preview = document.getElementById('newGiftPreview');
+                const placeholder = document.getElementById('newGiftPlaceholder');
+                preview.src = e.target.result;
+                preview.classList.remove('hidden');
+                placeholder.classList.add('hidden');
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    function closeCreateGiftModal() {
+        const modal = document.getElementById('modalCreateGift');
+        modal.classList.add('hidden');
+        // Limpiar campos
+        document.getElementById('n_name').value = '';
+        document.getElementById('n_desc').value = '';
+        document.getElementById('n_cat').value = 'Ropa';
+        document.getElementById('giftPrice').value = '';
+        document.getElementById('giftQty').value = '1';
+        document.getElementById('giftLink1').value = '';
+        document.getElementById('giftLink2').value = '';
+        document.getElementById('giftLink3').value = '';
+        document.getElementById('newGiftImgInput').value = '';
+        const preview = document.getElementById('newGiftPreview');
+        const placeholder = document.getElementById('newGiftPlaceholder');
+        preview.src = '';
+        preview.classList.add('hidden');
+        placeholder.classList.remove('hidden');
     }
 
     // ─── TABLAS DE LISTAS GUARDADAS ────────────────────────────────────────────
@@ -446,6 +576,32 @@
 
     // ─── INICIALIZACIÓN ────────────────────────────────────────────────────────
     document.addEventListener('DOMContentLoaded', () => {
+        // Cargar listas desde datos pasados por Laravel
+        const listasRegalosData = @json($listasRegalos ?? []);
+        if (listasRegalosData && listasRegalosData.length > 0) {
+            listasRegalosData.forEach(lista => {
+                const items = lista.regalos.map(regalo => ({
+                    id: regalo.id,
+                    name: regalo.nombre_regalo,
+                    category: regalo.categoria,
+                    description: regalo.descripcion,
+                    img: regalo.imagen_portada_url || 'https://placehold.co/400x300/f1f5f9/94a3b8?text=Regalo',
+                    link1: regalo.link_referencia,
+                    link2: regalo.link_referencia_2,
+                    link3: regalo.link_referencia_3,
+                    qty: regalo.cantidad_solicitada || 1,
+                    gifted: false
+                }));
+                savedLists.push({
+                    id: lista.id,
+                    name: lista.nombre,
+                    items: items,
+                    date: new Date(lista.created_at).toLocaleDateString('es-ES'),
+                    evento_id: lista.evento_id,
+                    estado: lista.estado
+                });
+            });
+        }
         renderSavedLists();
     });
 </script>

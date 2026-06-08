@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('invitados', function (Blueprint $table) {
             $table->id()->primary();
-            $table->bigInteger('evento_id')->unsigned()->index('idx_invitados_evento');
+            $table->bigInteger('evento_id')->unsigned()->nullable()->index('idx_invitados_evento');
             $table->string('nombre', 100);
             $table->string('email')->nullable();
             $table->string('telefono', 20)->nullable();

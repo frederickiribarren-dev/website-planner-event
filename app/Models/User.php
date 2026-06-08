@@ -113,5 +113,10 @@ class User extends Authenticatable
         return $this->hasMany(Evento::class, 'usuario_id');
     }
 
+    public function listasRegalos()
+    {
+        return $this->hasMany(ListaRegalo::class, 'user_id');
+    }
+
     
 }

@@ -55,6 +55,13 @@ Route::middleware('auth', 'verified')->group(function () {
     })->name('configuracion');
 
     Route::get('/regalos', [RegaloController::class, 'index'])->name('regalos.index');
+    
+    // Rutas para gestión de regalos y listas
+    Route::post('/regalos/store', [RegaloController::class, 'storeGift'])->name('regalos.store');
+    Route::post('/listas-regalos/store', [RegaloController::class, 'storeLista'])->name('listas-regalos.store');
+    Route::post('/listas-regalos/{listaRegalo}/add', [RegaloController::class, 'addToList'])->name('listas-regalos.addToList');
+    Route::put('/listas-regalos/{listaRegalo}', [RegaloController::class, 'updateLista'])->name('listas-regalos.update');
+    Route::delete('/listas-regalos/{listaRegalo}', [RegaloController::class, 'destroyLista'])->name('listas-regalos.destroy');
 });
 
 

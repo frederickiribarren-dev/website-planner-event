@@ -9,18 +9,26 @@ class Regalo extends Model
     //
     protected $fillable = [
         'evento_id',
+        'lista_regalos_id',
         'categoria_id',
-        'nombre',
+        'nombre_regalo',
         'descripcion',
-        'url_imagen',
-        'url_compra',
+        'prioridad',
+        'link_referencia',
+        'link_referencia_2',
+        'link_referencia_3',
+        'precio_estimado',
+        'cantidad_solicitada',
+        'cantidad_completada',
         'estado',
+        'imagen_portada_url',
     ];
 
-    //categoria
-    public function categoria()
+    //...existing code...
+
+    public function listaRegalo()
     {
-        return $this->belongsTo(CategoriaRegalo::class, 'categoria_id');   
+        return $this->belongsTo(ListaRegalo::class, 'lista_regalos_id');
     }
 
     public function evento()

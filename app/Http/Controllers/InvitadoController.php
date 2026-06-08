@@ -47,19 +47,25 @@ class InvitadoController extends Controller
     public function storeFront(Request $request)
     {
         $validated = $request->validate([
-            'evento_id' => 'required|exists:eventos,id',
+            'evento_id' => 'nullable|exists:eventos,id',
             'list_name' => 'required|string|max:150',
             'list_category' => 'nullable|string|max:150',
             'guests_json' => 'required|string',
         ], [
-            'evento_id.required' => 'Debe seleccionar un evento válido.',
             'evento_id.exists' => 'El evento seleccionado no existe.',
             'list_name.required' => 'El nombre de la lista es obligatorio.',
             'list_name.max' => 'El nombre de la lista no puede exceder los 150 caracteres.',
             'guests_json.required' => 'Debe añadir al menos un invitado.',
         ]);
 
-        $evento = auth()->user()->eventos()->findOrFail($validated['evento_id']);
+        $evento = null;
+        if (!empty($validated['evento_id'])) {
+            $evento = auth()->user()->eventos()->find($validated['evento_id']);
+            if (!$evento) {
+                return back()->withErrors(['evento_id' => 'Debe seleccionar un evento válido.'])->withInput();
+            }
+        }
+
         $guests = json_decode($validated['guests_json'], true);
 
         if (!is_array($guests) || empty($guests)) {
@@ -84,14 +90,22 @@ class InvitadoController extends Controller
             return back()->withErrors($guestValidator)->withInput();
         }
 
-        $lista = $evento->listasInvitados()->create([
-            'nombre' => $validated['list_name'],
-            'categoria' => $validated['list_category'] ?: null,
-        ]);
+        if ($evento) {
+            $lista = $evento->listasInvitados()->create([
+                'nombre' => $validated['list_name'],
+                'categoria' => $validated['list_category'] ?: null,
+            ]);
+        } else {
+            $lista = ListaInvitado::create([
+                'evento_id' => null,
+                'nombre' => $validated['list_name'],
+                'categoria' => $validated['list_category'] ?: null,
+            ]);
+        }
 
         $invitados = array_map(function ($guest) use ($evento, $lista) {
             return [
-                'evento_id' => $evento->id,
+                'evento_id' => $evento ? $evento->id : null,
                 'lista_invitado_id' => $lista->id,
                 'nombre' => $guest['name'],
                 'email' => $guest['email'] ?? null,

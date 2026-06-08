@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('listas_invitados', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('evento_id')->unsigned()->index('idx_listas_invitados_evento');
+            $table->bigInteger('evento_id')->unsigned()->nullable()->index('idx_listas_invitados_evento');
             $table->string('nombre', 150);
             $table->text('categoria')->nullable();
             $table->timestamp('created_at')->nullable()->useCurrent();
