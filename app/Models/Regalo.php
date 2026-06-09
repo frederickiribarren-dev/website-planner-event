@@ -36,6 +36,11 @@ class Regalo extends Model
         return $this->belongsTo(Evento::class, 'evento_id');
     }
 
+    public function categoria()
+{
+    return $this->belongsTo(CategoriaRegalo::class, 'categoria_id');
+}
+
 
 }
 

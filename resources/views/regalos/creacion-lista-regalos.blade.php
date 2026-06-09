@@ -60,7 +60,6 @@
 
         {{-- VISTA 2: CATÁLOGO DE REGALOS --}}
         <div id="view-catalogo" class="view-content hidden space-y-8">
-            {{-- Filtros de Categoría --}}
             <div class="flex flex-wrap items-center justify-between gap-4">
                 <div class="flex bg-white p-1 rounded-2xl border border-slate-100 shadow-sm overflow-x-auto h-[48px]">
                     <button onclick="filterCategory('Ropa')" class="category-btn px-6 py-2 rounded-xl text-sm font-bold transition-all whitespace-nowrap bg-cyan-700 text-white">Ropa</button>
@@ -70,7 +69,6 @@
                 </div>
             </div>
 
-            {{-- Grid de Productos --}}
             <div id="catalogoGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {{-- Inyectado por JS --}}
             </div>
@@ -112,7 +110,7 @@
                                 <button onclick="filterCreateCategory('Ropa')" class="create-cat-btn px-4 py-3 rounded-2xl text-sm font-bold transition-all text-left bg-cyan-700 text-white">Ropa</button>
                                 <button onclick="filterCreateCategory('Utensilios')" class="create-cat-btn px-4 py-3 rounded-2xl text-sm font-bold transition-all text-left text-slate-500 hover:bg-slate-50">Utensilios</button>
                                 <button onclick="filterCreateCategory('Accesorios')" class="create-cat-btn px-4 py-3 rounded-2xl text-sm font-bold transition-all text-left text-slate-500 hover:bg-slate-50">Accesorios</button>
-                                <button onclick="filterCreateCategory('Grupal')" class="create-cat-btn px-4 py-3 rounded-2xl text-sm font-bold transition-all text-left text-slate-500 hover:bg-slate-50">Grupal</button>
+                                <button onclick="filterCreateCategory('Grupales')" class="create-cat-btn px-4 py-3 rounded-2xl text-sm font-bold transition-all text-left text-slate-500 hover:bg-slate-50">Grupales</button>
                             </div>
                         </div>
 
@@ -128,28 +126,7 @@
                     <div id="itemsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         {{-- Inyectado por JS --}}
                     </div>
-            </div>
-        </div>
-
-        {{-- VISTA 4: DETALLE DE LISTA --}}
-        <div id="view-detail" class="view-content hidden space-y-8">
-            <div class="flex items-center justify-between mb-2">
-                <button onclick="showView('lists')" class="text-xs font-bold text-slate-400 hover:text-slate-600 flex items-center gap-2 uppercase tracking-widest transition-colors">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-                    Volver a mis listas
-                </button>
-                <h4 id="detailListName" class="font-black text-xl text-slate-800"></h4>
-            </div>
-
-            <div class="flex bg-white p-1 rounded-2xl border border-slate-100 shadow-sm overflow-x-auto h-[48px] w-fit">
-                <button onclick="filterDetailCategory('Ropa')" class="det-category-btn px-6 py-2 rounded-xl text-sm font-bold transition-all whitespace-nowrap bg-cyan-700 text-white">Ropa</button>
-                <button onclick="filterDetailCategory('Utensilios')" class="det-category-btn px-6 py-2 rounded-xl text-sm font-bold text-slate-500 hover:bg-slate-50 transition-all whitespace-nowrap">Utensilios</button>
-                <button onclick="filterDetailCategory('Accesorios')" class="det-category-btn px-6 py-2 rounded-xl text-sm font-bold text-slate-500 hover:bg-slate-50 transition-all whitespace-nowrap">Accesorios</button>
-                <button onclick="filterDetailCategory('Grupales')" class="det-category-btn px-6 py-2 rounded-xl text-sm font-bold text-slate-500 hover:bg-slate-50 transition-all whitespace-nowrap">Grupales</button>
-            </div>
-
-            <div id="detailItemsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {{-- Inyectado por JS --}}
+                </div>
             </div>
         </div>
 
@@ -157,7 +134,7 @@
 
     @include('regalos.partials.modal-crear-regalo')
     @include('regalos.partials.modal-detalle-regalo')
-    @include('regalos.partials.toast-notifications')
+    @include('regalos.partials.modal-ver-lista') @include('regalos.partials.toast-notifications')
     @include('regalos.partials.scripts')
 
     <style>
