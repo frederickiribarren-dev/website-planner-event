@@ -66,8 +66,8 @@
                 </div>
 
                 <div class="flex gap-4 mt-10">
-                    <button onclick="closeCreateGiftModal()" class="flex-1 px-6 py-4 bg-slate-100 text-slate-600 font-bold rounded-2xl hover:bg-slate-200 transition-all">Cancelar</button>
-                    <button onclick="createNewGift()" class="flex-1 px-6 py-4 bg-slate-800 text-white font-bold rounded-2xl hover:bg-slate-900 shadow-xl transition-all">Crear Regalo</button>
+                    <button onclick="closeCreateGiftModal()" class="flex-1 px-6 py-4 bg-slate-100 text-red-600 font-bold rounded-2xl hover:bg-slate-200 transition-all">Cancelar</button>
+                    <button onclick="createNewGift()" class="flex-1 px-6 py-4 bg-cyan-800 text-white font-bold rounded-2xl hover:bg-cyan-900 shadow-xl transition-all">Crear Regalo</button>
                 </div>
             </div>
         </div>
