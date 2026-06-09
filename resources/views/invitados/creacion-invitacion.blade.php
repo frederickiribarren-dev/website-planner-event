@@ -85,8 +85,8 @@
                                             @endif
                                         </td>
                                             <td class="px-8 py-5 text-right space-x-2 whitespace-nowrap">
-                                                <button class="px-4 py-2 bg-slate-100 text-cyan-700 text-xs font-bold rounded-xl hover:bg-cyan-600 hover:text-white transition-all">Ver lista</button>
-                                                <button class="px-4 py-2 bg-white border border-slate-200 text-slate-600 text-xs font-bold rounded-xl hover:border-cyan-500 hover:text-cyan-600 transition-all">Editar</button>
+                                                <button onclick="verListaDetalle('{{ $lista->id }}', '{{ addslashes($lista->nombre) }}', {{ $lista->invitados->count() }})" class="px-4 py-2 bg-slate-100 text-cyan-700 text-xs font-bold rounded-xl hover:bg-cyan-600 hover:text-white transition-all">Ver lista</button>
+                                                <a href="{{ route('listas-invitados.edit', $lista->id) }}" class="inline-block px-4 py-2 bg-white border border-slate-200 text-slate-600 text-xs font-bold rounded-xl hover:border-cyan-500 hover:text-cyan-600 transition-all">Editar</a>
                                                 <button class="p-2 bg-red-50 text-red-400 hover:text-red-600 rounded-xl transition-all" onclick="if(confirm('¿Estás seguro de eliminar esta lista? Esta acción no se puede deshacer.')) document.getElementById('delete-form-{{ $lista->id }}').submit();">
                                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                                                 </button>
@@ -208,11 +208,10 @@
                             </div>
                             
                             <div class="pt-6 border-t border-slate-50 space-y-4">
-                                <label class="cursor-pointer w-full flex items-center justify-center gap-3 px-6 py-4 bg-emerald-50 text-emerald-600 border border-emerald-100 font-bold rounded-2xl hover:bg-emerald-100 transition-all text-xs uppercase tracking-widest">
+                                <button type="button" onclick="openModal('modalImport')" class="w-full flex items-center justify-center gap-3 px-6 py-4 bg-emerald-50 text-emerald-600 border border-emerald-100 font-bold rounded-2xl hover:bg-emerald-100 transition-all text-xs uppercase tracking-widest">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
                                     Importar Lista
-                                    <input type="file" id="import_list" class="hidden" accept=".xlsx,.csv">
-                                </label>
+                                </button>
                                 <p class="text-center text-[10px] text-slate-400 font-bold uppercase tracking-widest">O añade manualmente:</p>
                             </div>
 
@@ -220,7 +219,7 @@
                                 <input type="text" id="manual_name" placeholder="Nombre completo" class="w-full bg-slate-50 border-none rounded-2xl px-6 py-3 focus:ring-2 focus:ring-cyan-600 transition text-sm">
                                 <input type="email" id="manual_email" placeholder="Correo electrónico" class="w-full bg-slate-50 border-none rounded-2xl px-6 py-3 focus:ring-2 focus:ring-cyan-600 transition text-sm">
                                 <input type="tel" id="manual_phone" placeholder="Número de contacto" class="w-full bg-slate-50 border-none rounded-2xl px-6 py-3 focus:ring-2 focus:ring-cyan-600 transition text-sm">
-                                <button type="button" onclick="addGuestManual()" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-4 rounded-2xl transition-all shadow-lg flex items-center justify-center gap-2 text-xs uppercase tracking-widest">
+                                <button type="button" onclick="addGuestManual()" class="w-full bg-emerald-700 hover:bg-emerald-800 text-white font-bold py-4 rounded-2xl transition-all shadow-lg flex items-center justify-center gap-2 text-xs uppercase tracking-widest">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                                     Agregar a la lista
                                 </button>
@@ -284,6 +283,16 @@
                 })->all()
             ];
         })->all()) !!};
+
+        // ─── MODAL HELPERS ────────────────────────────────────────────────────────
+        function openModal(id) {
+            const el = document.getElementById(id);
+            if (el) el.style.display = 'block';
+        }
+        function closeModal(id) {
+            const el = document.getElementById(id);
+            if (el) el.style.display = 'none';
+        }
 
         function showView(view) {
             document.querySelectorAll('.view-content').forEach(v => v.classList.add('hidden'));
