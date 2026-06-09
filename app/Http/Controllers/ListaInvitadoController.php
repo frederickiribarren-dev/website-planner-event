@@ -71,4 +71,36 @@ class ListaInvitadoController extends Controller
         return redirect()->route('invitados.creacion')
             ->with('success', 'Lista de invitados eliminada.');
     }
+
+    public function addGuest(Request $request, ListaInvitado $lista_invitado)
+    {
+        $validated = $request->validate([
+            'nombre'   => 'required|string|max:100',
+            'email'    => 'nullable|email|max:255',
+            'telefono' => 'nullable|string|max:20',
+        ]);
+
+        $lista_invitado->invitados()->create([
+            'nombre'             => $validated['nombre'],
+            'email'              => $validated['email'] ?? null,
+            'telefono'           => $validated['telefono'] ?? null,
+            'evento_id'          => $lista_invitado->evento_id,
+            'estado_asistencia'  => 'Sin responder',
+            'estado_invitacion'  => 'Pendiente',
+        ]);
+
+        return redirect()->route('listas-invitados.edit', $lista_invitado->id)
+            ->with('success', 'Invitado añadido correctamente.');
+    }
+
+    public function removeGuest(ListaInvitado $lista_invitado, \App\Models\Invitado $invitado)
+    {
+        // Sólo eliminar si el invitado pertenece a esta lista
+        if ($invitado->lista_invitado_id === $lista_invitado->id) {
+            $invitado->delete();
+        }
+
+        return redirect()->route('listas-invitados.edit', $lista_invitado->id)
+            ->with('success', 'Invitado eliminado de la lista.');
+    }
 }
