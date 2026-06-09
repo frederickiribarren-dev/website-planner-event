@@ -20,7 +20,7 @@
                 </div>
 
                 <div class="mt-10 flex justify-end">
-                    <button onclick="closeViewListModal()" class="px-8 py-3 bg-slate-800 text-white font-bold rounded-2xl hover:bg-slate-900 transition-all">Cerrar</button>
+                    <button onclick="closeViewListModal()" class="px-8 py-3 bg-cyan-800 text-white font-bold rounded-2xl hover:bg-cyan-900 transition-all">Cerrar</button>
                 </div>
             </div>
         </div>

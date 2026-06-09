@@ -53,6 +53,9 @@ class RegaloController extends Controller
     /**
      * Store a newly created gift (personalizado).
      */
+    /**
+     * Store a newly created gift (personalizado).
+     */
     public function storeGift(Request $request)
     {
         $validated = $request->validate([
@@ -64,15 +67,13 @@ class RegaloController extends Controller
             'link_referencia_3' => 'nullable|string|max:500',
             'precio_estimado' => 'nullable|numeric|min:0',
             'cantidad_solicitada' => 'nullable|integer|min:1',
-            'imagen_portada_url' => 'nullable|string|max:5000',
+            'imagen_portada' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048', 
             'lista_regalos_id' => 'nullable|exists:listas_regalos,id',
         ]);
 
-        // Mapeamos el nombre de la categoría del JS al ENUM real de la base de datos ('Grupal')
         $nombreCat = ($validated['categoria'] === 'Grupales') ? 'Grupal' : $validated['categoria'];
         $categoriaBD = CategoriaRegalo::where('nombre', $nombreCat)->firstOrFail();
 
-        // Si se crea directo desde una lista existente, heredamos su evento_id automáticamente
         $eventoId = null;
         if (!empty($validated['lista_regalos_id'])) {
             $listaDef = ListaRegalo::find($validated['lista_regalos_id']);
@@ -81,10 +82,15 @@ class RegaloController extends Controller
             }
         }
 
+        $rutaImagen = null;
+        if ($request->hasFile('imagen_portada')) {
+            $rutaImagen = $request->file('imagen_portada')->store('regalos', 'public');
+        }
+
         $regalo = Regalo::create([
             'nombre_regalo' => $validated['nombre_regalo'],
             'descripcion' => $validated['descripcion'] ?? null,
-            'categoria_id' => $categoriaBD->id, // Guardamos el ID numérico correspondiente
+            'categoria_id' => $categoriaBD->id, 
             'lista_regalos_id' => $validated['lista_regalos_id'] ?? null,
             'evento_id' => $eventoId,
             'link_referencia' => $validated['link_referencia'] ?? null,
@@ -92,7 +98,7 @@ class RegaloController extends Controller
             'link_referencia_3' => $validated['link_referencia_3'] ?? null,
             'precio_estimado' => $validated['precio_estimado'] ?? null,
             'cantidad_solicitada' => $validated['cantidad_solicitada'] ?? 1,
-            'imagen_portada_url' => $validated['imagen_portada_url'] ?? null,
+            'imagen_portada_url' => $rutaImagen, 
             'estado' => 'Disponible',
             'prioridad' => 'Media',
         ]);
@@ -107,14 +113,21 @@ class RegaloController extends Controller
     /**
      * Create a new gift list.
      */
+    /**
+     * Create a new gift list.
+     */
     public function storeLista(Request $request)
     {
         $validated = $request->validate([
             'nombre' => 'required|string|max:150',
             'descripcion' => 'nullable|string',
             'evento_id' => 'nullable|exists:eventos,id',
-            'regalos_ids' => 'required|array|min:1',
-            'regalos_ids.*' => 'integer|exists:regalos,id',
+            'regalos' => 'required|array|min:1',
+            'regalos.*.regalocatalogo' => 'required|integer|exists:regalos,id',
+            'regalos.*.qty' => 'required|integer|min:1',
+            'regalos.*.link_referencia' => 'nullable|string|max:500',
+            'regalos.*.link_referencia_2' => 'nullable|string|max:500',
+            'regalos.*.link_referencia_3' => 'nullable|string|max:500',
         ]);
 
         $listaRegalo = ListaRegalo::create([
@@ -122,22 +135,30 @@ class RegaloController extends Controller
             'evento_id' => $validated['evento_id'] ?? null,
             'nombre' => $validated['nombre'],
             'descripcion' => $validated['descripcion'] ?? null,
-            'estado' => 'Borrador', // Cambiado a 'Borrador' según la lógica estándar de tu tabla
+            'estado' => 'Borrador', 
         ]);
 
-        // Se replica el ítem base del catálogo para evitar alterar el maestro
-        foreach ($validated['regalos_ids'] as $idRegaloCatalogo) {
-            $regaloPlantilla = Regalo::find($idRegaloCatalogo);
-            
-            if ($regaloPlantilla) {
-                $regaloUsuario = $regaloPlantilla->replicate();
+  
+        if (!empty($request->regalos)) {
+            foreach ($request->regalos as $item) {
+                $idRegaloCatalogo = $item['regalocatalogo'];
+                $cantidad = $item['qty'];
 
-                // CORREGIDO: Se cambiaron los nombres de las propiedades a los campos reales de tu migración
-                $regaloUsuario->lista_regalos_id = $listaRegalo->id;
-                $regaloUsuario->evento_id = $listaRegalo->evento_id;
-                $regaloUsuario->cantidad_solicitada = 1; // Cantidad base por defecto al clonar masivo
+                $regaloPlantilla = Regalo::find($idRegaloCatalogo);
+                
+                if ($regaloPlantilla) {
+                    $regaloUsuario = $regaloPlantilla->replicate();
 
-                $regaloUsuario->save();
+                    $regaloUsuario->lista_regalos_id = $listaRegalo->id;
+                    $regaloUsuario->evento_id = $listaRegalo->evento_id;
+                    $regaloUsuario->cantidad_solicitada = $cantidad; 
+
+                    $regaloUsuario->link_referencia = $item['link_referencia'] ?? null;
+                    $regaloUsuario->link_referencia_2 = $item['link_referencia_2'] ?? null;
+                    $regaloUsuario->link_referencia_3 = $item['link_referencia_3'] ?? null;
+
+                    $regaloUsuario->save();
+                }
             }
         }
 
@@ -203,7 +224,10 @@ class RegaloController extends Controller
             'evento_id' => 'nullable|exists:eventos,id',
             'regalos' => 'required|array',
             'regalos.*.regalocatalogo' => 'required|integer|exists:regalos,id',
-            'regalos.*.qty' => 'required|integer|min:1'
+            'regalos.*.qty' => 'required|integer|min:1',
+            'regalos.*.link_referencia' => 'nullable|string|max:500',
+            'regalos.*.link_referencia_2' => 'nullable|string|max:500',
+            'regalos.*.link_referencia_3' => 'nullable|string|max:500',
         ]);
 
         $listaRegalo->update([
@@ -227,9 +251,11 @@ class RegaloController extends Controller
 
                 $regaloUsuario->lista_regalos_id = $listaRegalo->id;
                 $regaloUsuario->evento_id = $listaRegalo->evento_id;
-                
-                
                 $regaloUsuario->cantidad_solicitada = $cantidad;
+
+                $regaloUsuario->link_referencia = $item['link_referencia'] ?? null;
+                $regaloUsuario->link_referencia_2 = $item['link_referencia_2'] ?? null;
+                $regaloUsuario->link_referencia_3 = $item['link_referencia_3'] ?? null;
                 
                 $regaloUsuario->save();
             }
