@@ -73,9 +73,12 @@
                                     <div class="w-10 h-10 rounded-full bg-[#EEF5F5] flex items-center justify-center text-[#427A79]">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
                                     </div>
-                                    <div>
+                                    <div class="flex-1">
                                         <p class="text-xs font-bold text-gray-400 uppercase tracking-widest">Destinatarios totales</p>
                                         <p class="text-lg font-bold text-gray-800" id="summary-guest-count">0 Invitados</p>
+                                        <div id="summary-guest-list" class="mt-3 space-y-2">
+                                            <p class="text-sm text-gray-500">No hay invitados agregados</p>
+                                        </div>
                                     </div>
                                 </div>
                                 
@@ -106,16 +109,22 @@
                                 </div>
                                 <div>
                                     <h4 class="text-xl font-bold text-gray-800">Lista de Regalos</h4>
-                                    <p class="text-sm text-gray-500 font-medium">Asigna una lista a tu evento</p>
+                                    <p class="text-sm text-gray-500 font-medium">Asigna una lista a tu evento (opcional)</p>
                                 </div>
                             </div>
                             
                             <div class="space-y-4">
-                                <select name="lista_regalos" class="w-full bg-gray-50 border-none rounded-2xl px-6 py-4 focus:ring-2 focus:ring-[#427A79] transition text-sm font-bold text-gray-700">
+                                <select id="lista_regalos_id" name="lista_regalos_id" onchange="updateSummary()" class="w-full bg-gray-50 border-none rounded-2xl px-6 py-4 focus:ring-2 focus:ring-[#427A79] transition text-sm font-bold text-gray-700">
                                     <option value="">Seleccionar lista de regalos guardada...</option>
-                                    <option value="1">Mi Lista de Baby Shower</option>
-                                    <option value="2">Regalos Ropa de Bebé</option>
+                                    @forelse($listasRegalos as $lista)
+                                        <option value="{{ $lista->id }}">
+                                            {{ $lista->nombre }} ({{ $lista->regalos->count() }} regalos)
+                                        </option>
+                                    @empty
+                                        <option value="" disabled>No hay listas de regalos disponibles</option>
+                                    @endforelse
                                 </select>
+                                <p class="text-xs text-gray-500 mt-3" id="summary-gift-list">Lista seleccionada: <span class="font-bold text-gray-700">Sin lista asignada</span></p>
                                 
                                 <p class="text-[11px] text-gray-400 font-semibold italic text-center px-4 leading-relaxed">* Nota: Esta lista <span class="text-red-400">no se enviará directamente</span> en el correo de invitación. Solo se vinculará internamente con el evento para llevar el control.</p>
                             </div>

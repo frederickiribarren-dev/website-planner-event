@@ -3,20 +3,18 @@
                     <div class="lg:col-span-4 space-y-6">
                         <div class="bg-white rounded-[2rem] p-8 border border-gray-100 shadow-sm space-y-6">
                             <div>
-                                <label class="block text-sm font-bold text-gray-700 mb-4 italic underline decoration-cyan-500">Opciones de Carga Rápida</label>
-                                <select onchange="loadPrebuiltList(this.value)" class="w-full bg-gray-50 border-none rounded-xl px-5 py-3 focus:ring-2 focus:ring-cyan-600 transition text-sm font-semibold text-gray-600">
-                                    <option value="">Cargar lista guardada...</option>
-                                    <option value="familia">Familia Directa (15)</option>
-                                    <option value="amigos">Amigos Cercanos (20)</option>
-                                    <option value="trabajo">Compañeros de Trabajo (10)</option>
+                                <label class="block text-sm font-bold text-gray-700 mb-4 italic underline decoration-cyan-500">Cargar Lista Existente</label>
+                                <select id="lista_invitado_id" name="lista_invitado_id" class="w-full bg-gray-50 border-none rounded-xl px-5 py-3 focus:ring-2 focus:ring-cyan-600 transition text-sm font-semibold text-gray-600" onchange="loadExistingList(this.value)">
+                                    <option value="">Selecciona una lista...</option>
+                                    @forelse($listasInvitados as $lista)
+                                        <option value="{{ $lista->id }}" data-count="{{ $lista->invitados->count() }}">
+                                            {{ $lista->nombre }} ({{ $lista->invitados->count() }} invitados)
+                                        </option>
+                                    @empty
+                                        <option value="" disabled>No hay listas de invitados disponibles</option>
+                                    @endforelse
                                 </select>
-                            </div>
-                            <div class="pt-6 border-t border-gray-50">
-                                <label class="cursor-pointer w-full flex items-center justify-center gap-3 px-6 py-4 bg-pink-50 border border-pink-100 text-pink-500 font-bold rounded-2xl hover:bg-pink-100 transition-all text-xs">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
-                                    Importar Excel / CSV
-                                    <input type="file" class="hidden" accept=".xlsx,.csv">
-                                </label>
+                                <p class="text-xs text-gray-400 mt-2">Si no tienes listas creadas, agrega los invitados manualmente.</p>
                             </div>
                         </div>
                         <div class="bg-white rounded-[2rem] p-8 border border-gray-100 shadow-sm">

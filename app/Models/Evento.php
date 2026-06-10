@@ -20,11 +20,23 @@ class Evento extends Model
         'color_tema',
         'estado',
         'imagen_portada_url',
+        'lista_invitado_id',
+        'lista_regalos_id',
     ];
 
     public function usuario()
     {
         return $this->belongsTo(User::class, 'usuario_id');
+    }
+
+    public function listaInvitado()
+    {
+        return $this->belongsTo(ListaInvitado::class, 'lista_invitado_id');
+    }
+
+    public function listaRegalo()
+    {
+        return $this->belongsTo(ListaRegalo::class, 'lista_regalos_id');
     }
 
     public function regalos()

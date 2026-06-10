@@ -25,8 +25,8 @@
                                 <input type="date" name="fecha_evento" id="fecha_evento" required class="w-full bg-gray-50 border-none rounded-2xl px-6 py-4 focus:ring-2 focus:ring-cyan-600 focus:bg-white transition text-gray-900">
                             </div>
                             <div>
-                                <label for="direcion_evento" class="block text-sm font-bold text-gray-700 mb-2">Dirección del evento</label>
-                                <input type="text" name="direcion_evento" id="direcion_evento" required class="w-full bg-gray-50 border-none rounded-2xl px-6 py-4 focus:ring-2 focus:ring-cyan-600 focus:bg-white transition text-gray-900" placeholder="Ej: Calle Falsa 123">
+                                <label for="ubicacion_nombre" class="block text-sm font-bold text-gray-700 mb-2">Dirección del evento</label>
+                                <input type="text" name="ubicacion_nombre" id="ubicacion_nombre" required class="w-full bg-gray-50 border-none rounded-2xl px-6 py-4 focus:ring-2 focus:ring-cyan-600 focus:bg-white transition text-gray-900" placeholder="Ej: Calle Falsa 123">
                             </div>
                         </div>
                         <div class="pt-4">

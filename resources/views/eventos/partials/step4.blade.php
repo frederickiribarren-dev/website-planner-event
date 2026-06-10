@@ -8,7 +8,7 @@
                         <h4 class="font-bold text-xl text-gray-800 mb-6">Detalles del correo</h4>
                         <div>
                             <label class="block text-sm font-bold text-gray-700 mb-3">Asunto del correo</label>
-                            <input type="text" id="email_subject" oninput="updatePreview()" class="w-full bg-gray-50 border-none rounded-2xl px-6 py-4 focus:ring-2 focus:ring-cyan-600 transition text-gray-900" placeholder="¡Estás invitado al Baby Shower!">
+                            <input type="text" id="email_subject" name="email_subject" oninput="updatePreview()" class="w-full bg-gray-50 border-none rounded-2xl px-6 py-4 focus:ring-2 focus:ring-cyan-600 transition text-gray-900" placeholder="¡Estás invitado al Baby Shower!">
                         </div>
                         <div>
                             <label class="block text-sm font-bold text-gray-700 mb-3">Mensaje</label>
@@ -18,7 +18,7 @@
                                     <button type="button" class="text-gray-400 hover:text-gray-600 italic">I</button>
                                     <button type="button" class="text-gray-400 hover:text-gray-600 underline">U</button>
                                 </div>
-                                <textarea id="email_message" oninput="updatePreview()" rows="8" class="w-full bg-transparent border-none px-6 py-4 focus:ring-0 transition text-gray-900 resize-none" placeholder="Escribe aquí tu mensaje cálido..."></textarea>
+                                <textarea id="email_message" name="mensaje_invitacion" oninput="updatePreview()" rows="8" class="w-full bg-transparent border-none px-6 py-4 focus:ring-0 transition text-gray-900 resize-none" placeholder="Escribe aquí tu mensaje cálido..."></textarea>
                             </div>
                         </div>
                     </div>

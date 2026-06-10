@@ -25,6 +25,8 @@ return new class extends Migration
             $table->string('color_tema', 7)->nullable()->default('#60A5FA');
             $table->enum('estado', ['Borrador', 'Publicado', 'Finalizado', 'Cancelado'])->nullable()->default('Borrador');
             $table->string('imagen_portada_url', 500)->nullable();
+            $table->bigInteger('lista_invitado_id')->unsigned()->nullable()->index('idx_eventos_lista_invitado');
+            $table->bigInteger('lista_regalos_id')->unsigned()->nullable()->index('idx_eventos_lista_regalos');
             $table->timestamp('created_at')->nullable()->useCurrent();
             $table->timestamp('updated_at')->useCurrentOnUpdate()->nullable()->useCurrent();
             $table->softDeletes();

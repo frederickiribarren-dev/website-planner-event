@@ -40,6 +40,10 @@
         <form id="multiStepForm" method="POST" action="{{ route('eventos.store') }}">
             @csrf
             
+            <!-- Campo oculto para guardar invitados en JSON -->
+            <input type="hidden" id="invitados_json" name="invitados_json" value="[]">
+            <input type="hidden" id="imagen_portada_url" name="imagen_portada_url" value="https://img.freepik.com/vector-premium/lindo-baby-shower-invitacion-bebe-nino-elefante_23-2148443916.jpg">
+            
             @include('eventos.partials.step1')
             @include('eventos.partials.step2')
             @include('eventos.partials.step3')
