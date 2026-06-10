@@ -46,7 +46,7 @@
                                         </div>
                                         <div>
                                             <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Cuándo</p>
-                                            <p class="text-[11px] font-bold text-gray-700">{{ \Carbon\Carbon::parse($evento->fecha_evento)->translatedFormat('l, d de F Y') }}</p>
+                                            <p class="text-[11px] font-bold text-gray-700">{{ ucfirst(\Carbon\Carbon::parse($evento->fecha_evento)->locale('es')->isoFormat('dddd, D [de] MMMM [de] YYYY')) }}</p>
                                         </div>
                                     </div>
                                     <div class="h-px bg-gray-200/60 w-full"></div>
