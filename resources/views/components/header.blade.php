@@ -12,9 +12,9 @@
                    Ir a Dashboard
                </a>
            @else
-               <x-button variant="login" onclick="openModal('loginModal')">
+               <button type="button" onclick="openModal('loginModal')" class="inline-flex items-center justify-center px-6 py-2 rounded-full text-sm font-semibold transition-all transform active:scale-95 cursor-pointer bg-cyan-600 text-white hover:bg-cyan-700">
                     Inicio de Sesión
-               </x-button>
+               </button>
            @endauth
         </div>
            

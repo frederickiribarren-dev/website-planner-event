@@ -23,13 +23,13 @@
                     <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-6">Datos de la Lista</h3>
                     <div class="space-y-5">
                         <div>
-                            <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-2">Nombre</label>
+                            <div class="block text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-2">Nombre</div>
                             <div class="w-full bg-slate-50 rounded-2xl px-5 py-3.5 text-sm font-medium text-slate-700">
                                 {{ $lista_invitado->nombre }}
                             </div>
                         </div>
                         <div>
-                            <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-2">Categoría</label>
+                            <div class="block text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-2">Categoría</div>
                             <div class="w-full bg-slate-50 rounded-2xl px-5 py-3.5 text-sm font-medium text-slate-600">
                                 {{ $lista_invitado->categoria ?? 'Sin categoría' }}
                             </div>

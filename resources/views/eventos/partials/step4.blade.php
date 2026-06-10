@@ -7,7 +7,7 @@
                     <div class="bg-white rounded-[2.5rem] p-8 sm:p-10 border border-gray-100 shadow-sm space-y-8">
                         <h4 class="font-bold text-xl text-gray-800 mb-6">Detalles del correo</h4>
                         <div>
-                            <label class="block text-sm font-bold text-gray-700 mb-3">Asunto del correo</label>
+                            <label for="email_subject" class="block text-sm font-bold text-gray-700 mb-3">Asunto del correo</label>
                             <input type="text" id="email_subject" name="email_subject" oninput="updatePreview()" class="w-full bg-gray-50 border-none rounded-2xl px-6 py-4 focus:ring-2 focus:ring-cyan-600 transition text-gray-900" placeholder="¡Estás invitado al Baby Shower!">
                         </div>
                         <div>
@@ -22,14 +22,14 @@
                                     overflow-wrap: break-word !important;
                                 }
                             </style>
-                            <label class="block text-sm font-bold text-gray-700 mb-3">Mensaje</label>
+                            <div class="block text-sm font-bold text-gray-700 mb-3" id="email_message_label">Mensaje</div>
                             <div class="bg-gray-50 rounded-2xl overflow-hidden border border-gray-100">
                                 <div class="flex items-center gap-2 px-6 py-3 border-b border-gray-200 bg-gray-100/50">
                                     <button type="button" onclick="formatText('bold')" class="text-gray-400 font-bold hover:text-gray-600 w-8 h-8 rounded-lg hover:bg-gray-200/60 transition-colors flex items-center justify-center text-sm">B</button>
                                     <button type="button" onclick="formatText('italic')" class="text-gray-400 hover:text-gray-600 italic w-8 h-8 rounded-lg hover:bg-gray-200/60 transition-colors flex items-center justify-center text-sm">I</button>
                                     <button type="button" onclick="formatText('underline')" class="text-gray-400 hover:text-gray-600 underline w-8 h-8 rounded-lg hover:bg-gray-200/60 transition-colors flex items-center justify-center text-sm">U</button>
                                 </div>
-                                <div id="email_message_editor" contenteditable="true" oninput="syncEditorContent()" class="w-full bg-transparent border-none px-6 py-4 focus:outline-none transition text-gray-900 min-h-[180px] overflow-y-auto" placeholder="Escribe aquí tu mensaje cálido..."></div>
+                                <div id="email_message_editor" aria-labelledby="email_message_label" contenteditable="true" oninput="syncEditorContent()" class="w-full bg-transparent border-none px-6 py-4 focus:outline-none transition text-gray-900 min-h-[180px] overflow-y-auto" placeholder="Escribe aquí tu mensaje cálido..."></div>
                                 <input type="hidden" id="email_message" name="mensaje_invitacion" value="{{ old('mensaje_invitacion', $evento->mensaje_invitacion ?? '') }}">
                             </div>
                         </div>

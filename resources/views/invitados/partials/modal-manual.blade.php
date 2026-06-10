@@ -4,7 +4,7 @@
     
     <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
         <!-- Fondo oscuro -->
-        <div class="fixed inset-0 bg-gray-500/50 transition-opacity" onclick="closeModal('modalManual')"></div>
+        <button type="button" tabindex="-1" class="fixed inset-0 w-full h-full bg-gray-500/50 transition-opacity cursor-default" onclick="closeModal('modalManual')" aria-label="Cerrar modal"></button>
 
         <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
 
@@ -21,18 +21,18 @@
                 <form action="{{ route('invitados.creacion.store') }}" method="POST" class="space-y-4" onsubmit="prepareGuestsJson(event)">
                     @csrf
                     <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-1">Nombre de la Lista</label>
-                        <input type="text" name="list_name" class="w-full px-4 py-2.5 rounded-xl border-slate-200 focus:border-cyan-500 focus:ring-cyan-500 transition-all" placeholder="Ej. Familia Directa" required>
+                        <label for="list_name_manual" class="block text-sm font-semibold text-slate-700 mb-1">Nombre de la Lista</label>
+                        <input type="text" id="list_name_manual" name="list_name" class="w-full px-4 py-2.5 rounded-xl border-slate-200 focus:border-cyan-500 focus:ring-cyan-500 transition-all" placeholder="Ej. Familia Directa" required>
                     </div>
 
                     <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-1">Categoría (opcional)</label>
-                        <input type="text" name="list_category" class="w-full px-4 py-2.5 rounded-xl border-slate-200 focus:border-cyan-500 focus:ring-cyan-500 transition-all" placeholder="Familia, Amigos, Trabajo...">
+                        <label for="list_category_manual" class="block text-sm font-semibold text-slate-700 mb-1">Categoría (opcional)</label>
+                        <input type="text" id="list_category_manual" name="list_category" class="w-full px-4 py-2.5 rounded-xl border-slate-200 focus:border-cyan-500 focus:ring-cyan-500 transition-all" placeholder="Familia, Amigos, Trabajo...">
                     </div>
 
                     <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-1">Evento (opcional)</label>
-                        <select name="evento_id" class="w-full px-4 py-2.5 rounded-xl border-slate-200 focus:border-cyan-500 focus:ring-cyan-500 transition-all">
+                        <label for="evento_id_manual" class="block text-sm font-semibold text-slate-700 mb-1">Evento (opcional)</label>
+                        <select id="evento_id_manual" name="evento_id" class="w-full px-4 py-2.5 rounded-xl border-slate-200 focus:border-cyan-500 focus:ring-cyan-500 transition-all">
                             <option value="">Sin evento</option>
                             @isset($eventos)
                                 @foreach($eventos as $ev)
@@ -45,17 +45,17 @@
                     <hr class="my-2">
 
                     <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-1">Nombre Completo</label>
+                        <label for="manual_name" class="block text-sm font-semibold text-slate-700 mb-1">Nombre Completo</label>
                         <input type="text" id="manual_name" name="manual_name" class="w-full px-4 py-2.5 rounded-xl border-slate-200 focus:border-cyan-500 focus:ring-cyan-500 transition-all" placeholder="Ej. Juan Pérez" required>
                     </div>
 
                     <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-1">Correo Electrónico</label>
+                        <label for="manual_email" class="block text-sm font-semibold text-slate-700 mb-1">Correo Electrónico</label>
                         <input type="email" id="manual_email" name="manual_email" class="w-full px-4 py-2.5 rounded-xl border-slate-200 focus:border-cyan-500 focus:ring-cyan-500 transition-all" placeholder="juan@ejemplo.com">
                     </div>
 
                     <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-1">Teléfono / WhatsApp</label>
+                        <label for="manual_phone" class="block text-sm font-semibold text-slate-700 mb-1">Teléfono / WhatsApp</label>
                         <input type="tel" id="manual_phone" name="manual_phone" class="w-full px-4 py-2.5 rounded-xl border-slate-200 focus:border-cyan-500 focus:ring-cyan-500 transition-all" placeholder="+56 9 ...">
                     </div>
 

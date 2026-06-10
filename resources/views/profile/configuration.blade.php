@@ -36,12 +36,12 @@
                         
                         <div class="flex-1 w-full space-y-4">
                             <div>
-                                <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Nombre Completo</label>
-                                <input type="text" value="ejemplo nombre" class="w-full px-4 py-3 rounded-2xl border-slate-100 bg-slate-50 focus:border-cyan-500 focus:ring-cyan-500 transition-all font-medium text-slate-700">
+                                <label for="conf_name" class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Nombre Completo</label>
+                                <input type="text" id="conf_name" value="ejemplo nombre" class="w-full px-4 py-3 rounded-2xl border-slate-100 bg-slate-50 focus:border-cyan-500 focus:ring-cyan-500 transition-all font-medium text-slate-700">
                             </div>
                             <div>
-                                <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Correo Electrónico</label>
-                                <input type="email" value="ejemplo@dominio.com" class="w-full px-4 py-3 rounded-2xl border-slate-100 bg-slate-50 focus:border-cyan-500 focus:ring-cyan-500 transition-all font-medium text-slate-700">
+                                <label for="conf_email" class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Correo Electrónico</label>
+                                <input type="email" id="conf_email" value="ejemplo@dominio.com" class="w-full px-4 py-3 rounded-2xl border-slate-100 bg-slate-50 focus:border-cyan-500 focus:ring-cyan-500 transition-all font-medium text-slate-700">
                             </div>
                         </div>
                     </div>
@@ -51,9 +51,9 @@
                 <div class="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm">
                     <h3 class="text-xl font-bold text-slate-800 mb-6">Preferencias</h3>
                     <div class="max-w-md">
-                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Idioma de la Interfaz</label>
+                        <label for="conf_lang" class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Idioma de la Interfaz</label>
                         <div class="relative">
-                            <select class="w-full px-4 py-3 rounded-2xl border-slate-100 bg-slate-50 focus:border-cyan-500 focus:ring-cyan-500 transition-all font-medium text-slate-700 appearance-none">
+                            <select id="conf_lang" class="w-full px-4 py-3 rounded-2xl border-slate-100 bg-slate-50 focus:border-cyan-500 focus:ring-cyan-500 transition-all font-medium text-slate-700 appearance-none">
                                 <option>Español (Latinoamérica)</option>
                                 <option>English (US)</option>
                                 <option>Português (Brasil)</option>
@@ -103,8 +103,8 @@
                                 <p class="text-sm font-bold text-slate-700">Confirmaciones de Asistencia</p>
                                 <p class="text-xs text-slate-400 italic">Recibir email cuando alguien confirme.</p>
                             </div>
-                            <label class="relative inline-flex items-center cursor-pointer">
-                                <input type="checkbox" checked class="sr-only peer">
+                            <label for="notif_confirm" class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="notif_confirm" checked class="sr-only peer">
                                 <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-cyan-600"></div>
                             </label>
                         </div>
@@ -114,8 +114,8 @@
                                 <p class="text-sm font-bold text-slate-700">Nuevos Mensajes en Libro de Visitas</p>
                                 <p class="text-xs text-slate-400 italic">Avisarme de nuevos mensajes.</p>
                             </div>
-                            <label class="relative inline-flex items-center cursor-pointer">
-                                <input type="checkbox" class="sr-only peer">
+                            <label for="notif_messages" class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="notif_messages" class="sr-only peer">
                                 <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-cyan-600"></div>
                             </label>
                         </div>

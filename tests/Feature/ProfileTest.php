@@ -2,6 +2,8 @@
 
 use App\Models\User;
 
+const TEST_USER_NAME = 'Test User';
+
 test('profile page is displayed', function () {
     $user = User::factory()->create();
 
@@ -18,7 +20,7 @@ test('profile information can be updated', function () {
     $response = $this
         ->actingAs($user)
         ->patch('/profile', [
-            'name' => 'Test User',
+            'name' => TEST_USER_NAME,
             'email' => 'test@example.com',
         ]);
 
@@ -28,7 +30,7 @@ test('profile information can be updated', function () {
 
     $user->refresh();
 
-    $this->assertSame('Test User', $user->name);
+    $this->assertSame(TEST_USER_NAME, $user->name);
     $this->assertSame('test@example.com', $user->email);
     $this->assertNull($user->email_verified_at);
 });
@@ -39,7 +41,7 @@ test('email verification status is unchanged when the email address is unchanged
     $response = $this
         ->actingAs($user)
         ->patch('/profile', [
-            'name' => 'Test User',
+            'name' => TEST_USER_NAME,
             'email' => $user->email,
         ]);
 

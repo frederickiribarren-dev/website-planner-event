@@ -82,19 +82,19 @@
                 <div class="lg:col-span-4 space-y-6">
                     <div class="bg-white rounded-[2.5rem] p-8 border border-slate-100 shadow-sm space-y-6">
                         <div>
-                            <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-3">Nombre de la Lista</label>
+                            <label for="listNameInput" class="block text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-3">Nombre de la Lista</label>
                             <input type="text" id="listNameInput" placeholder="Ej. Regalos Baby Shower"
                                 class="w-full bg-slate-50 border-none rounded-2xl px-6 py-4 focus:ring-2 focus:ring-cyan-600 transition text-sm font-medium text-slate-700" required>
                         </div>
 
                         <div>
-                            <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-3">Descripción (opcional)</label>
+                            <label for="listDescInput" class="block text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-3">Descripción (opcional)</label>
                             <textarea id="listDescInput" placeholder="Detalles sobre esta lista de regalos..."
                                 class="w-full bg-slate-50 border-none rounded-2xl px-6 py-4 focus:ring-2 focus:ring-cyan-600 transition text-sm font-medium text-slate-700 resize-none" rows="2"></textarea>
                         </div>
 
                         <div>
-                            <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-3">Asignar a Evento (opcional)</label>
+                            <label for="listEventoInput" class="block text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-3">Asignar a Evento (opcional)</label>
                             <select id="listEventoInput" class="w-full bg-slate-50 border-none rounded-2xl px-6 py-4 focus:ring-2 focus:ring-cyan-600 transition text-sm font-medium text-slate-700">
                                 <option value="">Sin evento (lista independiente)</option>
                                 @forelse($eventos ?? [] as $evento)

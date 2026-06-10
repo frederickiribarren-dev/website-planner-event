@@ -1,7 +1,7 @@
 <!-- MODAL VER DETALLE DE LISTA -->
 <div id="modalViewList" class="fixed inset-0 z-50 overflow-y-auto" style="display: none;">
     <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-        <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" onclick="closeViewListModal()"></div>
+        <button type="button" tabindex="-1" class="fixed inset-0 w-full h-full bg-slate-900/60 backdrop-blur-sm transition-opacity cursor-default" onclick="closeViewListModal()" aria-label="Cerrar modal"></button>
         <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
         <div class="relative z-10 inline-block align-bottom bg-white rounded-[2.5rem] text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-4xl sm:w-full">
             <div class="bg-white px-8 py-8">

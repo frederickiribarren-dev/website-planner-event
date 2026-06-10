@@ -1,7 +1,7 @@
 <!-- MODAL IMPORTAR LISTA -->
 <div id="modalImport" class="fixed inset-0 z-50 overflow-y-auto" style="display: none;">
     <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-        <div class="fixed inset-0 bg-gray-500/50 transition-opacity" onclick="closeModal('modalImport')"></div>
+        <button type="button" tabindex="-1" class="fixed inset-0 w-full h-full bg-gray-500/50 transition-opacity cursor-default" onclick="closeModal('modalImport')" aria-label="Cerrar modal"></button>
         <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
         <div class="relative z-10 inline-block overflow-hidden text-left align-bottom transition-all transform bg-white rounded-2xl shadow-2xl sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
             <div class="px-6 py-8 bg-white">
@@ -50,7 +50,7 @@
 <!-- MODAL VER DETALLE LISTA INVITADOS -->
 <div id="modalVerListaDetalle" class="fixed inset-0 z-50 overflow-y-auto" style="display:none;">
     <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-        <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="cerrarVerListaDetalle()"></div>
+        <button type="button" tabindex="-1" class="fixed inset-0 w-full h-full bg-slate-900/60 backdrop-blur-sm cursor-default" onclick="cerrarVerListaDetalle()" aria-label="Cerrar modal"></button>
         <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
         <div class="relative z-10 inline-block align-bottom bg-white rounded-[2rem] text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-sm sm:w-full border border-slate-100">
             <div class="bg-white px-8 py-8">

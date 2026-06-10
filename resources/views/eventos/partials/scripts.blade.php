@@ -122,14 +122,14 @@
                 const isSelected = selectedImageUrl === url;
                 
                 const cardHtml = `
-                    <div onclick="selectTemplate('${url}')" class="template-card relative h-48 rounded-[2rem] overflow-hidden cursor-pointer border-4 ${isSelected ? 'border-cyan-600 scale-[1.02]' : 'border-transparent hover:scale-[1.02]'} transition-all bg-gray-100">
+                    <button type="button" onclick="selectTemplate('${url}')" class="template-card relative h-48 w-full block rounded-[2rem] overflow-hidden cursor-pointer border-4 ${isSelected ? 'border-cyan-600 scale-[1.02]' : 'border-transparent hover:scale-[1.02]'} transition-all bg-gray-100">
                         <img src="${url}" class="w-full h-full object-cover" alt="Plantilla">
                         <div class="absolute inset-0 flex items-center justify-center bg-cyan-900/0 hover:bg-cyan-900/10 transition-all">
                             <div class="check-icon ${isSelected ? '' : 'opacity-0'} w-8 h-8 bg-cyan-600 text-white rounded-full flex items-center justify-center shadow-lg">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                             </div>
                         </div>
-                    </div>
+                    </button>
                 `;
                 container.innerHTML += cardHtml;
             });

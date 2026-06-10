@@ -19,7 +19,7 @@
                 </p>
                 
                 <div class="flex flex-wrap items-center gap-4">
-                    <x-button onclick="openModal('registerModal')" variant="tertiary">Comenzar Ahora</x-button>
+                    <button type="button" onclick="openModal('registerModal')" class="inline-flex items-center justify-center px-6 py-2 rounded-full text-sm font-semibold transition-all transform active:scale-95 cursor-pointer bg-transparent border-2 border-cyan-600 text-cyan-700 hover:bg-cyan-50">Comenzar Ahora</button>
                 </div>
             </div>
 

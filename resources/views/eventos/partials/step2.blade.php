@@ -3,7 +3,7 @@
                     <div class="lg:col-span-4 space-y-6">
                         <div class="bg-white rounded-[2rem] p-8 border border-gray-100 shadow-sm space-y-6">
                             <div>
-                                <label class="block text-sm font-bold text-gray-700 mb-4 italic underline decoration-cyan-500">Cargar Lista Existente</label>
+                                <label for="lista_invitado_id" class="block text-sm font-bold text-gray-700 mb-4 italic underline decoration-cyan-500">Cargar Lista Existente</label>
                                 <select id="lista_invitado_id" name="lista_invitado_id" class="w-full bg-gray-50 border-none rounded-xl px-5 py-3 focus:ring-2 focus:ring-cyan-600 transition text-sm font-semibold text-gray-600" onchange="loadExistingList(this.value)">
                                     <option value="">Selecciona una lista...</option>
                                     @forelse($listasInvitados as $lista)

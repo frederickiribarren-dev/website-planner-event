@@ -185,7 +185,7 @@
                         <input type="hidden" id="guests_json" name="guests_json">
                         <div class="bg-white rounded-[2.5rem] p-8 border border-slate-100 shadow-sm space-y-8">
                             <div>
-                                <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-4 italic">Evento (Opcional)</label>
+                                <label for="evento_select" class="block text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-4 italic">Evento (Opcional)</label>
                                 <select id="evento_select" name="evento_id" class="w-full bg-slate-50 border-none rounded-2xl px-6 py-4 focus:ring-2 focus:ring-cyan-600 transition text-sm font-medium text-slate-600 mb-6">
                                     <option value="">Sin evento (Lista independiente)</option>
                                     @forelse($eventos as $evento)
@@ -194,10 +194,10 @@
                                     @endforelse
                                 </select>
 
-                                <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-4 italic">Nombre de la Lista</label>
+                                <label for="list_name" class="block text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-4 italic">Nombre de la Lista</label>
                                 <input type="text" id="list_name" name="list_name" placeholder="Ej: Amigos de la Infancia" class="w-full bg-slate-50 border-none rounded-2xl px-6 py-4 focus:ring-2 focus:ring-cyan-600 transition text-sm font-medium mb-6">
                                 
-                                <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-4 italic">Categoría</label>
+                                <label for="list_category" class="block text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-4 italic">Categoría</label>
                                 <select id="list_category" name="list_category" class="w-full bg-slate-50 border-none rounded-2xl px-6 py-4 focus:ring-2 focus:ring-cyan-600 transition text-sm font-medium text-slate-600">
                                     <option value="">Seleccionar Categoría...</option>
                                     <option value="Familia">Familia</option>

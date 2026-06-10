@@ -43,12 +43,14 @@ Route::middleware('auth', 'verified')->group(function () {
         Route::post('listas-invitados', [ListaInvitadoController::class, 'store'])->name('eventos.listas-invitados.store');
     });
 
-    Route::get('listas-invitados/{lista_invitado}', [ListaInvitadoController::class, 'show'])->name('listas-invitados.show');
-    Route::get('listas-invitados/{lista_invitado}/editar', [ListaInvitadoController::class, 'edit'])->name('listas-invitados.edit');
-    Route::put('listas-invitados/{lista_invitado}', [ListaInvitadoController::class, 'update'])->name('listas-invitados.update');
-    Route::delete('listas-invitados/{lista_invitado}', [ListaInvitadoController::class, 'destroy'])->name('listas-invitados.destroy');
-    Route::post('listas-invitados/{lista_invitado}/invitado', [ListaInvitadoController::class, 'addGuest'])->name('listas-invitados.addGuest');
-    Route::delete('listas-invitados/{lista_invitado}/invitado/{invitado}', [ListaInvitadoController::class, 'removeGuest'])->name('listas-invitados.removeGuest');
+    Route::prefix('listas-invitados/{lista_invitado}')->group(function () {
+        Route::get('/', [ListaInvitadoController::class, 'show'])->name('listas-invitados.show');
+        Route::get('/editar', [ListaInvitadoController::class, 'edit'])->name('listas-invitados.edit');
+        Route::put('/', [ListaInvitadoController::class, 'update'])->name('listas-invitados.update');
+        Route::delete('/', [ListaInvitadoController::class, 'destroy'])->name('listas-invitados.destroy');
+        Route::post('/invitado', [ListaInvitadoController::class, 'addGuest'])->name('listas-invitados.addGuest');
+        Route::delete('/invitado/{invitado}', [ListaInvitadoController::class, 'removeGuest'])->name('listas-invitados.removeGuest');
+    });
 
     Route::get('/invitados/creacion', [InvitadoController::class, 'createFront'])->name('invitados.creacion');
     Route::post('/invitados/creacion', [InvitadoController::class, 'storeFront'])->name('invitados.creacion.store');

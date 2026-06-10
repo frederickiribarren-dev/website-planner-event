@@ -41,13 +41,13 @@
                         @csrf
                         @method('PUT')
                         <div>
-                            <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-2">Nombre</label>
-                            <input type="text" name="nombre" value="{{ old('nombre', $lista_invitado->nombre) }}"
+                            <label for="edit_nombre" class="block text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-2">Nombre</label>
+                            <input type="text" id="edit_nombre" name="nombre" value="{{ old('nombre', $lista_invitado->nombre) }}"
                                    class="w-full bg-slate-50 border-none rounded-2xl px-5 py-3.5 focus:ring-2 focus:ring-cyan-600 text-sm font-medium text-slate-700" required>
                         </div>
                         <div>
-                            <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-2">Categoría</label>
-                            <select name="categoria" class="w-full bg-slate-50 border-none rounded-2xl px-5 py-3.5 focus:ring-2 focus:ring-cyan-600 text-sm font-medium text-slate-600">
+                            <label for="edit_categoria" class="block text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-2">Categoría</label>
+                            <select id="edit_categoria" name="categoria" class="w-full bg-slate-50 border-none rounded-2xl px-5 py-3.5 focus:ring-2 focus:ring-cyan-600 text-sm font-medium text-slate-600">
                                 <option value="">Sin categoría</option>
                                 @foreach(['Familia', 'Amigos', 'Trabajo', 'Compañeros', 'Otros'] as $cat)
                                     <option value="{{ $cat }}" {{ old('categoria', $lista_invitado->categoria) === $cat ? 'selected' : '' }}>{{ $cat }}</option>

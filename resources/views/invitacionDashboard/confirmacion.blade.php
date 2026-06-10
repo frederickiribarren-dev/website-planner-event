@@ -52,15 +52,15 @@
 
             {{-- Radio Buttons Asistencia --}}
             <div class="flex bg-slate-50 p-1 rounded-2xl mb-10 border border-slate-100">
-                <label class="flex-1 text-center cursor-pointer relative">
-                    <input type="radio" name="asistencia" value="yes" class="peer sr-only" checked>
+                <label for="asist_yes" class="flex-1 text-center cursor-pointer relative">
+                    <input type="radio" id="asist_yes" name="asistencia" value="yes" class="peer sr-only" checked>
                     <div class="py-3 px-4 rounded-xl text-sm font-bold text-slate-500 peer-checked:bg-white peer-checked:text-emerald-600 peer-checked:shadow-sm transition-all flex items-center justify-center gap-2">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                         Asistir
                     </div>
                 </label>
-                <label class="flex-1 text-center cursor-pointer relative">
-                    <input type="radio" name="asistencia" value="no" class="peer sr-only">
+                <label for="asist_no" class="flex-1 text-center cursor-pointer relative">
+                    <input type="radio" id="asist_no" name="asistencia" value="no" class="peer sr-only">
                     <div class="py-3 px-4 rounded-xl text-sm font-bold text-slate-500 peer-checked:bg-white peer-checked:text-red-500 peer-checked:shadow-sm transition-all flex items-center justify-center gap-2">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                         No asistir
@@ -70,7 +70,7 @@
 
             {{-- Contador Asistentes --}}
             <div class="mb-12">
-                <label class="block text-xs font-bold text-slate-500 mb-4">Número de asistentes (incluyéndote)</label>
+                <div class="block text-xs font-bold text-slate-500 mb-4">Número de asistentes (incluyéndote)</div>
                 <div class="flex items-center justify-between bg-slate-50 rounded-2xl p-2 border border-slate-100">
                     <button class="w-12 h-12 rounded-xl flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-white transition-all bg-transparent font-bold text-xl">
                         -
@@ -92,7 +92,7 @@
     {{-- Modal Proponer Regalo --}}
     <div id="modalProponer" class="fixed inset-0 z-50 overflow-y-auto" style="display: none;">
         <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-            <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" onclick="closeProponerModal()"></div>
+            <button type="button" tabindex="-1" class="fixed inset-0 w-full h-full bg-slate-900/60 backdrop-blur-sm transition-opacity cursor-default" onclick="closeProponerModal()" aria-label="Cerrar modal"></button>
             <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
             <div class="relative z-10 inline-block align-bottom bg-white rounded-[2rem] text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full border border-slate-100">
                 <div class="bg-white px-8 py-8">
@@ -107,12 +107,12 @@
 
                     <div class="space-y-5">
                         <div>
-                            <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Título del regalo</label>
-                            <input type="text" placeholder="Ej. Sesión fotográfica para el bebé" class="w-full px-5 py-4 rounded-2xl border-none bg-slate-50 focus:ring-2 focus:ring-rose-500 transition-all text-sm font-medium text-slate-800 shadow-inner">
+                            <label for="prop_title" class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Título del regalo</label>
+                            <input type="text" id="prop_title" placeholder="Ej. Sesión fotográfica para el bebé" class="w-full px-5 py-4 rounded-2xl border-none bg-slate-50 focus:ring-2 focus:ring-rose-500 transition-all text-sm font-medium text-slate-800 shadow-inner">
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Descripción o Enlace (Opcional)</label>
-                            <textarea rows="3" placeholder="Añade detalles o un link para que sepamos exactamente qué es..." class="w-full px-5 py-4 rounded-2xl border-none bg-slate-50 focus:ring-2 focus:ring-rose-500 transition-all text-sm font-medium text-slate-800 shadow-inner resize-none"></textarea>
+                            <label for="prop_desc" class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Descripción o Enlace (Opcional)</label>
+                            <textarea id="prop_desc" rows="3" placeholder="Añade detalles o un link para que sepamos exactamente qué es..." class="w-full px-5 py-4 rounded-2xl border-none bg-slate-50 focus:ring-2 focus:ring-rose-500 transition-all text-sm font-medium text-slate-800 shadow-inner resize-none"></textarea>
                         </div>
                     </div>
 

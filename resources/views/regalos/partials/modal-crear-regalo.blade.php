@@ -1,7 +1,7 @@
 <!-- MODAL CREAR REGALO PERSONALIZADO -->
 <div id="modalCreateGift" class="fixed inset-0 z-[60] overflow-y-auto hidden" style="">
     <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-        <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" onclick="closeCreateGiftModal()"></div>
+        <button type="button" tabindex="-1" class="fixed inset-0 w-full h-full bg-slate-900/60 backdrop-blur-sm transition-opacity cursor-default" onclick="closeCreateGiftModal()" aria-label="Cerrar modal"></button>
         <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
         <div class="relative z-10 inline-block align-bottom bg-white rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-xl sm:w-full">
             <div class="bg-white px-8 py-8">
@@ -18,25 +18,25 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <!-- Subida de Imagen -->
                     <div>
-                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Imagen del Regalo</label>
-                        <div onclick="document.getElementById('newGiftImgInput').click()" class="aspect-square rounded-3xl border-2 border-dashed border-slate-200 bg-slate-50 flex flex-col items-center justify-center cursor-pointer hover:border-cyan-500 hover:bg-cyan-50/30 transition-all overflow-hidden relative group">
+                        <label for="newGiftImgInput" class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Imagen del Regalo</label>
+                        <label for="newGiftImgInput" class="aspect-square rounded-3xl border-2 border-dashed border-slate-200 bg-slate-50 flex flex-col items-center justify-center cursor-pointer hover:border-cyan-500 hover:bg-cyan-50/30 transition-all overflow-hidden relative group">
                             <img id="newGiftPreview" src="" class="absolute inset-0 w-full h-full object-cover hidden">
                             <div id="newGiftPlaceholder" class="flex flex-col items-center gap-2 text-slate-400 group-hover:text-cyan-600 transition-colors">
                                 <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                                 <span class="text-xs font-bold">Subir Imagen</span>
                             </div>
                             <input type="file" id="newGiftImgInput" class="hidden" accept="image/*" onchange="previewNewGiftImg(this)">
-                        </div>
+                        </label>
                     </div>
 
                     <!-- Datos del Regalo -->
                     <div class="space-y-4">
                         <div>
-                            <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Nombre</label>
+                            <label for="n_name" class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Nombre</label>
                             <input type="text" id="n_name" placeholder="Ej. Monitor de Bebé" class="w-full px-4 py-3 rounded-xl border-slate-100 bg-slate-50 focus:border-cyan-500 focus:ring-cyan-500 transition-all text-sm font-bold" required>
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Categoría</label>
+                            <label for="n_cat" class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Categoría</label>
                             <select id="n_cat" class="w-full px-4 py-3 rounded-xl border-slate-100 bg-slate-50 focus:border-cyan-500 focus:ring-cyan-500 transition-all text-sm font-bold">
                                 <option value="Ropa">Ropa</option>
                                 <option value="Utensilios">Utensilios</option>
@@ -45,19 +45,19 @@
                             </select>
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Descripción</label>
+                            <label for="n_desc" class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Descripción</label>
                             <textarea id="n_desc" placeholder="Breve descripción..." rows="3" class="w-full px-4 py-3 rounded-xl border-slate-100 bg-slate-50 focus:border-cyan-500 focus:ring-cyan-500 transition-all text-sm font-medium resize-none"></textarea>
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Precio Estimado (opcional)</label>
+                            <label for="giftPrice" class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Precio Estimado (opcional)</label>
                             <input type="number" id="giftPrice" step="0.01" min="0" placeholder="$" class="w-full px-4 py-3 rounded-xl border-slate-100 bg-slate-50 focus:border-cyan-500 focus:ring-cyan-500 transition-all text-sm font-medium">
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Cantidad</label>
+                            <label for="giftQty" class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Cantidad</label>
                             <input type="number" id="giftQty" min="1" value="1" class="w-full px-4 py-3 rounded-xl border-slate-100 bg-slate-50 focus:border-cyan-500 focus:ring-cyan-500 transition-all text-sm font-medium">
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Links de Referencia</label>
+                            <label for="giftLink1" class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Links de Referencia</label>
                             <input type="url" id="giftLink1" placeholder="Link 1 (Amazon, MercadoLibre...)" class="w-full px-4 py-2 mb-2 rounded-xl border-slate-100 bg-slate-50 focus:border-cyan-500 focus:ring-cyan-500 transition-all text-sm font-medium">
                             <input type="url" id="giftLink2" placeholder="Link 2 (opcional)" class="w-full px-4 py-2 mb-2 rounded-xl border-slate-100 bg-slate-50 focus:border-cyan-500 focus:ring-cyan-500 transition-all text-sm font-medium">
                             <input type="url" id="giftLink3" placeholder="Link 3 (opcional)" class="w-full px-4 py-2 rounded-xl border-slate-100 bg-slate-50 focus:border-cyan-500 focus:ring-cyan-500 transition-all text-sm font-medium">
