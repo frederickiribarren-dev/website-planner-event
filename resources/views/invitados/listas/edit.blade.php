@@ -107,7 +107,7 @@
                                     <th class="px-8 py-5 text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] text-right">Acciones</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-slate-50">
+                            <tbody id="guest-edit-table-body" class="divide-y divide-slate-50">
                                 @forelse($lista_invitado->invitados as $invitado)
                                     <tr class="hover:bg-slate-50/30 transition-colors group">
                                         <td class="px-8 py-5 font-bold text-slate-700">{{ $invitado->nombre }}</td>
@@ -139,14 +139,14 @@
                                                   onsubmit="return confirm('¿Eliminar a {{ addslashes($invitado->nombre) }} de la lista?')">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="p-2 bg-red-50 text-red-400 hover:text-red-600 rounded-xl transition-all opacity-0 group-hover:opacity-100">
-                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                                <button type="submit" class="text-red-500 hover:text-red-700 text-xs font-bold transition-colors">
+                                                    ✕ Eliminar
                                                 </button>
                                             </form>
                                         </td>
                                     </tr>
                                 @empty
-                                    <tr>
+                                    <tr class="no-guests">
                                         <td colspan="4" class="px-8 py-10 text-center">
                                             <p class="text-slate-400 font-medium text-sm">Esta lista no tiene invitados aún.</p>
                                             <p class="text-slate-300 text-xs mt-1">Usa el formulario de la izquierda para añadir personas.</p>
@@ -156,8 +156,85 @@
                             </tbody>
                         </table>
                     </div>
+                    @if($lista_invitado->invitados->count() > 0)
+                        <div class="p-6 border-t border-slate-50 flex items-center justify-between bg-slate-50/10">
+                            <p class="text-xs text-slate-400 font-medium">Mostrando <span class="font-bold text-slate-600" id="pag-info">0-0</span> de <span class="font-bold text-slate-600" id="total-count">{{ $lista_invitado->invitados->count() }}</span></p>
+                            <div class="flex gap-2">
+                                <button type="button" id="btn-pag-prev" onclick="goToPrevPage()" class="px-4 py-2 rounded-lg bg-white border border-gray-200 text-gray-400 hover:text-cyan-600 transition-all text-xs font-bold">Ant.</button>
+                                <button type="button" id="btn-pag-next" onclick="goToNextPage()" class="px-4 py-2 rounded-lg bg-white border border-gray-200 text-gray-400 hover:text-cyan-600 transition-all text-xs font-bold">Sig.</button>
+                            </div>
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>
     </div>
+
+    <script>
+        let currentEditPage = 1;
+        const editItemsPerPage = 6;
+        const rows = Array.from(document.querySelectorAll('#guest-edit-table-body tr')).filter(row => !row.classList.contains('no-guests'));
+
+        function renderEditTable() {
+            if (rows.length === 0) return;
+
+            const totalPages = Math.ceil(rows.length / editItemsPerPage);
+            if (currentEditPage > totalPages) currentEditPage = totalPages;
+            if (currentEditPage < 1) currentEditPage = 1;
+
+            const startIndex = (currentEditPage - 1) * editItemsPerPage;
+            const endIndex = startIndex + editItemsPerPage;
+
+            rows.forEach((row, index) => {
+                if (index >= startIndex && index < endIndex) {
+                    row.classList.remove('hidden');
+                } else {
+                    row.classList.add('hidden');
+                }
+            });
+
+            document.getElementById('pag-info').innerText = `${startIndex + 1}-${Math.min(endIndex, rows.length)}`;
+            
+            const btnPrev = document.getElementById('btn-pag-prev');
+            const btnNext = document.getElementById('btn-pag-next');
+
+            btnPrev.disabled = currentEditPage <= 1;
+            btnNext.disabled = currentEditPage >= totalPages;
+
+            if (currentEditPage <= 1) {
+                btnPrev.classList.add('opacity-50', 'cursor-not-allowed');
+                btnPrev.classList.remove('hover:text-cyan-600');
+            } else {
+                btnPrev.classList.remove('opacity-50', 'cursor-not-allowed');
+                btnPrev.classList.add('hover:text-cyan-600');
+            }
+
+            if (currentEditPage >= totalPages) {
+                btnNext.classList.add('opacity-50', 'cursor-not-allowed');
+                btnNext.classList.remove('hover:text-cyan-600');
+            } else {
+                btnNext.classList.remove('opacity-50', 'cursor-not-allowed');
+                btnNext.classList.add('hover:text-cyan-600');
+            }
+        }
+
+        function goToPrevPage() {
+            if (currentEditPage > 1) {
+                currentEditPage--;
+                renderEditTable();
+            }
+        }
+
+        function goToNextPage() {
+            const totalPages = Math.ceil(rows.length / editItemsPerPage);
+            if (currentEditPage < totalPages) {
+                currentEditPage++;
+                renderEditTable();
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderEditTable();
+        });
+    </script>
 </x-app-layout>
