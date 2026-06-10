@@ -5,9 +5,19 @@
         let selectedImageUrl = 'https://img.freepik.com/vector-premium/lindo-baby-shower-invitacion-bebe-nino-elefante_23-2148443916.jpg';
         let availableLists = @json($listasInvitados ?? []);
         let availableGiftLists = @json($listasRegalos ?? []);
+        let allTemplates = @json($plantillas ?? []);
+        let customUploadedImage = null;
+        let currentImagePage = 1;
+        const imagesPerPage = 5; // 5 images + 1 upload button
 
         document.addEventListener('DOMContentLoaded', () => {
+            const editor = document.getElementById('email_message_editor');
+            const hiddenInput = document.getElementById('email_message');
+            if (editor && hiddenInput) {
+                editor.innerHTML = hiddenInput.value || '';
+            }
             renderGuests();
+            renderImageGrid();
             updatePreview();
             updateSummary();
             syncImageUrl();
@@ -61,14 +71,71 @@
             }
         }
 
-        function selectTemplate(url, index) {
+        function renderImageGrid() {
+            const container = document.getElementById('image-grid-container');
+            if (!container) return;
+            
+            container.innerHTML = '';
+
+            // Render upload button always first
+            container.innerHTML += `
+                <div class="relative group h-48">
+                    <label class="cursor-pointer h-full flex flex-col items-center justify-center gap-3 bg-cyan-50 border-2 border-dashed border-cyan-200 rounded-[2rem] hover:bg-cyan-100 transition-all">
+                        <div class="w-10 h-10 bg-cyan-600 text-white rounded-full flex items-center justify-center shadow-lg"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg></div>
+                        <span class="text-xs font-bold text-cyan-700">Subir propia</span>
+                        <input type="file" name="imagen_portada" id="custom_image" class="hidden" accept="image/*" onchange="previewSelectedImage(this)">
+                    </label>
+                </div>
+            `;
+
+            let displayTemplates = customUploadedImage ? [customUploadedImage, ...allTemplates] : allTemplates;
+            
+            const startIndex = (currentImagePage - 1) * imagesPerPage;
+            const paginatedTemplates = displayTemplates.slice(startIndex, startIndex + imagesPerPage);
+
+            paginatedTemplates.forEach((url, index) => {
+                const isSelected = selectedImageUrl === url;
+                
+                const cardHtml = `
+                    <div onclick="selectTemplate('${url}')" class="template-card relative h-48 rounded-[2rem] overflow-hidden cursor-pointer border-4 ${isSelected ? 'border-cyan-600 scale-[1.02]' : 'border-transparent hover:scale-[1.02]'} transition-all bg-gray-100">
+                        <img src="${url}" class="w-full h-full object-cover" alt="Plantilla">
+                        <div class="absolute inset-0 flex items-center justify-center bg-cyan-900/0 hover:bg-cyan-900/10 transition-all">
+                            <div class="check-icon ${isSelected ? '' : 'opacity-0'} w-8 h-8 bg-cyan-600 text-white rounded-full flex items-center justify-center shadow-lg">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += cardHtml;
+            });
+
+            // Update Pagination controls
+            const totalPages = Math.ceil(displayTemplates.length / imagesPerPage);
+            document.getElementById('image-pagination-info').innerText = `Página ${currentImagePage} de ${totalPages || 1}`;
+            document.getElementById('btn-prev-image').disabled = currentImagePage <= 1;
+            document.getElementById('btn-next-image').disabled = currentImagePage >= totalPages;
+        }
+
+        function prevImagePage() {
+            if (currentImagePage > 1) {
+                currentImagePage--;
+                renderImageGrid();
+            }
+        }
+
+        function nextImagePage() {
+            let displayTemplates = customUploadedImage ? [customUploadedImage, ...allTemplates] : allTemplates;
+            const totalPages = Math.ceil(displayTemplates.length / imagesPerPage);
+            if (currentImagePage < totalPages) {
+                currentImagePage++;
+                renderImageGrid();
+            }
+        }
+
+        function selectTemplate(url) {
             selectedImageUrl = url;
             syncImageUrl();
-            document.querySelectorAll('.template-card').forEach(c => c.classList.remove('border-cyan-600', 'scale-[1.02]'));
-            document.querySelectorAll('.check-icon').forEach(i => i.classList.add('opacity-0'));
-            const cards = document.querySelectorAll('.template-card');
-            cards[index].classList.add('border-cyan-600', 'scale-[1.02]');
-            cards[index].querySelector('.check-icon').classList.remove('opacity-0');
+            renderImageGrid(); // Re-render to update selected styling
             if(document.getElementById('step3_preview_img')) document.getElementById('step3_preview_img').src = url;
             if(document.getElementById('mobile_preview_img')) document.getElementById('mobile_preview_img').src = url;
         }
@@ -77,11 +144,14 @@
             if (input.files && input.files[0]) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    selectedImageUrl = e.target.result;
+                    customUploadedImage = e.target.result;
+                    selectedImageUrl = customUploadedImage;
+                    currentImagePage = 1; // Go to first page to see the uploaded image
                     syncImageUrl();
+                    renderImageGrid();
+                    
                     if(document.getElementById('step3_preview_img')) document.getElementById('step3_preview_img').src = selectedImageUrl;
                     if(document.getElementById('mobile_preview_img')) document.getElementById('mobile_preview_img').src = selectedImageUrl;
-                    document.querySelectorAll('.template-card').forEach(c => c.classList.remove('border-cyan-600', 'scale-[1.02]'));
                 }
                 reader.readAsDataURL(input.files[0]);
             }
@@ -302,7 +372,7 @@
 
             if (document.getElementById('final_preview_message')) {
                 const message = document.getElementById('email_message').value;
-                document.getElementById('final_preview_message').innerText = message || 'Estamos muy emocionados de compartir este momento tan especial contigo. Acompáñanos a celebrar la llegada de nuestro pequeño.';
+                document.getElementById('final_preview_message').innerHTML = message || 'Estamos muy emocionados de compartir este momento tan especial contigo. Acompáñanos a celebrar la llegada de nuestro pequeño.';
             }
 
             if (document.getElementById('final_preview_title')) {
@@ -347,8 +417,29 @@
             const subject = document.getElementById('email_subject').value;
             const message = document.getElementById('email_message').value;
             if(document.getElementById('preview_subject')) document.getElementById('preview_subject').innerText = subject || '¡Estás invitado!';
-            if(document.getElementById('preview_message')) document.getElementById('preview_message').innerText = message || 'Nos llena de alegría invitarte...';
+            if(document.getElementById('preview_message')) document.getElementById('preview_message').innerHTML = message || 'Nos llena de alegría invitarte...';
             updateSummary();
+        }
+
+        function formatText(command) {
+            document.execCommand(command, false, null);
+            const editor = document.getElementById('email_message_editor');
+            if (editor) {
+                editor.focus();
+                syncEditorContent();
+            }
+        }
+
+        function syncEditorContent() {
+            const editor = document.getElementById('email_message_editor');
+            const hiddenInput = document.getElementById('email_message');
+            if (editor && hiddenInput) {
+                if (editor.innerText.trim() === '') {
+                    editor.innerHTML = '';
+                }
+                hiddenInput.value = editor.innerHTML;
+                updatePreview();
+            }
         }
 
         document.getElementById('multiStepForm')?.addEventListener('submit', function(e) {

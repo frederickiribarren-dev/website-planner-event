@@ -5,30 +5,17 @@
                 </div>
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
                     <div class="lg:col-span-8">
-                        <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-                            <div class="relative group h-48">
-                                <label class="cursor-pointer h-full flex flex-col items-center justify-center gap-3 bg-cyan-50 border-2 border-dashed border-cyan-200 rounded-[2rem] hover:bg-cyan-100 transition-all">
-                                    <div class="w-10 h-10 bg-cyan-600 text-white rounded-full flex items-center justify-center shadow-lg"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg></div>
-                                    <span class="text-xs font-bold text-cyan-700">Subir propia</span>
-                                    <input type="file" id="custom_image" class="hidden" accept="image/*" onchange="previewSelectedImage(this, 'custom')">
-                                </label>
-                            </div>
-                            @php
-                                $templates = [
-                                    'https://img.freepik.com/vector-premium/lindo-baby-shower-invitacion-bebe-nino-elefante_23-2148443916.jpg',
-                                    'https://img.freepik.com/vector-gratis/plantilla-invitacion-baby-shower-dibujada-mano_23-2148943360.jpg',
-                                    'https://img.freepik.com/vector-gratis/plantilla-invitacion-baby-shower-acuarela_23-2148943361.jpg',
-                                    'https://img.freepik.com/vector-premium/invitacion-baby-shower-bebe-bebe-linda-cigüena_23-2148450123.jpg',
-                                    'https://img.freepik.com/vector-gratis/tarjeta-baby-shower-dibujada-mano_23-2148943362.jpg',
-                                    'https://img.freepik.com/vector-premium/invitacion-baby-shower-bebe-bebe-linda-oso_23-2148450124.jpg'
-                                ];
-                            @endphp
-                            @foreach($templates as $index => $url)
-                            <div onclick="selectTemplate('{{ $url }}', {{ $index }})" class="template-card relative h-48 rounded-[2rem] overflow-hidden cursor-pointer border-4 border-transparent hover:scale-[1.02] transition-all bg-gray-100">
-                                <img src="{{ $url }}" class="w-full h-full object-cover" alt="Plantilla {{ $index + 1 }}">
-                                <div class="absolute inset-0 flex items-center justify-center bg-cyan-900/0 hover:bg-cyan-900/10 transition-all"><div class="check-icon opacity-0 w-8 h-8 bg-cyan-600 text-white rounded-full flex items-center justify-center shadow-lg"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg></div></div>
-                            </div>
-                            @endforeach
+                        <div id="image-grid-container" class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                            <!-- Este contenedor se llenará con JavaScript -->
+                        </div>
+                        <div class="mt-6 flex justify-between items-center bg-gray-50/50 rounded-2xl p-4 border border-gray-100">
+                            <button type="button" id="btn-prev-image" onclick="prevImagePage()" class="px-5 py-2.5 rounded-xl bg-white border border-gray-200 text-gray-500 hover:text-cyan-700 hover:border-cyan-200 transition-all text-sm font-bold shadow-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg> Anterior
+                            </button>
+                            <span id="image-pagination-info" class="text-sm font-semibold text-gray-500">Página 1</span>
+                            <button type="button" id="btn-next-image" onclick="nextImagePage()" class="px-5 py-2.5 rounded-xl bg-white border border-gray-200 text-gray-500 hover:text-cyan-700 hover:border-cyan-200 transition-all text-sm font-bold shadow-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
+                                Siguiente <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                            </button>
                         </div>
                         <div class="mt-8 flex justify-between gap-4">
                             <button type="button" onclick="goToStep(2)" class="px-10 py-4 bg-white border border-gray-200 text-gray-500 font-bold rounded-full hover:bg-gray-50 transition-all shadow-sm">Volver</button>

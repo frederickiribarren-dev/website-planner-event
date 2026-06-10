@@ -37,7 +37,7 @@
     </x-slot>
 
     <div class="py-10">
-        <form id="multiStepForm" method="POST" action="{{ route('eventos.store') }}">
+        <form id="multiStepForm" method="POST" action="{{ route('eventos.store') }}" enctype="multipart/form-data">
             @csrf
             
             <!-- Campo oculto para guardar invitados en JSON -->

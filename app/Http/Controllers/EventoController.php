@@ -40,7 +40,13 @@ class EventoController extends Controller
         // Obtener listas de regalos disponibles del usuario
         $listasRegalos = ListaRegalo::where('user_id', $user->id)->with('regalos')->get();
         
-        return view('eventos.create', compact('listasInvitados', 'listasRegalos'));
+        // Obtener imágenes de diseño
+        $files = \Illuminate\Support\Facades\Storage::disk('public')->files('regalos/step3-diseno');
+        $plantillas = array_map(function($file) {
+            return asset('storage/' . $file);
+        }, $files);
+        
+        return view('eventos.create', compact('listasInvitados', 'listasRegalos', 'plantillas'));
     }
 
     /**
@@ -60,7 +66,8 @@ class EventoController extends Controller
             'mensaje_invitacion' => 'nullable|string',
             'color_tema' => 'nullable|string|size:7',
             'estado' => 'nullable|in:Borrador,Publicado,Finalizado,Cancelado',
-            'imagen_portada_url' => 'nullable|string|max:500',
+            'imagen_portada_url' => 'nullable|string',
+            'imagen_portada' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:5120',
             'lista_invitado_id' => 'nullable|integer|exists:listas_invitados,id',
             'lista_regalos_id' => 'nullable|integer|exists:listas_regalos,id',
             'invitados_json' => 'nullable|json',
@@ -103,6 +110,12 @@ class EventoController extends Controller
             if ($listaRegalo->user_id !== $user->id) {
                 return back()->withErrors(['lista_regalos_id' => 'No tienes permiso para usar esta lista de regalos.']);
             }
+        }
+
+        // Subir imagen personalizada si existe
+        if ($request->hasFile('imagen_portada')) {
+            $path = $request->file('imagen_portada')->store('eventos/portadas', 'public');
+            $validated['imagen_portada_url'] = asset('storage/' . $path);
         }
 
         // Crear el evento

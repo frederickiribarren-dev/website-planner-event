@@ -1,4 +1,10 @@
             <div id="step5" class="step-content hidden max-w-6xl mx-auto px-4 mt-6">
+                <style>
+                    #final_preview_message {
+                        word-break: break-word !important;
+                        overflow-wrap: break-word !important;
+                    }
+                </style>
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
                     
                     <!-- Columna Izquierda: Vista previa del correo -->
@@ -30,7 +36,7 @@
                                     <div class="p-6 text-center space-y-6">
                                         <span class="inline-block px-4 py-1.5 bg-[#EEF5F5] text-[#427A79] rounded-full text-[10px] font-bold uppercase tracking-widest">Estás Invitado</span>
                                         <h4 class="text-2xl font-bold text-gray-800" id="final_preview_title">Baby Shower de <br><span class="italic text-[#427A79] font-medium">Leo</span></h4>
-                                        <p class="text-xs text-gray-500 leading-relaxed font-medium" id="final_preview_message">Estamos muy emocionados de compartir este momento tan especial contigo. Acompáñanos a celebrar la llegada de nuestro pequeño.</p>
+                                        <p class="text-xs text-gray-500 leading-relaxed font-medium break-words" id="final_preview_message">Estamos muy emocionados de compartir este momento tan especial contigo. Acompáñanos a celebrar la llegada de nuestro pequeño.</p>
                                         
                                         <div class="bg-[#F8F9FA] rounded-2xl p-4 text-left space-y-4 border border-gray-100">
                                             <div class="flex items-start gap-3">
