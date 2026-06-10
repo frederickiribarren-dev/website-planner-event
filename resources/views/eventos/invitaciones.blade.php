@@ -67,9 +67,15 @@
                                     Ver Invitación
                                 </a>
                                 
-                                <button type="button" onclick="openCancelModal('{{ route('eventos.update', $evento->id) }}')" class="w-full flex items-center justify-center py-4 bg-white border border-red-100 text-red-500 text-[10px] font-black uppercase tracking-widest rounded-2xl hover:bg-red-50 transition-all">
-                                    Cancelar Evento
-                                </button>
+                                @if($evento->estado === 'Cancelado')
+                                    <button type="button" onclick="openDeleteModal('{{ route('eventos.destroy', $evento->id) }}')" class="w-full flex items-center justify-center py-4 bg-red-600 text-white text-[10px] font-black uppercase tracking-widest rounded-2xl hover:bg-red-700 transition-all shadow-lg shadow-red-950/10">
+                                        Eliminar Evento
+                                    </button>
+                                @else
+                                    <button type="button" onclick="openCancelModal('{{ route('eventos.cancel', $evento->id) }}')" class="w-full flex items-center justify-center py-4 bg-white border border-red-100 text-red-500 text-[10px] font-black uppercase tracking-widest rounded-2xl hover:bg-red-50 transition-all">
+                                        Cancelar Evento
+                                    </button>
+                                @endif
                             </div>
                         </div>
                     @endforeach
@@ -79,4 +85,5 @@
     </div>
 
     @include('eventos.partials.modal-cancelar')
+    @include('eventos.partials.modal-eliminar')
 </x-app-layout>

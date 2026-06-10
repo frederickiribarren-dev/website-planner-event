@@ -166,7 +166,7 @@ class EventoController extends Controller
      */
     public function show(string $id)
     {
-        $evento = Auth::user()->eventos()->with(['invitados', 'listasInvitados', 'regalos'])->findOrFail($id);
+        $evento = Auth::user()->eventos()->with(['invitados', 'listasInvitados', 'regalos', 'listaRegalo.regalos'])->findOrFail($id);
         return view('eventos.show', compact('evento'));
     }
 
@@ -175,7 +175,26 @@ class EventoController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $user = Auth::user();
+        $evento = $user->eventos()->with('invitados')->findOrFail($id);
+
+        // Obtener listas de invitados disponibles del usuario
+        $listasInvitados = ListaInvitado::where(function($q) use ($user) {
+            $q->whereHas('evento', function ($query) use ($user) {
+                $query->where('usuario_id', $user->id);
+            })->orWhereNull('evento_id');
+        })->with('invitados')->get();
+        
+        // Obtener listas de regalos disponibles del usuario
+        $listasRegalos = ListaRegalo::where('user_id', $user->id)->with('regalos')->get();
+        
+        // Obtener imágenes de diseño
+        $files = \Illuminate\Support\Facades\Storage::disk('public')->files('regalos/step3-diseno');
+        $plantillas = array_map(function($file) {
+            return asset('storage/' . $file);
+        }, $files);
+
+        return view('eventos.edit', compact('evento', 'listasInvitados', 'listasRegalos', 'plantillas'));
     }
 
     /**
@@ -183,12 +202,108 @@ class EventoController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $user = Auth::user();
+        $evento = $user->eventos()->findOrFail($id);
+
+        $validated = $request->validate([
+            'slug' => 'nullable|string|max:100|unique:eventos,slug,' . $evento->id,
+            'nombre_bebe' => 'required|string|max:100',
+            'genero_bebe' => 'required|in:Niño,Niña,Sorpresa,Múltiple',
+            'fecha_evento' => 'required|date',
+            'ubicacion_nombre' => 'nullable|string|max:255',
+            'lat' => 'nullable|numeric',
+            'lng' => 'nullable|numeric',
+            'mensaje_invitacion' => 'nullable|string',
+            'color_tema' => 'nullable|string|size:7',
+            'estado' => 'nullable|in:Borrador,Publicado,Finalizado,Cancelado',
+            'imagen_portada_url' => 'nullable|string',
+            'imagen_portada' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:5120',
+            'lista_invitado_id' => 'nullable|integer|exists:listas_invitados,id',
+            'lista_regalos_id' => 'nullable|integer|exists:listas_regalos,id',
+            'invitados_json' => 'nullable|json',
+        ]);
+
+        if ($validated['lista_invitado_id'] ?? null) {
+            $listaInvitado = ListaInvitado::findOrFail($validated['lista_invitado_id']);
+            if ($listaInvitado->evento_id !== null && $listaInvitado->evento->usuario_id !== $user->id) {
+                return back()->withErrors(['lista_invitado_id' => 'No tienes permiso para usar esta lista de invitados.']);
+            }
+        }
+
+        if ($validated['lista_regalos_id'] ?? null) {
+            $listaRegalo = ListaRegalo::findOrFail($validated['lista_regalos_id']);
+            if ($listaRegalo->user_id !== $user->id) {
+                return back()->withErrors(['lista_regalos_id' => 'No tienes permiso para usar esta lista de regalos.']);
+            }
+        }
+
+        if ($request->hasFile('imagen_portada')) {
+            $path = $request->file('imagen_portada')->store('eventos/portadas', 'public');
+            $validated['imagen_portada_url'] = asset('storage/' . $path);
+        }
+
+        $evento->update($validated);
+
+        if ($invitadosJson = $request->input('invitados_json')) {
+            try {
+                $invitadosData = json_decode($invitadosJson, true);
+                
+                $listaInvitadoId = $evento->lista_invitado_id;
+                if (!$listaInvitadoId && count($invitadosData) > 0) {
+                    $nuevaLista = ListaInvitado::create([
+                        'evento_id' => $evento->id,
+                        'nombre' => 'Lista de ' . $evento->nombre_bebe,
+                        'categoria' => 'General',
+                    ]);
+                    $listaInvitadoId = $nuevaLista->id;
+                    $evento->update(['lista_invitado_id' => $listaInvitadoId]);
+                }
+
+                if ($listaInvitadoId) {
+                    // Obtener los invitados actuales para preservarlos o actualizarlos
+                    $currentInvitados = Invitado::where('evento_id', $evento->id)->get()->keyBy('email');
+                    
+                    // Borrar los actuales que pertenecen a este evento específicamente (los reemplazaremos o actualizaremos)
+                    // Una forma más limpia es limpiar y recrear, o actualizar. Haremos recrear para simplificar, 
+                    // preservando estados si es necesario, pero si el usuario editó la lista, la json es la fuente de la verdad.
+                    Invitado::where('evento_id', $evento->id)->delete();
+                    
+                    foreach ($invitadosData as $inv) {
+                        $email = $inv['email'] ?? null;
+                        $estado_invitacion = 'Pendiente';
+                        $estado_asistencia = 'Sin responder';
+                        
+                        // Si ya existía este email en el evento, preservar sus estados
+                        if ($email && $currentInvitados->has($email)) {
+                            $estado_invitacion = $currentInvitados[$email]->estado_invitacion;
+                            $estado_asistencia = $currentInvitados[$email]->estado_asistencia;
+                        }
+
+                        Invitado::create([
+                            'evento_id' => $evento->id,
+                            'lista_invitado_id' => $listaInvitadoId,
+                            'nombre' => $inv['name'] ?? $inv['nombre'] ?? '',
+                            'email' => $email,
+                            'telefono' => $inv['phone'] ?? $inv['telefono'] ?? null,
+                            'estado_invitacion' => $estado_invitacion,
+                            'estado_asistencia' => $estado_asistencia,
+                        ]);
+                    }
+                }
+            } catch (\Exception $e) {
+                \Log::error('Error al actualizar invitados: ' . $e->getMessage());
+            }
+        }
+
+        return redirect()->route('eventos.index')->with('status', 'Evento actualizado exitosamente.');
+    }
+
+    public function cancel(Request $request, string $id)
+    {
         $evento = Auth::user()->eventos()->findOrFail($id);
         $evento->update(['estado' => 'Cancelado']);
 
         return redirect()->route('eventos.index')->with('status', 'Evento cancelado exitosamente.');
-
     }
 
     /**

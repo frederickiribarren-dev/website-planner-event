@@ -30,7 +30,7 @@
                                     <button type="button" onclick="formatText('underline')" class="text-gray-400 hover:text-gray-600 underline w-8 h-8 rounded-lg hover:bg-gray-200/60 transition-colors flex items-center justify-center text-sm">U</button>
                                 </div>
                                 <div id="email_message_editor" contenteditable="true" oninput="syncEditorContent()" class="w-full bg-transparent border-none px-6 py-4 focus:outline-none transition text-gray-900 min-h-[180px] overflow-y-auto" placeholder="Escribe aquí tu mensaje cálido..."></div>
-                                <input type="hidden" id="email_message" name="mensaje_invitacion">
+                                <input type="hidden" id="email_message" name="mensaje_invitacion" value="{{ old('mensaje_invitacion', $evento->mensaje_invitacion ?? '') }}">
                             </div>
                         </div>
                     </div>

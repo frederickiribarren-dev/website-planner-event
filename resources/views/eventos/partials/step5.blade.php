@@ -121,9 +121,10 @@
                             
                             <div class="space-y-4">
                                 <select id="lista_regalos_id" name="lista_regalos_id" onchange="updateSummary()" class="w-full bg-gray-50 border-none rounded-2xl px-6 py-4 focus:ring-2 focus:ring-[#427A79] transition text-sm font-bold text-gray-700">
+                                    @php $regaloId = old('lista_regalos_id', $evento->lista_regalos_id ?? ''); @endphp
                                     <option value="">Seleccionar lista de regalos guardada...</option>
                                     @forelse($listasRegalos as $lista)
-                                        <option value="{{ $lista->id }}">
+                                        <option value="{{ $lista->id }}" {{ $regaloId == $lista->id ? 'selected' : '' }}>
                                             {{ $lista->nombre }} ({{ $lista->regalos->count() }} regalos)
                                         </option>
                                     @empty
@@ -138,14 +139,17 @@
 
                         <!-- Botones de Acción (Lado a lado) -->
                         <div class="flex flex-col sm:flex-row gap-4 pt-4">
-                            <button type="button" onclick="goToStep(4)" class="w-full sm:w-1/2 bg-white border border-gray-200 text-gray-500 font-bold rounded-full hover:bg-gray-50 transition-all shadow-sm transition-all flex justify-center items-center gap-2">
+                            <button type="button" onclick="goToStep(4)" class="w-full sm:w-1/3 bg-white border border-gray-200 text-gray-500 font-bold rounded-full hover:bg-gray-50 shadow-sm transition-all flex justify-center items-center gap-2">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
                                 Volver a Editar
                             </button>
-                            <button type="submit" class="w-full sm:w-1/2 bg-cyan-800 hover:bg-cyan-900 text-white font-bold py-4 px-8 rounded-full shadow-lg transition-all transform hover:scale-[1.02] active:scale-95 flex justify-center items-center gap-2">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
-                                Confirmar y Enviar
+                            <button type="button" onclick="document.getElementById('estado_input').value='Borrador'; document.getElementById('multiStepForm').submit();" class="w-full sm:w-1/3 bg-gray-100 border border-gray-200 text-gray-700 font-bold py-4 px-4 rounded-full shadow-sm hover:bg-gray-200 transition-all transform hover:scale-[1.02] active:scale-95 flex justify-center items-center gap-2">
+                                Guardar Borrador
                             </button>
+                             <button type="button" onclick="openSendModal()" class="w-full sm:w-1/3 bg-cyan-800 hover:bg-cyan-900 text-white font-bold py-4 px-4 rounded-full shadow-lg transition-all transform hover:scale-[1.02] active:scale-95 flex justify-center items-center gap-2">
+                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+                                 Enviar
+                             </button>
                         </div>
                     </div>
                 </div>

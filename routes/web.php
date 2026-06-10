@@ -27,6 +27,7 @@ Route::middleware('auth')->group(function () {
 
 Route::middleware('auth', 'verified')->group(function () {
     Route::resource('eventos', EventoController::class);
+    Route::patch('eventos/{evento}/cancel', [EventoController::class, 'cancel'])->name('eventos.cancel');
 
     Route::prefix('eventos/{evento}')->group(function () {
         Route::get('invitados', [InvitadoController::class, 'index'])->name('eventos.invitados.index');

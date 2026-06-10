@@ -3,7 +3,7 @@
     <x-slot name="header">
         <div class="flex items-center gap-4">
             <h2 class="font-bold text-2xl text-gray-800 leading-tight">
-                {{ __('Crear Nuevo Evento') }}
+                {{ __('Editar Evento') }}
             </h2>
         </div>
         <div class="flex justify-center mt-6 mb-2">
@@ -37,13 +37,14 @@
     </x-slot>
 
     <div class="py-10">
-        <form id="multiStepForm" method="POST" action="{{ route('eventos.store') }}" enctype="multipart/form-data">
+        <form id="multiStepForm" method="POST" action="{{ route('eventos.update', $evento->id) }}" enctype="multipart/form-data">
             @csrf
+            @method('PUT')
             
             <!-- Campo oculto para guardar invitados en JSON -->
             <input type="hidden" id="invitados_json" name="invitados_json" value="[]">
-            <input type="hidden" id="imagen_portada_url" name="imagen_portada_url" value="https://img.freepik.com/vector-premium/lindo-baby-shower-invitacion-bebe-nino-elefante_23-2148443916.jpg">
-            <input type="hidden" id="estado_input" name="estado" value="Borrador">
+            <input type="hidden" id="imagen_portada_url" name="imagen_portada_url" value="{{ old('imagen_portada_url', $evento->imagen_portada_url ?? 'https://img.freepik.com/vector-premium/lindo-baby-shower-invitacion-bebe-nino-elefante_23-2148443916.jpg') }}">
+            <input type="hidden" id="estado_input" name="estado" value="{{ old('estado', $evento->estado ?? 'Borrador') }}">
             
             @include('eventos.partials.step1')
             @include('eventos.partials.step2')

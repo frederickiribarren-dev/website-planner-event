@@ -1,8 +1,21 @@
     <script>
-        let guests = [];
+        @php
+            $invitadosData = [];
+            if (isset($evento) && $evento->invitados) {
+                $invitadosData = $evento->invitados->map(function($inv) {
+                    return [
+                        'id' => $inv->id,
+                        'name' => $inv->nombre,
+                        'email' => $inv->email,
+                        'phone' => $inv->telefono
+                    ];
+                })->values()->all();
+            }
+        @endphp
+        let guests = @json($invitadosData);
         let currentPage = 1;
         const itemsPerPage = 5;
-        let selectedImageUrl = 'https://img.freepik.com/vector-premium/lindo-baby-shower-invitacion-bebe-nino-elefante_23-2148443916.jpg';
+        let selectedImageUrl = '{{ isset($evento) && $evento->imagen_portada_url ? $evento->imagen_portada_url : "https://img.freepik.com/vector-premium/lindo-baby-shower-invitacion-bebe-nino-elefante_23-2148443916.jpg" }}';
         let availableLists = @json($listasInvitados ?? []);
         let availableGiftLists = @json($listasRegalos ?? []);
         let allTemplates = @json($plantillas ?? []);
@@ -16,6 +29,10 @@
             if (editor && hiddenInput) {
                 editor.innerHTML = hiddenInput.value || '';
             }
+            @if(isset($evento))
+            // Actualizar invitados JSON con datos cargados
+            serializeGuests();
+            @endif
             renderGuests();
             renderImageGrid();
             updatePreview();
