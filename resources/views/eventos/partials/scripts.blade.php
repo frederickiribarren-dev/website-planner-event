@@ -87,25 +87,99 @@
             }
         }
 
+        function showToast(message, type = 'warning') {
+            let container = document.getElementById('toast-container');
+            if (!container) {
+                container = document.createElement('div');
+                container.id = 'toast-container';
+                container.className = 'fixed top-5 right-5 z-[9999] flex flex-col gap-3 pointer-events-none max-w-sm w-full px-4 sm:px-0';
+                document.body.appendChild(container);
+            }
+
+            const toast = document.createElement('div');
+            toast.className = 'pointer-events-auto bg-white/95 backdrop-blur-md rounded-2xl p-4 shadow-xl border border-gray-100 flex items-center justify-between gap-4 transition-all duration-300 transform translate-x-12 opacity-0';
+            
+            let borderClass = 'border-l-4 border-l-cyan-500';
+            let iconBg = 'bg-cyan-50 text-cyan-600';
+            let iconSvg = `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>`;
+
+            if (type === 'warning') {
+                borderClass = 'border-l-4 border-l-amber-500';
+                iconBg = 'bg-amber-50 text-amber-600';
+                iconSvg = `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>`;
+            } else if (type === 'error') {
+                borderClass = 'border-l-4 border-l-rose-500';
+                iconBg = 'bg-rose-50 text-rose-600';
+                iconSvg = `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>`;
+            } else if (type === 'success') {
+                borderClass = 'border-l-4 border-l-emerald-500';
+                iconBg = 'bg-emerald-50 text-emerald-600';
+                iconSvg = `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>`;
+            }
+
+            toast.className += ' ' + borderClass;
+
+            toast.innerHTML = `
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-xl ${iconBg} flex items-center justify-center shrink-0">
+                        ${iconSvg}
+                    </div>
+                    <div class="text-sm font-semibold text-gray-800">${escapeHtml(message)}</div>
+                </div>
+                <button type="button" class="close-toast-btn text-gray-400 hover:text-gray-600 transition-colors focus:outline-none shrink-0">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            `;
+
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.classList.remove('translate-x-12', 'opacity-0');
+            }, 10);
+
+            const closeBtn = toast.querySelector('.close-toast-btn');
+            const dismiss = () => {
+                toast.classList.add('translate-x-12', 'opacity-0');
+                toast.addEventListener('transitionend', () => {
+                    toast.remove();
+                });
+            };
+            
+            if (closeBtn) {
+                closeBtn.addEventListener('click', dismiss);
+            }
+
+            setTimeout(dismiss, 4000);
+        }
+
+        let loadedLists = [];
+
         function loadExistingList(listaId) {
-            if (!listaId) {
-                guests = [];
-                renderGuests();
-                updateSummary();
+            if (!listaId) return;
+
+            if (loadedLists.includes(listaId)) {
+                showToast('Esta lista ya ha sido agregada.', 'warning');
+                document.getElementById('lista_invitado_id').value = '';
                 return;
             }
 
             const lista = availableLists.find(l => l.id == listaId);
             if (lista && lista.invitados) {
-                guests = lista.invitados.map(inv => ({
-                    id: inv.id,
+                const newGuests = lista.invitados.map(inv => ({
+                    id: Date.now() + Math.floor(Math.random() * 10000),
                     name: inv.nombre,
                     email: inv.email || '',
                     phone: inv.telefono || ''
                 }));
+                
+                guests = guests.concat(newGuests);
+                loadedLists.push(listaId);
+                
                 currentPage = 1;
                 renderGuests();
                 updateSummary();
+                
+                document.getElementById('lista_invitado_id').value = '';
             }
         }
 
@@ -115,12 +189,12 @@
             const phone = document.getElementById('guest_phone').value.trim();
 
             if (!name) {
-                alert('El nombre es obligatorio');
+                showToast('El nombre del invitado es obligatorio.', 'warning');
                 return;
             }
 
             if (email && !validateEmail(email)) {
-                alert('El email no es válido');
+                showToast('El correo electrónico ingresado no es válido.', 'warning');
                 return;
             }
 

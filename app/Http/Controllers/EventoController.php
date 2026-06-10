@@ -30,9 +30,11 @@ class EventoController extends Controller
     {
         $user = Auth::user();
         
-        // Obtener listas de invitados disponibles del usuario
-        $listasInvitados = ListaInvitado::whereHas('evento', function ($query) use ($user) {
-            $query->where('usuario_id', $user->id);
+        // Obtener listas de invitados disponibles del usuario (asociadas a sus eventos o listas independientes)
+        $listasInvitados = ListaInvitado::where(function($q) use ($user) {
+            $q->whereHas('evento', function ($query) use ($user) {
+                $query->where('usuario_id', $user->id);
+            })->orWhereNull('evento_id');
         })->with('invitados')->get();
         
         // Obtener listas de regalos disponibles del usuario
@@ -87,10 +89,10 @@ class EventoController extends Controller
 
         $user = $request->user();
         
-        // Validar que la lista de invitados pertenece al usuario
+        // Validar que la lista de invitados pertenece al usuario (o es independiente)
         if ($validated['lista_invitado_id'] ?? null) {
             $listaInvitado = ListaInvitado::findOrFail($validated['lista_invitado_id']);
-            if ($listaInvitado->evento->usuario_id !== $user->id) {
+            if ($listaInvitado->evento_id !== null && $listaInvitado->evento->usuario_id !== $user->id) {
                 return back()->withErrors(['lista_invitado_id' => 'No tienes permiso para usar esta lista de invitados.']);
             }
         }
@@ -111,16 +113,32 @@ class EventoController extends Controller
             try {
                 $invitados = json_decode($invitadosJson, true);
                 
-                foreach ($invitados as $invitadoData) {
-                    Invitado::create([
-                        'evento_id' => $evento->id,
-                        'lista_invitado_id' => $evento->lista_invitado_id,
-                        'nombre' => $invitadoData['name'] ?? $invitadoData['nombre'] ?? '',
-                        'email' => $invitadoData['email'] ?? null,
-                        'telefono' => $invitadoData['phone'] ?? $invitadoData['telefono'] ?? null,
-                        'estado_invitacion' => 'Pendiente',
-                        'estado_asistencia' => 'Sin responder',
-                    ]);
+                if (count($invitados) > 0) {
+                    $listaInvitadoId = $evento->lista_invitado_id;
+
+                    // Si no se seleccionó ninguna lista de invitados y hay invitados manuales,
+                    // crear una lista de invitados por defecto con el nombre del evento
+                    if (!$listaInvitadoId) {
+                        $nuevaLista = ListaInvitado::create([
+                            'evento_id' => $evento->id,
+                            'nombre' => 'Lista de ' . $evento->nombre_bebe,
+                            'categoria' => 'General',
+                        ]);
+                        $listaInvitadoId = $nuevaLista->id;
+                        $evento->update(['lista_invitado_id' => $listaInvitadoId]);
+                    }
+
+                    foreach ($invitados as $invitadoData) {
+                        Invitado::create([
+                            'evento_id' => $evento->id,
+                            'lista_invitado_id' => $listaInvitadoId,
+                            'nombre' => $invitadoData['name'] ?? $invitadoData['nombre'] ?? '',
+                            'email' => $invitadoData['email'] ?? null,
+                            'telefono' => $invitadoData['phone'] ?? $invitadoData['telefono'] ?? null,
+                            'estado_invitacion' => 'Pendiente',
+                            'estado_asistencia' => 'Sin responder',
+                        ]);
+                    }
                 }
             } catch (\Exception $e) {
                 \Log::error('Error al procesar invitados: ' . $e->getMessage());
