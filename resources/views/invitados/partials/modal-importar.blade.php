@@ -203,7 +203,7 @@
         document.getElementById('detalleListaNombre').innerText = listaNombre;
         document.getElementById('detalleListaCount').innerText  = totalInvitados;
         var link = document.getElementById('detalleListaEditarLink');
-        if (link) link.href = '/listas-invitados/' + listaId + '/editar';
+        if (link) link.href = '/listas-invitados/' + listaId;
         document.getElementById('modalVerListaDetalle').style.display = 'block';
     };
 
