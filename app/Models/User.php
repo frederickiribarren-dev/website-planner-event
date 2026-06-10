@@ -61,9 +61,12 @@ class User extends Authenticatable
     ];
 
     /**
-     * Get the attributes that should be cast.
+     * Define las conversiones de tipo (casting) de los atributos del modelo.
      *
-     * @return array<string, string>
+     * Asigna tipos específicos a columnas como 'email_verified_at' (fecha y hora) y
+     * 'password_hash' (hash seguro de contraseña) para que Eloquent los trate adecuadamente.
+     *
+     * @return array<string, string> Reglas de casting del modelo.
      */
     protected function casts(): array
     {
@@ -74,9 +77,12 @@ class User extends Authenticatable
     }
 
     /**
-     * Obtener el nombre de la columna de contraseña para la autenticación.
+     * Obtiene el nombre del atributo que contiene la contraseña hash para la autenticación.
      *
-     * @return string
+     * Devuelve el nombre de la columna personalizada 'password_hash' en lugar del valor
+     * predeterminado de Laravel ('password').
+     *
+     * @return string Nombre del atributo de la contraseña.
      */
     public function getAuthPasswordName()
     {
@@ -84,7 +90,12 @@ class User extends Authenticatable
     }
 
     /**
-     * Alias para el atributo 'nombre' para compatibilidad con Breeze.
+     * Define un descriptor de acceso (Accessor) y mutador (Mutator) para el atributo 'name'.
+     *
+     * Facilita la compatibilidad con Laravel Breeze permitiendo interactuar con el atributo 'name'
+     * mientras que en la base de datos se lee y escribe sobre la columna real 'nombre'.
+     *
+     * @return \Illuminate\Database\Eloquent\Casts\Attribute Descriptor de atributo para 'name'.
      */
     protected function name(): Attribute
     {
@@ -97,7 +108,12 @@ class User extends Authenticatable
     }
 
     /**
-     * Alias para el atributo 'password_hash' para compatibilidad con Breeze.
+     * Define un mutador (Mutator) para el atributo 'password'.
+     *
+     * Mapea el valor asignado a 'password' directamente a la columna real 'password_hash'
+     * para asegurar la compatibilidad con los sistemas nativos de autenticación de Laravel.
+     *
+     * @return \Illuminate\Database\Eloquent\Casts\Attribute Descriptor de atributo para 'password'.
      */
     protected function password(): Attribute
     {
@@ -108,15 +124,29 @@ class User extends Authenticatable
         );
     }
 
+    /**
+     * Define la relación "uno a muchos" (HasMany) entre el usuario y sus eventos.
+     *
+     * Establece que un usuario puede tener uno o más eventos creados asociados a través
+     * de la clave foránea 'usuario_id'.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany Objeto de la relación de eventos.
+     */
     public function eventos()
     {
         return $this->hasMany(Evento::class, 'usuario_id');
     }
 
+    /**
+     * Define la relación "uno a muchos" (HasMany) entre el usuario y sus listas de regalos.
+     *
+     * Establece que un usuario puede tener múltiples listas de regalos creadas bajo su
+     * autoría asociadas mediante la clave foránea 'user_id'.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany Objeto de la relación de listas de regalos.
+     */
     public function listasRegalos()
     {
         return $this->hasMany(ListaRegalo::class, 'user_id');
     }
-
-    
 }

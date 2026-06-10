@@ -40,6 +40,9 @@
             syncImageUrl();
         });
 
+        /**
+         * Navega entre los diferentes pasos del formulario, actualizando la interfaz y validando datos si es necesario.
+         */
         function goToStep(step) {
             if (step === 5) {
                 serializeGuests();
@@ -81,6 +84,9 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
+        /**
+         * Sincroniza la URL de la imagen seleccionada con el campo oculto del formulario.
+         */
         function syncImageUrl() {
             const hiddenInput = document.getElementById('imagen_portada_url');
             if (hiddenInput) {
@@ -88,13 +94,15 @@
             }
         }
 
+        /**
+         * Renderiza la cuadrícula de imágenes disponibles para la portada, incluyendo la paginación.
+         */
         function renderImageGrid() {
             const container = document.getElementById('image-grid-container');
             if (!container) return;
             
             container.innerHTML = '';
 
-            // Render upload button always first
             container.innerHTML += `
                 <div class="relative group h-48">
                     <label class="cursor-pointer h-full flex flex-col items-center justify-center gap-3 bg-cyan-50 border-2 border-dashed border-cyan-200 rounded-[2rem] hover:bg-cyan-100 transition-all">
@@ -126,13 +134,15 @@
                 container.innerHTML += cardHtml;
             });
 
-            // Update Pagination controls
             const totalPages = Math.ceil(displayTemplates.length / imagesPerPage);
             document.getElementById('image-pagination-info').innerText = `Página ${currentImagePage} de ${totalPages || 1}`;
             document.getElementById('btn-prev-image').disabled = currentImagePage <= 1;
             document.getElementById('btn-next-image').disabled = currentImagePage >= totalPages;
         }
 
+        /**
+         * Retrocede a la página anterior de imágenes disponibles.
+         */
         function prevImagePage() {
             if (currentImagePage > 1) {
                 currentImagePage--;
@@ -140,6 +150,9 @@
             }
         }
 
+        /**
+         * Avanza a la siguiente página de imágenes disponibles.
+         */
         function nextImagePage() {
             let displayTemplates = customUploadedImage ? [customUploadedImage, ...allTemplates] : allTemplates;
             const totalPages = Math.ceil(displayTemplates.length / imagesPerPage);
@@ -149,21 +162,27 @@
             }
         }
 
+        /**
+         * Selecciona una plantilla de imagen específica y actualiza las previsualizaciones.
+         */
         function selectTemplate(url) {
             selectedImageUrl = url;
             syncImageUrl();
-            renderImageGrid(); // Re-render to update selected styling
+            renderImageGrid();
             if(document.getElementById('step3_preview_img')) document.getElementById('step3_preview_img').src = url;
             if(document.getElementById('mobile_preview_img')) document.getElementById('mobile_preview_img').src = url;
         }
 
+        /**
+         * Previsualiza y establece como seleccionada una imagen subida por el usuario.
+         */
         function previewSelectedImage(input) {
             if (input.files && input.files[0]) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     customUploadedImage = e.target.result;
                     selectedImageUrl = customUploadedImage;
-                    currentImagePage = 1; // Go to first page to see the uploaded image
+                    currentImagePage = 1;
                     syncImageUrl();
                     renderImageGrid();
                     
@@ -174,6 +193,9 @@
             }
         }
 
+        /**
+         * Muestra una notificación emergente tipo toast en la pantalla.
+         */
         function showToast(message, type = 'warning') {
             let container = document.getElementById('toast-container');
             if (!container) {
@@ -241,6 +263,9 @@
 
         let loadedLists = [];
 
+        /**
+         * Carga una lista de invitados existente y agrega sus miembros a la lista actual.
+         */
         function loadExistingList(listaId) {
             if (!listaId) return;
 
@@ -270,6 +295,9 @@
             }
         }
 
+        /**
+         * Añade un nuevo invitado a la lista de forma manual validando sus campos.
+         */
         function addGuest() {
             const name = document.getElementById('guest_name').value.trim();
             const email = document.getElementById('guest_email').value.trim();
@@ -294,11 +322,17 @@
             updateSummary();
         }
 
+        /**
+         * Valida que el formato del correo electrónico ingresado sea correcto.
+         */
         function validateEmail(email) {
             const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             return re.test(email);
         }
 
+        /**
+         * Elimina un invitado específico de la lista utilizando su identificador.
+         */
         function removeGuest(id) {
             guests = guests.filter(g => g.id !== id);
             currentPage = Math.max(1, Math.ceil((guests.length) / itemsPerPage));
@@ -306,6 +340,9 @@
             updateSummary();
         }
 
+        /**
+         * Renderiza la tabla de invitados de acuerdo a la página actual y actualiza la paginación.
+         */
         function renderGuests() {
             const body = document.getElementById('guest-table-body');
             body.innerHTML = '';
@@ -343,6 +380,9 @@
             document.getElementById('btn-next').disabled = currentPage >= Math.ceil(guests.length / itemsPerPage);
         }
 
+        /**
+         * Retrocede a la página anterior en la tabla de invitados.
+         */
         function prevPage() {
             if (currentPage > 1) {
                 currentPage--;
@@ -350,6 +390,9 @@
             }
         }
 
+        /**
+         * Avanza a la siguiente página en la tabla de invitados.
+         */
         function nextPage() {
             const totalPages = Math.ceil(guests.length / itemsPerPage);
             if (currentPage < totalPages) {
@@ -358,18 +401,22 @@
             }
         }
 
+        /**
+         * Convierte la lista de invitados a formato JSON para enviarla con el formulario.
+         */
         function serializeGuests() {
             syncImageUrl();
             document.getElementById('invitados_json').value = JSON.stringify(guests);
         }
 
+        /**
+         * Actualiza el resumen final del evento con todos los datos recolectados.
+         */
         function updateSummary() {
             const summaryCount = document.getElementById('summary-guest-count');
             if (summaryCount) {
                 summaryCount.innerText = `${guests.length} ${guests.length === 1 ? 'Invitado' : 'Invitados'}`;
             }
-
-
 
             const selectedGift = document.getElementById('lista_regalos_id');
             const giftSummary = document.getElementById('summary-gift-list');
@@ -412,6 +459,9 @@
             }
         }
 
+        /**
+         * Formatea la fecha seleccionada a un formato local en español legible.
+         */
         function formatEventDate(dateValue) {
             try {
                 const date = new Date(dateValue + 'T00:00:00');
@@ -421,6 +471,9 @@
             }
         }
 
+        /**
+         * Escapa caracteres especiales de HTML para evitar inyecciones XSS.
+         */
         function escapeHtml(unsafe) {
             return unsafe
                 .replace(/&/g, "&amp;")
@@ -430,6 +483,9 @@
                 .replace(/'/g, "&#039;");
         }
 
+        /**
+         * Actualiza la previsualización del asunto y cuerpo del mensaje.
+         */
         function updatePreview() {
             const subject = document.getElementById('email_subject').value;
             const message = document.getElementById('email_message').value;
@@ -438,6 +494,9 @@
             updateSummary();
         }
 
+        /**
+         * Aplica un formato de texto específico al editor visual y sincroniza el contenido.
+         */
         function formatText(command) {
             document.execCommand(command, false, null);
             const editor = document.getElementById('email_message_editor');
@@ -447,6 +506,9 @@
             }
         }
 
+        /**
+         * Sincroniza el contenido del editor visual con el campo oculto del formulario.
+         */
         function syncEditorContent() {
             const editor = document.getElementById('email_message_editor');
             const hiddenInput = document.getElementById('email_message');
@@ -459,6 +521,9 @@
             }
         }
 
+        /**
+         * Prepara y serializa los datos de los invitados antes de enviar el formulario.
+         */
         document.getElementById('multiStepForm')?.addEventListener('submit', function(e) {
             serializeGuests();
         });

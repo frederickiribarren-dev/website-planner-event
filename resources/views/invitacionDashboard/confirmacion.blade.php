@@ -132,15 +132,25 @@
     </div>
 
     <script>
+        /**
+         * Abre el modal para que el invitado pueda proponer un regalo que no está en la lista.
+         */
         function openProponerModal() {
             document.getElementById('modalProponer').style.display = 'block';
         }
+
+        /**
+         * Cierra el modal de propuesta de regalo.
+         */
         function closeProponerModal() {
             document.getElementById('modalProponer').style.display = 'none';
         }
+
+        /**
+         * Envía la propuesta de regalo ingresada por el invitado y muestra una notificación de éxito.
+         */
         function submitPropuesta() {
             closeProponerModal();
-            // Show custom toast
             const toast = document.getElementById('customToast');
             toast.classList.remove('translate-y-20', 'opacity-0');
             setTimeout(() => {

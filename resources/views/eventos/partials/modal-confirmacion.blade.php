@@ -41,6 +41,9 @@
 </div>
 
 <script>
+    /**
+     * Muestra el modal de confirmación de envío evitando el desplazamiento de la página.
+     */
     function openSendModal() {
         const modal = document.getElementById('confirmSendModal');
         if (modal) {
@@ -49,6 +52,9 @@
         }
     }
 
+    /**
+     * Oculta el modal de confirmación de envío y restaura el desplazamiento de la página.
+     */
     function closeSendModal() {
         const modal = document.getElementById('confirmSendModal');
         if (modal) {
@@ -57,13 +63,15 @@
         }
     }
 
+    /**
+     * Asigna el estado seleccionado al formulario y lo envía para procesar el evento.
+     */
     function submitFormWithStatus(status) {
         const statusInput = document.getElementById('estado_input');
         if (statusInput) {
             statusInput.value = status;
         }
         
-        // Ejecutar envío del formulario
         const form = document.getElementById('multiStepForm');
         if (form) {
             form.submit();

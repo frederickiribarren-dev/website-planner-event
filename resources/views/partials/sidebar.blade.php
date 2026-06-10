@@ -37,10 +37,16 @@
                 <span class="font-bold text-slate-600 group-hover:text-slate-900 uppercase text-[11px] tracking-wider">Invitaciones</span>
             </x-nav-link>
 
-            <x-nav-link :href="route('regalos.index')" :active="request()->routeIs('regalos.*')" 
+            <x-nav-link :href="route('regalos.index')" :active="request()->routeIs('regalos.index')" 
                 class="w-full flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-200 hover:bg-white hover:shadow-sm group">
                 <svg class="w-5 h-5 text-slate-400 group-hover:text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12V8H4v4m16 0v8H4v-8m16 0H4m12-4V4H8v4m8 0H8"></path></svg>
                 <span class="font-bold text-slate-600 group-hover:text-slate-900 uppercase text-[11px] tracking-wider">Regalos</span>
+            </x-nav-link>
+ 
+            <x-nav-link :href="route('regalos.propuestas')" :active="request()->routeIs('regalos.propuestas')" 
+                class="w-full flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-200 hover:bg-white hover:shadow-sm group">
+                <svg class="w-5 h-5 text-slate-400 group-hover:text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12V8H4v4m16 0v8H4v-8m16 0H4m12-4V4H8v4m8 0H8"></path></svg>
+                <span class="font-bold text-slate-600 group-hover:text-slate-900 uppercase text-[11px] tracking-wider">Propuestas regalos</span>
             </x-nav-link>
 
             <x-nav-link :href="route('configuracion')" :active="request()->routeIs('configuracion')" 

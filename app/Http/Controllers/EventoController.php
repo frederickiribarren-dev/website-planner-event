@@ -13,34 +13,44 @@ use App\Models\Invitado;
 class EventoController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Muestra una lista de las invitaciones y eventos asociados al usuario autenticado.
+     *
+     * Recupera el usuario autenticado actual y, si existe, obtiene la colección de sus eventos.
+     * En caso contrario, genera una colección vacía. Envía esta información a la vista
+     * 'eventos.invitaciones' para su renderización.
+     *
+     * @return \Illuminate\View\View Vista con la lista de eventos del usuario.
      */
     public function index()
     {
-        //Traer eventos del usuario autenticado
         $user = Auth::user();
         $eventos = $user && $user->eventos ? $user->eventos : collect();
         return view('eventos.invitaciones', compact('eventos'));
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Muestra el formulario de creación para un nuevo evento de Baby Shower.
+     *
+     * Obtiene el usuario autenticado y carga todas las listas de invitados creadas por el usuario o 
+     * aquellas independientes (sin evento asignado). También recupera las listas de regalos 
+     * asociadas al usuario y obtiene las URLs de las plantillas de diseño de invitaciones guardadas 
+     * en el almacenamiento público bajo la ruta 'regalos/step3-diseno'. Retorna la vista de 
+     * creación con estos conjuntos de datos.
+     *
+     * @return \Illuminate\View\View Vista del formulario de creación de eventos.
      */
     public function create()
     {
         $user = Auth::user();
         
-        // Obtener listas de invitados disponibles del usuario (asociadas a sus eventos o listas independientes)
         $listasInvitados = ListaInvitado::where(function($q) use ($user) {
             $q->whereHas('evento', function ($query) use ($user) {
                 $query->where('usuario_id', $user->id);
             })->orWhereNull('evento_id');
         })->with('invitados')->get();
         
-        // Obtener listas de regalos disponibles del usuario
         $listasRegalos = ListaRegalo::where('user_id', $user->id)->with('regalos')->get();
         
-        // Obtener imágenes de diseño
         $files = \Illuminate\Support\Facades\Storage::disk('public')->files('regalos/step3-diseno');
         $plantillas = array_map(function($file) {
             return asset('storage/' . $file);
@@ -50,11 +60,20 @@ class EventoController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Valida y almacena un nuevo evento en la base de datos.
+     *
+     * Realiza la validación de los datos del formulario (slug, nombre del bebé, género, fecha,
+     * ubicación, coordenadas, mensaje, color del tema, estado, imágenes y listas asociadas).
+     * Verifica que el usuario tenga permisos sobre la lista de invitados y la lista de regalos
+     * seleccionadas. Si se sube una portada personalizada, la almacena. Crea el registro del evento 
+     * y, en caso de recibir invitados vía JSON, los decodifica e inserta, creando una lista de 
+     * invitados por defecto si no se había seleccionado ninguna.
+     *
+     * @param \Illuminate\Http\Request $request Solicitud HTTP con los datos del evento.
+     * @return \Illuminate\Http\RedirectResponse Redirección a la lista de eventos con mensaje de éxito o retorno con errores.
      */
     public function store(Request $request)
     {
-        //validar datos para guardar el evento
         $validated = $request->validate([
             'slug' => 'nullable|string|max:100|unique:eventos,slug',
             'nombre_bebe' => 'required|string|max:100',
@@ -96,7 +115,6 @@ class EventoController extends Controller
 
         $user = $request->user();
         
-        // Validar que la lista de invitados pertenece al usuario (o es independiente)
         if ($validated['lista_invitado_id'] ?? null) {
             $listaInvitado = ListaInvitado::findOrFail($validated['lista_invitado_id']);
             if ($listaInvitado->evento_id !== null && $listaInvitado->evento->usuario_id !== $user->id) {
@@ -104,7 +122,6 @@ class EventoController extends Controller
             }
         }
 
-        // Validar que la lista de regalos pertenece al usuario
         if ($validated['lista_regalos_id'] ?? null) {
             $listaRegalo = ListaRegalo::findOrFail($validated['lista_regalos_id']);
             if ($listaRegalo->user_id !== $user->id) {
@@ -112,16 +129,13 @@ class EventoController extends Controller
             }
         }
 
-        // Subir imagen personalizada si existe
         if ($request->hasFile('imagen_portada')) {
             $path = $request->file('imagen_portada')->store('eventos/portadas', 'public');
             $validated['imagen_portada_url'] = asset('storage/' . $path);
         }
 
-        // Crear el evento
         $evento = $user->eventos()->create($validated);
 
-        // Procesar invitados si se enviaron
         if ($invitadosJson = $request->input('invitados_json')) {
             try {
                 $invitados = json_decode($invitadosJson, true);
@@ -129,8 +143,6 @@ class EventoController extends Controller
                 if (count($invitados) > 0) {
                     $listaInvitadoId = $evento->lista_invitado_id;
 
-                    // Si no se seleccionó ninguna lista de invitados y hay invitados manuales,
-                    // crear una lista de invitados por defecto con el nombre del evento
                     if (!$listaInvitadoId) {
                         $nuevaLista = ListaInvitado::create([
                             'evento_id' => $evento->id,
@@ -162,7 +174,15 @@ class EventoController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Muestra la información y los detalles de un evento específico.
+     *
+     * Busca el evento por ID dentro de la colección de eventos que pertenecen al usuario autenticado,
+     * cargando de forma optimizada las relaciones de invitados, listas de invitados, regalos
+     * e ítems de regalos asociados a la lista de regalos. Devuelve la vista 'eventos.show' con
+     * el evento cargado.
+     *
+     * @param string $id Identificador del evento a consultar.
+     * @return \Illuminate\View\View Vista con la información detallada del evento.
      */
     public function show(string $id)
     {
@@ -171,24 +191,28 @@ class EventoController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Muestra el formulario para editar un evento específico.
+     *
+     * Busca el evento perteneciente al usuario autenticado y obtiene los catálogos/opciones
+     * necesarias para la modificación: listas de invitados, listas de regalos del usuario
+     * y plantillas de diseño desde el disco público de Laravel. Retorna la vista de edición.
+     *
+     * @param string $id Identificador del evento a editar.
+     * @return \Illuminate\View\View Vista con el formulario de edición cargado con la información existente.
      */
     public function edit(string $id)
     {
         $user = Auth::user();
         $evento = $user->eventos()->with('invitados')->findOrFail($id);
 
-        // Obtener listas de invitados disponibles del usuario
         $listasInvitados = ListaInvitado::where(function($q) use ($user) {
             $q->whereHas('evento', function ($query) use ($user) {
                 $query->where('usuario_id', $user->id);
             })->orWhereNull('evento_id');
         })->with('invitados')->get();
         
-        // Obtener listas de regalos disponibles del usuario
         $listasRegalos = ListaRegalo::where('user_id', $user->id)->with('regalos')->get();
         
-        // Obtener imágenes de diseño
         $files = \Illuminate\Support\Facades\Storage::disk('public')->files('regalos/step3-diseno');
         $plantillas = array_map(function($file) {
             return asset('storage/' . $file);
@@ -198,7 +222,18 @@ class EventoController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Actualiza los datos de un evento existente en el almacenamiento.
+     *
+     * Valida los datos entrantes específicos para el evento (permitiendo el slug actual para evitar
+     * conflictos de unicidad). Valida los permisos de las listas de invitados y regalos asignadas.
+     * Si se detecta un nuevo archivo de imagen de portada, lo almacena y actualiza su ruta. Actualiza
+     * el evento y procesa la carga de invitados en formato JSON, limpiando registros anteriores y
+     * reinsertando los nuevos mientras preserva estados anteriores de invitaciones o asistencia si 
+     * el correo electrónico coincide.
+     *
+     * @param \Illuminate\Http\Request $request Solicitud HTTP con los datos actualizados del evento.
+     * @param string $id Identificador del evento a actualizar.
+     * @return \Illuminate\Http\RedirectResponse Redirección a la lista de eventos con mensaje de éxito o retorno con errores.
      */
     public function update(Request $request, string $id)
     {
@@ -260,12 +295,8 @@ class EventoController extends Controller
                 }
 
                 if ($listaInvitadoId) {
-                    // Obtener los invitados actuales para preservarlos o actualizarlos
                     $currentInvitados = Invitado::where('evento_id', $evento->id)->get()->keyBy('email');
                     
-                    // Borrar los actuales que pertenecen a este evento específicamente (los reemplazaremos o actualizaremos)
-                    // Una forma más limpia es limpiar y recrear, o actualizar. Haremos recrear para simplificar, 
-                    // preservando estados si es necesario, pero si el usuario editó la lista, la json es la fuente de la verdad.
                     Invitado::where('evento_id', $evento->id)->delete();
                     
                     foreach ($invitadosData as $inv) {
@@ -273,7 +304,6 @@ class EventoController extends Controller
                         $estado_invitacion = 'Pendiente';
                         $estado_asistencia = 'Sin responder';
                         
-                        // Si ya existía este email en el evento, preservar sus estados
                         if ($email && $currentInvitados->has($email)) {
                             $estado_invitacion = $currentInvitados[$email]->estado_invitacion;
                             $estado_asistencia = $currentInvitados[$email]->estado_asistencia;
@@ -298,6 +328,16 @@ class EventoController extends Controller
         return redirect()->route('eventos.index')->with('status', 'Evento actualizado exitosamente.');
     }
 
+    /**
+     * Cancela un evento específico actualizando su estado.
+     *
+     * Busca el evento perteneciente al usuario autenticado por ID y actualiza su atributo 'estado'
+     * al valor 'Cancelado'. Redirecciona al listado general de eventos.
+     *
+     * @param \Illuminate\Http\Request $request Solicitud HTTP de cancelación.
+     * @param string $id Identificador del evento a cancelar.
+     * @return \Illuminate\Http\RedirectResponse Redirección a la lista de eventos con mensaje de confirmación.
+     */
     public function cancel(Request $request, string $id)
     {
         $evento = Auth::user()->eventos()->findOrFail($id);
@@ -307,15 +347,20 @@ class EventoController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Elimina de forma lógica (soft delete) un evento específico de la base de datos.
+     *
+     * Busca el evento por ID dentro de los eventos propios del usuario autenticado, ejecuta la
+     * eliminación (que debido al rasgo SoftDeletes del modelo marcará la fecha de eliminación sin
+     * destruirlo físicamente), y redirecciona al index con mensaje de éxito.
+     *
+     * @param string $id Identificador del evento a eliminar.
+     * @return \Illuminate\Http\RedirectResponse Redirección a la lista de eventos con mensaje de éxito.
      */
     public function destroy(string $id)
     {
-        //Eliminar evento
         $evento = Auth::user()->eventos()->findOrFail($id);
         $evento->delete();
 
         return redirect()->route('eventos.index')->with('status', 'Evento eliminado exitosamente.');
-
     }
 }

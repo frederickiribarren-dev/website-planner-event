@@ -6,17 +6,19 @@ use Illuminate\Database\Eloquent\Model;
 
 class CategoriaRegalo extends Model
 {
-    // Le indicamos a Laravel el nombre exacto de tu tabla de la migración
     protected $table = 'categorias_regalos';
 
-    // Permitimos la asignación masiva del campo nombre
     protected $fillable = [
         'nombre',
         'icono_url',
     ];
 
     /**
-     * Relación: Una categoría tiene muchos regalos asociados en el catálogo.
+     * Define la relación "uno a muchos" (HasMany) entre la categoría y los regalos que pertenecen a ella.
+     *
+     * Permite consultar la colección de regalos asociados a esta categoría mediante la clave foránea 'categoria_id'.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany Relación con los regalos de la categoría.
      */
     public function regalos()
     {

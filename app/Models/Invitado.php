@@ -24,11 +24,25 @@ class Invitado extends Model
         'fecha_confirmacion',
     ];
 
+    /**
+     * Define la relación "pertenece a" (BelongsTo) entre el invitado y su evento asociado.
+     *
+     * Vincula el registro del invitado con el evento correspondiente mediante la clave foránea 'evento_id'.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo Relación hacia el evento asociado.
+     */
     public function evento()
     {
         return $this->belongsTo(Evento::class, 'evento_id');
     }
 
+    /**
+     * Define la relación "pertenece a" (BelongsTo) entre el invitado y la lista de invitados a la que pertenece.
+     *
+     * Asocia al invitado con una lista de invitados específica mediante la clave foránea 'lista_invitado_id'.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo Relación hacia la lista de invitados asociada.
+     */
     public function listaInvitado()
     {
         return $this->belongsTo(ListaInvitado::class, 'lista_invitado_id');

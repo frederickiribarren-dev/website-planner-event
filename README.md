@@ -11,7 +11,7 @@ Esta aplicación permite a los usuarios planificar eventos de manera organizada,
 ### Qué Hace
 - **Planificación de Eventos**: Permite crear y gestionar eventos sociales como baby showers.
 - **Gestión de Invitados**: Envío de invitaciones, seguimiento de confirmaciones y control de asistencia.
-- **Gestión de Regalos**: Registro de regalos deseados, sugerencias para invitados y seguimiento de entregas para evitar duplicados o regalos innecesarios.
+- **Gestión de Regalos**: Registro de regalos deseados, sugerencias para invitados y seguimiento de selecciones para evitar duplicados o regalos innecesarios.
 - **Configuraciones Personales**: Opciones para personalizar la experiencia del usuario.
 
 ### Por Qué Existe
@@ -19,7 +19,7 @@ La organización de eventos sociales, especialmente baby showers, enfrenta dific
 
 ### Problema que Resuelve
 #### Descripción del Problema Técnico
-- **Regalos**: Invitados entregan obsequios innecesarios, repetidos o poco prácticos. Los futuros padres reciben artículos que no se ajustan a sus necesidades.
+- **Regalos**: Invitados entregan obsequios innecesarios, repetidos o poco prácticos. Los futuros padres reciben artículos que no se ajustan a sus necesidades reales.
 - **Gestión de Invitados**: Invitaciones enviadas por canales informales (mensajes, llamadas, redes sociales), con escasa trazabilidad y evidencia de confirmación. Ausencia de invitados por falta de claridad.
 - **Impacto**:
   - **Técnico**: Falta de trazabilidad en confirmaciones y regalos; información dispersa en múltiples canales.
@@ -37,34 +37,34 @@ La organización de eventos sociales, especialmente baby showers, enfrenta dific
 - PHP 8.2 o superior
 - Composer
 - Node.js y npm
-- Base de datos (MySQL, PostgreSQL, etc.) se usara: MySQL
+- Base de datos MySQL
 - Laravel 12
-- Tailwind CSS (CSS framework)
+- Tailwind CSS
 
 ### Pasos
 1. **Clona el Repositorio**:
-   ```
+   ```bash
    git clone https://github.com/frederickiribarren-dev/website-planner-event.git
    cd website-planner-event
    ```
 
 2. **Instala Dependencias de PHP**:
-   ```
+   ```bash
    composer install
    ```
 
 3. **Instala Dependencias de JavaScript**:
-   ```
+   ```bash
    npm install
    ```
 
 4. **Configura el Entorno**:
    - Copia `.env.example` a `.env`:
-     ```
+     ```bash
      cp .env.example .env
      ```
    - Edita `.env` con tus credenciales de base de datos:
-     ```
+     ```env
      DB_CONNECTION=mysql
      DB_HOST=127.0.0.1
      DB_PORT=3306
@@ -74,26 +74,22 @@ La organización de eventos sociales, especialmente baby showers, enfrenta dific
      ```
 
 5. **Genera Clave de Aplicación**:
-   ```
+   ```bash
    php artisan key:generate
    ```
 
 6. **Ejecuta Migraciones**:
-   ```
+   ```bash
    php artisan migrate
-   ```
-   ```
-   php artisan migrate:generate & del /Q database\migrations\*_add_foreign_keys_to_*.php 
-   para generar las base de datos sin foreign keys
    ```
 
 7. **Compila Assets**:
-   ```
+   ```bash
    npm run build
    ```
 
 8. **Inicia el Servidor**:
-   ```
+   ```bash
    php artisan serve
    ```
    Accede en `http://localhost:8000`.
@@ -172,7 +168,7 @@ This application allows users to plan events in an organized manner, managing gu
 ### What It Does
 - **Event Planning**: Allows creating and managing social events like baby showers.
 - **Guest Management**: Sending invitations, tracking confirmations, and controlling attendance.
-- **Gift Management**: Recording desired gifts, suggestions for guests, and tracking deliveries to avoid duplicates or unnecessary gifts.
+- **Gift Management**: Recording desired gifts, suggestions for guests, and tracking selections to avoid duplicates or unnecessary gifts.
 - **Personal Configurations**: Options to customize the user experience.
 
 ### Why It Exists
@@ -198,58 +194,59 @@ The organization of social events, especially baby showers, faces technical diff
 - PHP 8.2 or higher
 - Composer
 - Node.js and npm
-- Database (MySQL, PostgreSQL, etc.)
+- MySQL Database
 - Laravel 12
+- Tailwind CSS
 
 ### Steps
 1. **Clone the Repository**:
-   ```
+   ```bash
    git clone https://github.com/frederickiribarren-dev/website-planner-event.git
    cd website-planner-event
    ```
 
 2. **Install PHP Dependencies**:
-   ```
+   ```bash
    composer install
    ```
 
 3. **Install JavaScript Dependencies**:
-   ```
+   ```bash
    npm install
    ```
 
 4. **Configure the Environment**:
    - Copy `.env.example` to `.env`:
-     ```
+     ```bash
      cp .env.example .env
      ```
    - Edit `.env` with your database credentials:
-     ```
+     ```env
      DB_CONNECTION=mysql
      DB_HOST=127.0.0.1
      DB_PORT=3306
-     DB_DATABASE=name_base_datos
+     DB_DATABASE=website_planner_event
      DB_USERNAME=your_username
      DB_PASSWORD=your_password
      ```
 
 5. **Generate Application Key**:
-   ```
+   ```bash
    php artisan key:generate
    ```
 
 6. **Run Migrations**:
-   ```
+   ```bash
    php artisan migrate
    ```
 
 7. **Compile Assets**:
-   ```
+   ```bash
    npm run build
    ```
 
 8. **Start the Server**:
-   ```
+   ```bash
    php artisan serve
    ```
    Access at `http://localhost:8000`.

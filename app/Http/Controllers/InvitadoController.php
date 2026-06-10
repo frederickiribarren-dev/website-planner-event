@@ -11,7 +11,15 @@ use App\Models\ListaInvitado;
 class InvitadoController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Muestra el listado de invitados pertenecientes a un evento específico.
+     *
+     * Recupera todas las listas de invitados asociadas al evento y consulta la colección de
+     * invitados del evento, permitiendo filtrar por una lista en particular si se incluye el
+     * parámetro 'lista_id' en la solicitud HTTP. Devuelve la vista 'invitados.index'.
+     *
+     * @param \Illuminate\Http\Request $request Solicitud HTTP que puede contener un filtro de lista.
+     * @param \App\Models\Evento $evento Evento al cual pertenecen los invitados.
+     * @return \Illuminate\View\View Vista con el listado de invitados y filtros.
      */
     public function index(Request $request, Evento $evento)
     {
@@ -28,7 +36,13 @@ class InvitadoController extends Controller
     }
 
     /**
-     * Show the form for creating the guest/list frontend page.
+     * Muestra la interfaz de creación y gestión de invitados desde la vista frontend pública/usuario.
+     *
+     * Obtiene todos los eventos pertenecientes al usuario autenticado, cargando de forma anidada
+     * sus listas de invitados y el conteo/detalle de sus miembros. Retorna la vista
+     * 'invitados.creacion-invitacion'.
+     *
+     * @return \Illuminate\View\View Vista frontend para la gestión de invitaciones.
      */
     public function createFront()
     {
@@ -42,7 +56,15 @@ class InvitadoController extends Controller
     }
 
     /**
-     * Store a new guest list and its invited guests from the frontend page.
+     * Almacena una nueva lista de invitados y sus respectivos integrantes desde la vista frontend.
+     *
+     * Valida los datos recibidos (nombre de la lista, categoría opcional, ID del evento y la cadena JSON
+     * que contiene la lista de invitados). Verifica los permisos del evento en caso de estar especificado.
+     * Valida cada invitado del array JSON y crea la lista de invitados y sus correspondientes registros
+     * de invitados en la base de datos de manera masiva.
+     *
+     * @param \Illuminate\Http\Request $request Solicitud HTTP con la información de la lista e invitados.
+     * @return \Illuminate\Http\RedirectResponse Redirección al frontend de creación con mensaje de éxito o errores.
      */
     public function storeFront(Request $request)
     {
@@ -121,7 +143,13 @@ class InvitadoController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Muestra el formulario para registrar un invitado individual en un evento.
+     *
+     * Obtiene las listas de invitados asociadas al evento y carga la vista de creación
+     * individual de invitados ('invitados.create').
+     *
+     * @param \App\Models\Evento $evento Evento en el cual se registrará el invitado.
+     * @return \Illuminate\View\View Vista del formulario de registro individual.
      */
     public function create(Evento $evento)
     {
@@ -130,7 +158,15 @@ class InvitadoController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Almacena un nuevo invitado individual asociado a un evento específico.
+     *
+     * Valida la información del invitado (nombre, email, teléfono, estados de asistencia,
+     * cantidades y fechas). Asigna el identificador del evento e inserta el nuevo registro
+     * de invitado. Redirecciona con un mensaje de éxito.
+     *
+     * @param \Illuminate\Http\Request $request Solicitud HTTP con la información del invitado.
+     * @param \App\Models\Evento $evento Evento asociado al nuevo invitado.
+     * @return \Illuminate\Http\RedirectResponse Redirección al index de invitados con mensaje de éxito.
      */
     public function store(Request $request, Evento $evento)
     {
@@ -173,7 +209,12 @@ class InvitadoController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Muestra la vista detallada de un invitado específico.
+     *
+     * Retorna la vista 'invitados.show' enviando la instancia del modelo de invitado.
+     *
+     * @param \App\Models\Invitado $invitado Instancia del invitado a consultar.
+     * @return \Illuminate\View\View Vista con la información del invitado.
      */
     public function show(Invitado $invitado)
     {
@@ -181,7 +222,13 @@ class InvitadoController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Muestra el formulario para editar a un invitado específico.
+     *
+     * Obtiene las listas de invitados asociadas al evento del invitado y retorna la vista
+     * 'invitados.edit' con los datos correspondientes.
+     *
+     * @param \App\Models\Invitado $invitado Instancia del invitado a modificar.
+     * @return \Illuminate\View\View Vista del formulario de edición.
      */
     public function edit(Invitado $invitado)
     {
@@ -190,7 +237,14 @@ class InvitadoController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Actualiza la información de un invitado específico en el almacenamiento.
+     *
+     * Valida los datos actualizados del invitado y los guarda en la base de datos a través del modelo.
+     * Redirecciona con un mensaje de éxito.
+     *
+     * @param \Illuminate\Http\Request $request Solicitud HTTP con la información a actualizar.
+     * @param \App\Models\Invitado $invitado Instancia del invitado a actualizar.
+     * @return \Illuminate\Http\RedirectResponse Redirección al index de invitados del evento.
      */
     public function update(Request $request, Invitado $invitado)
     {
@@ -215,7 +269,13 @@ class InvitadoController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Elimina a un invitado específico de la base de datos.
+     *
+     * Obtiene el identificador del evento para la redirección, elimina el registro físico del
+     * invitado de la base de datos y redirecciona con un mensaje de éxito.
+     *
+     * @param \App\Models\Invitado $invitado Instancia del invitado a eliminar.
+     * @return \Illuminate\Http\RedirectResponse Redirección al index de invitados del evento.
      */
     public function destroy(Invitado $invitado)
     {

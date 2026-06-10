@@ -93,10 +93,9 @@
             transform: translateY(0);
         }
         
-        /* Estado Abierto del Acordeón */
         .faq-button.active .faq-icon {
             transform: rotate(180deg);
-            background-color: #0d9488; /* Teal-600 */
+            background-color: #0d9488; 
             color: white;
         }
         .faq-button.active {

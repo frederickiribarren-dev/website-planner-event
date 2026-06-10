@@ -75,10 +75,8 @@
 
 <script>
 (function() {
-    // Guardar referencia al archivo seleccionado
     var _importFile = null;
 
-    // Usar label+input sr-only → más compatible en Linux
     document.addEventListener('DOMContentLoaded', function () {
         var input = document.getElementById('importFileInput');
         if (!input) return;
@@ -92,6 +90,9 @@
         });
     });
 
+    /**
+     * Muestra el mensaje de estado de la importación con sus respectivos colores según el tipo.
+     */
     function showImportStatus(msg, type) {
         var el = document.getElementById('importStatusMsg');
         if (!el) return;
@@ -103,14 +104,15 @@
         el.classList.remove('hidden');
     }
 
-    // Exponer globalmente
+    /**
+     * Procesa el archivo seleccionado y extrae los datos de los invitados utilizando la librería XLSX.
+     */
     window.processImportFile = function () {
         if (!_importFile) {
             showImportStatus('Primero selecciona un archivo.', 'err');
             return;
         }
 
-        // Verificar que XLSX esté disponible
         if (typeof XLSX === 'undefined') {
             showImportStatus('Cargando librería... espera 2 segundos e intenta de nuevo.', 'err');
             return;
@@ -131,7 +133,6 @@
                     return;
                 }
 
-                // Detectar si hay encabezados
                 var firstRow = rows[0].map(function(h){ return String(h).toLowerCase().trim(); });
                 var hasHdr = firstRow.some(function(h){
                     return h.includes('nombre') || h === 'name' ||
@@ -150,7 +151,6 @@
                         return;
                     }
                 } else {
-                    // Sin encabezados: A=Nombre, B=Email, C=Teléfono
                     nameIdx  = 0;
                     emailIdx = 1;
                     phoneIdx = 2;
@@ -166,7 +166,6 @@
                     var phone = phoneIdx >= 0 ? String(row[phoneIdx] || '').trim() : '';
                     if (!name) continue;
 
-                    // tempGuests es global en creacion-invitacion.blade.php
                     if (typeof tempGuests !== 'undefined') {
                         tempGuests.push({ id: Date.now() + Math.random(), name: name, email: email, phone: phone, contact: email || phone || '---' });
                     }
@@ -198,7 +197,9 @@
         reader.readAsArrayBuffer(_importFile);
     };
 
-    // ─── VER DETALLE LISTA ────────────────────────────────────────────────
+    /**
+     * Muestra el modal con los detalles completos de una lista de invitados seleccionada.
+     */
     window.verListaDetalle = function(listaId, listaNombre, totalInvitados) {
         document.getElementById('detalleListaNombre').innerText = listaNombre;
         document.getElementById('detalleListaCount').innerText  = totalInvitados;
@@ -207,6 +208,9 @@
         document.getElementById('modalVerListaDetalle').style.display = 'block';
     };
 
+    /**
+     * Oculta el modal de los detalles de la lista de invitados.
+     */
     window.cerrarVerListaDetalle = function() {
         document.getElementById('modalVerListaDetalle').style.display = 'none';
     };

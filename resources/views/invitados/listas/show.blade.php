@@ -113,6 +113,9 @@
         const editItemsPerPage = 6;
         const rows = Array.from(document.querySelectorAll('#guest-edit-table-body tr')).filter(row => !row.classList.contains('no-guests'));
 
+        /**
+         * Renderiza la tabla de visualización de invitados aplicando paginación visual y controlando los botones.
+         */
         function renderEditTable() {
             if (rows.length === 0) return;
 
@@ -156,6 +159,9 @@
             }
         }
 
+        /**
+         * Navega a la página anterior de la tabla de invitados, si no está en la primera página.
+         */
         function goToPrevPage() {
             if (currentEditPage > 1) {
                 currentEditPage--;
@@ -163,6 +169,9 @@
             }
         }
 
+        /**
+         * Navega a la página siguiente de la tabla de invitados, si no está en la última página.
+         */
         function goToNextPage() {
             const totalPages = Math.ceil(rows.length / editItemsPerPage);
             if (currentEditPage < totalPages) {

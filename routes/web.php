@@ -58,6 +58,7 @@ Route::middleware('auth', 'verified')->group(function () {
     })->name('configuracion');
 
     Route::get('/regalos', [RegaloController::class, 'index'])->name('regalos.index');
+    Route::get('/regalos/propuestas', [RegaloController::class, 'propuestas'])->name('regalos.propuestas');
     
     // Rutas para gestión de regalos y listas
     Route::post('/regalos/store', [RegaloController::class, 'storeGift'])->name('regalos.store');

@@ -40,18 +40,24 @@
 </div>
 
 <script>
+    /**
+     * Muestra el modal de confirmación de cancelación y establece la URL de acción del formulario.
+     */
     function openCancelModal(actionUrl) {
         const modal = document.getElementById('cancelEventModal');
         const form = document.getElementById('confirmCancelForm');
         form.action = actionUrl;
         
         modal.classList.remove('hidden');
-        document.body.style.overflow = 'hidden'; // Evitar scroll
+        document.body.style.overflow = 'hidden';
     }
 
+    /**
+     * Oculta el modal de confirmación de cancelación y restaura el scroll de la página.
+     */
     function closeCancelModal() {
         const modal = document.getElementById('cancelEventModal');
         modal.classList.add('hidden');
-        document.body.style.overflow = 'auto'; // Restaurar scroll
+        document.body.style.overflow = 'auto';
     }
 </script>

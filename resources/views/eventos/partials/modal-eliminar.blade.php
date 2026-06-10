@@ -39,18 +39,24 @@
 </div>
 
 <script>
+    /**
+     * Muestra el modal de confirmación de eliminación y establece la URL de acción del formulario.
+     */
     function openDeleteModal(actionUrl) {
         const modal = document.getElementById('deleteEventModal');
         const form = document.getElementById('confirmDeleteForm');
         form.action = actionUrl;
         
         modal.classList.remove('hidden');
-        document.body.style.overflow = 'hidden'; // Evitar scroll
+        document.body.style.overflow = 'hidden';
     }
 
+    /**
+     * Oculta el modal de confirmación de eliminación y restaura el scroll de la página.
+     */
     function closeDeleteModal() {
         const modal = document.getElementById('deleteEventModal');
         modal.classList.add('hidden');
-        document.body.style.overflow = 'auto'; // Restaurar scroll
+        document.body.style.overflow = 'auto';
     }
 </script>

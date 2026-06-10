@@ -284,16 +284,25 @@
             ];
         })->all()) !!};
 
-        // ─── MODAL HELPERS ────────────────────────────────────────────────────────
+        /**
+         * Muestra un modal en pantalla cambiando su estilo a bloque.
+         */
         function openModal(id) {
             const el = document.getElementById(id);
             if (el) el.style.display = 'block';
         }
+
+        /**
+         * Oculta un modal de la pantalla cambiando su estilo a none.
+         */
         function closeModal(id) {
             const el = document.getElementById(id);
             if (el) el.style.display = 'none';
         }
 
+        /**
+         * Alterna entre las diferentes vistas de la interfaz ocultando y mostrando el contenido.
+         */
         function showView(view) {
             document.querySelectorAll('.view-content').forEach(v => v.classList.add('hidden'));
             document.getElementById('view-' + view).classList.remove('hidden');
@@ -326,6 +335,9 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
+        /**
+         * Muestra el detalle de invitados de un evento en específico renderizando la tabla correspondiente.
+         */
         function showEventDetail(eventId) {
             const event = eventsData.find(e => e.id === eventId);
             if (!event) return;
@@ -365,6 +377,9 @@
             document.getElementById('detail-summary').innerText = `Mostrando ${totalGuests} invitados confirmados`;
         }
 
+        /**
+         * Añade un nuevo invitado temporal de forma manual tomando la información del formulario.
+         */
         function addGuestManual() {
             const name = document.getElementById('manual_name').value;
             const email = document.getElementById('manual_email').value;
@@ -379,11 +394,17 @@
             renderTempGuests();
         }
 
+        /**
+         * Elimina un invitado de la lista temporal utilizando su identificador único.
+         */
         function removeTempGuest(id) {
             tempGuests = tempGuests.filter(g => g.id !== id);
             renderTempGuests();
         }
 
+        /**
+         * Actualiza el listado visual en tabla de invitados que están guardados temporalmente en la creación.
+         */
         function renderTempGuests() {
             const body = document.getElementById('temp-guests-body');
             const count = document.getElementById('temp-count');
@@ -406,6 +427,9 @@
             count.innerText = `${tempGuests.length} Invitados`;
         }
 
+        /**
+         * Empaqueta la lista temporal y la envía a través del formulario para ser almacenada permanentemente.
+         */
         function saveList() {
             if (tempGuests.length === 0) return alert('Añade al menos un invitado');
 

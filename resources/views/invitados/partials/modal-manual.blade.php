@@ -78,8 +78,10 @@
 </div>
 
 <script>
+    /**
+     * Prepara el arreglo de invitados a partir de los campos manuales antes de enviar el formulario.
+     */
     function prepareGuestsJson(e) {
-        // build guests array from manual inputs
         const name = document.getElementById('manual_name').value.trim();
         if (!name) {
             e.preventDefault();

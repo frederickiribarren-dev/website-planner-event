@@ -1,9 +1,10 @@
 <script>
-    // ─── DATOS DEL JSON (desde Laravel) ───────────────────────────────────────
     const dataCategorias = @json($categorias ?? []);
     let giftItems = [];
 
-    // ─── 1. SINCRONIZADOR DE IMÁGENES CORREGIDO ───────────────────────────────
+    /**
+     * Sincroniza y procesa los regalos disponibles desde la base de datos hacia el formato requerido en el frontend.
+     */
     function sincronizarGiftItems() {
         giftItems = [];
         if (!dataCategorias) return;
@@ -13,9 +14,7 @@
                 let urlImagen = item.imagen_portada_url || item.img;
                 
                 if (urlImagen && !/^https?:\/\//i.test(urlImagen)) {
-                    // Si la base de datos trae un prefijo duplicado o antiguo "img/regalos", lo limpiamos
                     urlImagen = urlImagen.replace(/^img\/regalos\//i, 'regalos/');
-                    // Aseguramos que apunte correctamente a tu ruta real /storage/regalos/...
                     urlImagen = '/storage/' + urlImagen;
                 }
 
@@ -30,7 +29,6 @@
         });
     }
 
-    // ─── ESTADO GLOBAL ─────────────────────────────────────────────────────────
     let selectedItems      = [];
     let savedLists         = [];
     let currentCategory    = 'Ropa';
@@ -40,7 +38,9 @@
     let currentItemForModal = null;
     let editingListId      = null;
 
-    // ─── NAVEGACIÓN DE VISTAS ─────────────────────────────────────────────────
+    /**
+     * Alterna la visualización entre las distintas secciones de la gestión de regalos actualizando textos y botones.
+     */
     function showView(view) {
         document.querySelectorAll('.view-content').forEach(v => v.classList.add('hidden'));
         const target = document.getElementById('view-' + view);
@@ -111,7 +111,9 @@
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    // ─── CATÁLOGO (solo lectura) ───────────────────────────────────────────────
+    /**
+     * Renderiza los regalos del catálogo principal según la categoría actualmente seleccionada.
+     */
     function renderCatalogGrid() {
         const grid = document.getElementById('catalogoGrid');
         if (!grid) return;
@@ -138,6 +140,9 @@
         });
     }
 
+    /**
+     * Actualiza la categoría seleccionada en el catálogo y refresca los elementos mostrados.
+     */
     function filterCategory(cat) {
         currentCategory = cat;
         document.querySelectorAll('.category-btn').forEach(btn => {
@@ -152,7 +157,9 @@
         renderCatalogGrid();
     }
 
-    // ─── CREACIÓN Y EDICIÓN DE ELEMENTOS EN LA LISTA ───────────────────────────
+    /**
+     * Filtra los elementos mostrados durante la creación de la lista según la categoría seleccionada.
+     */
     function filterCreateCategory(cat) {
         currentCreateCategory = cat;
         document.querySelectorAll('.create-cat-btn').forEach(btn => {
@@ -167,6 +174,9 @@
         renderCreateGrid();
     }
 
+    /**
+     * Renderiza la cuadrícula de productos disponibles para la categoría actual durante la creación o edición de una lista.
+     */
     function renderCreateGrid() {
         const grid = document.getElementById('itemsGrid');
         if (!grid) return;
@@ -209,7 +219,9 @@
         });
     }
 
-    // ─── MODAL DE CONFIGURACIÓN DE REGALO (CANTIDAD / LINKS) ───────────────────
+    /**
+     * Muestra el modal para configurar las opciones específicas (enlaces y cantidades) de un regalo seleccionado.
+     */
     function openGiftModal(id) {
         const item = giftItems.find(i => i.id === id);
         if (!item) return;
@@ -241,11 +253,17 @@
         document.getElementById('modalGiftDetail').style.display = 'block';
     }
 
+    /**
+     * Oculta el modal de configuración de regalo y limpia la selección actual temporal.
+     */
     function closeGiftModal() {
         document.getElementById('modalGiftDetail').style.display = 'none';
         currentItemForModal = null;
     }
 
+    /**
+     * Confirma y guarda la configuración del regalo seleccionado en el listado activo.
+     */
     function confirmAddGift() {
         if (!currentItemForModal) return;
         const id = currentItemForModal.id;
@@ -273,6 +291,9 @@
         closeGiftModal();
     }
 
+    /**
+     * Elimina un regalo específico del listado activo actualmente seleccionado.
+     */
     function removeItem(id) {
         selectedItems = selectedItems.filter(s => s.id !== id);
         updateCounter();
@@ -280,6 +301,9 @@
         showToast('Eliminado de la lista', 'warning');
     }
 
+    /**
+     * Calcula y actualiza el contador total de regalos seleccionados en la lista activa.
+     */
     function updateCounter() {
         const counter = document.getElementById('selectedCount');
         if (counter) {
@@ -291,7 +315,9 @@
         }
     }
 
-    // ─── 2. GUARDAR LISTA (CORREGIDO Y SEGURO) ─────────────────────────────────
+    /**
+     * Valida, procesa y guarda la lista de regalos completa enviando los datos al servidor.
+     */
     function saveCurrentList() {
         const nameInput = document.getElementById('listNameInput');
         const name = nameInput ? nameInput.value.trim() : '';
@@ -359,19 +385,23 @@
         });
     }
 
-    // ─── 3. CREAR REGALO PERSONALIZADO Y SOLUCIÓN AL ERROR DEL MODAL ──────────
-    
-    // Nueva función para cerrar el modal de creación inteligentemente
+    /**
+     * Cierra el modal de creación de un regalo personalizado de forma segura sin bloquear la UI.
+     */
     function closeCreateGiftModal() {
         const inputNombre = document.getElementById('n_name');
         if (inputNombre) {
             const modal = inputNombre.closest('.fixed');
             if (modal) {
-                modal.classList.add('hidden'); // Oculta usando la clase de Tailwind
-                modal.style.removeProperty('display'); // Limpia el bloqueo para que el botón vuelva a funcionar
+                modal.classList.add('hidden');
+                modal.style.removeProperty('display');
             }
         }
     }
+
+    /**
+     * Envía la información de un regalo personalizado al servidor, lo agrega al catálogo y lo auto-selecciona.
+     */
     function createNewGift() {
         const name = document.getElementById('n_name')?.value.trim();
         const cat = document.getElementById('n_cat')?.value;
@@ -391,7 +421,6 @@
         formData.append('link_referencia_3', document.getElementById('giftLink3')?.value || '');
         formData.append('precio_estimado', document.getElementById('giftPrice')?.value || '');
         
-        // Capturamos la cantidad deseada para auto-seleccionarla
         const userQty = parseInt(document.getElementById('giftQty')?.value) || 1;
         formData.append('cantidad_solicitada', userQty);
 
@@ -412,12 +441,10 @@
             if (data.success) {
                 showToast('¡Regalo personalizado creado y seleccionado!', 'success');
                 
-                // 1. Cerramos el modal sin romper los botones
                 closeCreateGiftModal();
                 
                 const catFrontend = (cat === 'Grupal' || cat === 'Grupales') ? 'Grupales' : cat;
                 
-                // 2. Procesamos la URL de la imagen
                 let imagenFinal = data.gift.imagen_portada_url;
                 if (imagenFinal && !/^https?:\/\//i.test(imagenFinal)) {
                     imagenFinal = '/storage/' + imagenFinal.replace(/^img\/regalos\//i, 'regalos/');
@@ -425,7 +452,6 @@
                     imagenFinal = 'https://placehold.co/400x300/f1f5f9/94a3b8?text=Nuevo+Regalo';
                 }
 
-                // 3. Añadimos el regalo al Catálogo (AL PRINCIPIO del array usando unshift)
                 const nuevoRegaloParaData = {
                     id: data.gift.id,
                     nombre: data.gift.nombre_regalo,
@@ -434,9 +460,8 @@
                 };
                 
                 if (!dataCategorias[catFrontend]) dataCategorias[catFrontend] = [];
-                dataCategorias[catFrontend].unshift(nuevoRegaloParaData); // Aparecerá arriba de todo
+                dataCategorias[catFrontend].unshift(nuevoRegaloParaData);
 
-                // 4. AUTO-SELECCIONAMOS el regalo inmediatamente en la lista del usuario
                 selectedItems.push({
                     id: data.gift.id,
                     name: data.gift.nombre_regalo,
@@ -451,7 +476,6 @@
                 });
                 updateCounter();
 
-                // 5. Sincronizamos y forzamos la vista al instante
                 sincronizarGiftItems();
                 filterCreateCategory(catFrontend);
 
@@ -463,7 +487,6 @@
                     renderCreateGrid(); 
                 }
 
-                // 6. Limpieza de campos del modal para la próxima vez
                 if(document.getElementById('n_name')) document.getElementById('n_name').value = '';
                 if(document.getElementById('n_desc')) document.getElementById('n_desc').value = '';
                 if(document.getElementById('giftPrice')) document.getElementById('giftPrice').value = '';
@@ -486,7 +509,10 @@
             showToast('Error de conexión al crear el regalo.', 'error');
         });
     }
-    // ─── RENDERS DE LA TABLA DE LISTAS GUARDADAS ────────────────────────────────
+
+    /**
+     * Renderiza la tabla visual de las listas de regalos previamente guardadas.
+     */
     function renderSavedLists() {
         const body = document.getElementById('savedListsBody');
         const emptyRow = document.getElementById('emptyStateRow');
@@ -526,7 +552,9 @@
         });
     }
 
-    // ─── ENTRAR EN MODO EDICIÓN ───────────────────────────────────────────────
+    /**
+     * Prepara la interfaz y carga los datos para editar una lista de regalos guardada.
+     */
     function editList(id) {
         const list = savedLists.find(l => l.id === id);
         if (!list) return;
@@ -562,6 +590,9 @@
         showToast('Modo edición activado', 'success');
     }
 
+    /**
+     * Elimina definitivamente una lista de regalos realizando una petición al servidor.
+     */
     function deleteList(id) {
         if (!confirm('¿Estás seguro de que deseas eliminar esta lista de regalos por completo?')) return;
 
@@ -588,7 +619,9 @@
         });
     }
 
-    // ─── DETALLE DE LISTA (MODAL) ─────────────────────────────────────────────
+    /**
+     * Abre el modal y muestra los detalles completos de todos los regalos en la lista guardada seleccionada.
+     */
     function viewListDetail(id) {
         currentDetailListId = id;
         const list = savedLists.find(l => l.id === id);
@@ -647,6 +680,9 @@
         }
     }
 
+    /**
+     * Oculta el modal de visualización de detalles de la lista.
+     */
     function closeViewListModal() {
         const modal = document.getElementById('modalViewList');
         if (modal) {
@@ -655,7 +691,9 @@
         }
     }
 
-    // ─── TOAST NOTIFICATIONS ───────────────────────────────────────────────────
+    /**
+     * Muestra una notificación emergente con estilos personalizables según el tipo de alerta.
+     */
     function showToast(msg, type = 'success') {
         const toast   = document.getElementById('toastSuccess');
         const icon    = document.getElementById('toastIcon');
@@ -677,10 +715,8 @@
         setTimeout(() => toast.classList.add('-translate-y-20', 'opacity-0', 'pointer-events-none'), 3000);
     }
 
-    // ─── 4. INICIALIZACIÓN UNIFICADA DE EVENTOS ───────────────────────────────
     document.addEventListener('DOMContentLoaded', () => {
         
-        // Escucha para previsualizar la imagen del regalo en tiempo real
         document.getElementById('newGiftImgInput')?.addEventListener('change', function(e) {
             const preview = document.getElementById('newGiftPreview');
             const placeholder = document.getElementById('newGiftPlaceholder');
@@ -697,7 +733,6 @@
             }
         });
 
-        // Carga y mapeo inicial de las listas guardadas desde Laravel
         const listasRegalosData = @json($listasRegalos ?? []);
         if (listasRegalosData && listasRegalosData.length > 0) {
             listasRegalosData.forEach(lista => {
@@ -707,7 +742,6 @@
 
                     let imagenFinal = regalo.imagen_portada_url;
                     if (imagenFinal && !/^https?:\/\//i.test(imagenFinal)) {
-                        // Limpieza idéntica para las imágenes de las listas guardadas
                         imagenFinal = imagenFinal.replace(/^img\/regalos\//i, 'regalos/');
                         imagenFinal = '/storage/' + imagenFinal;
                     } else if (!imagenFinal) {
@@ -739,7 +773,6 @@
             });
         }
         
-        // Renderizamos y cargamos el catálogo por defecto
         if (typeof renderSavedLists === 'function') renderSavedLists();
         sincronizarGiftItems(); 
         

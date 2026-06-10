@@ -11,19 +11,22 @@ use App\Models\Evento;
 class RegaloController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Muestra la interfaz general para la creación de listas de regalos.
+     *
+     * Recupera las categorías de regalos junto con sus regalos base predeterminados, los eventos
+     * activos del usuario autenticado y las listas de regalos guardadas del usuario con sus 
+     * respectivos detalles de regalos asignados. Retorna la vista 'regalos.creacion-lista-regalos'.
+     *
+     * @return \Illuminate\View\View Vista para administrar y crear listas de regalos.
      */
     public function index()
     {
-        // 1. Traemos las categorías con sus regalos base (el catálogo maestro donde lista_regalos_id es null)
         $categoriasBD = CategoriaRegalo::with(['regalos' => function($query) {
             $query->whereNull('lista_regalos_id');
         }])->get();
 
-        // Convertimos al formato estructural de tu JSON original para no romper el JS
         $categorias = [];
         foreach ($categoriasBD as $cat) {
-            // Si en el JS usas "Grupales" en vez de "Grupal", lo mapeamos aquí
             $nombreKey = ($cat->nombre === 'Grupal') ? 'Grupales' : $cat->nombre;
             $categorias[$nombreKey] = $cat->regalos->map(function($regalo) {
                 return [
@@ -37,10 +40,8 @@ class RegaloController extends Controller
             })->toArray();
         }
 
-        // 2. Traemos los eventos del usuario autenticado
         $eventos = auth()->user()->eventos()->get();
 
-        // 3. Traemos las listas del usuario con sus copias privadas de regalos cargadas
         $listasRegalos = auth()->user()->listasRegalos()->with('regalos.categoria')->get();
 
         return view('regalos.creacion-lista-regalos', [
@@ -48,13 +49,18 @@ class RegaloController extends Controller
             'eventos' => $eventos,
             'listasRegalos' => $listasRegalos,
         ]);
-    } // <-- Se eliminó la llave extra que rompía el archivo aquí
+    }
 
     /**
-     * Store a newly created gift (personalizado).
-     */
-    /**
-     * Store a newly created gift (personalizado).
+     * Almacena un regalo nuevo y personalizado (creado directamente por el usuario).
+     *
+     * Valida los parámetros del regalo (nombre, descripción, categoría, enlaces de referencia,
+     * precio estimado, cantidad solicitada e imagen). Obtiene la categoría correspondiente en la
+     * base de datos, almacena el archivo de imagen en el disco público si se proporciona, y crea el 
+     * regalo asociándolo opcionalmente a una lista y evento. Retorna una respuesta JSON.
+     *
+     * @param \Illuminate\Http\Request $request Solicitud HTTP con la información del regalo.
+     * @return \Illuminate\Http\JsonResponse Respuesta JSON con el resultado de la operación y el regalo creado.
      */
     public function storeGift(Request $request)
     {
@@ -111,10 +117,15 @@ class RegaloController extends Controller
     }
 
     /**
-     * Create a new gift list.
-     */
-    /**
-     * Create a new gift list.
+     * Crea una nueva lista de regalos y asocia regalos replicados a partir del catálogo maestro.
+     *
+     * Valida el nombre, descripción y el evento asociado a la lista, así como un array de regalos
+     * que contiene las referencias al catálogo maestro y sus cantidades/enlaces personalizados.
+     * Crea la lista de regalos con estado inicial 'Borrador' y replica cada regalo del catálogo maestro,
+     * asignándolo a la lista recién creada. Retorna el resultado en JSON.
+     *
+     * @param \Illuminate\Http\Request $request Solicitud HTTP con los datos de la lista y regalos.
+     * @return \Illuminate\Http\JsonResponse Respuesta JSON confirmando la creación e incluyendo la lista.
      */
     public function storeLista(Request $request)
     {
@@ -138,7 +149,6 @@ class RegaloController extends Controller
             'estado' => 'Borrador', 
         ]);
 
-  
         if (!empty($request->regalos)) {
             foreach ($request->regalos as $item) {
                 $idRegaloCatalogo = $item['regalocatalogo'];
@@ -170,16 +180,23 @@ class RegaloController extends Controller
     }
 
     /**
-     * Add gift to existing list.
+     * Agrega un regalo individual del catálogo maestro a una lista existente de regalos.
+     *
+     * Valida el regalo y la cantidad solicitada. Comprueba que el usuario autenticado sea el dueño
+     * de la lista de regalos. Replica el regalo de plantilla, asignándolo a la lista de regalos y 
+     * guardando la cantidad indicada. Retorna respuesta en formato JSON.
+     *
+     * @param \Illuminate\Http\Request $request Solicitud HTTP con el ID de regalo y cantidad.
+     * @param \App\Models\ListaRegalo $listaRegalo Lista de regalos seleccionada.
+     * @return \Illuminate\Http\JsonResponse Respuesta JSON con el resultado de la operación.
      */
     public function addToList(Request $request, ListaRegalo $listaRegalo)
     {
         $validated = $request->validate([
             'regalo_id' => 'required|exists:regalos,id',
-            'qty' => 'nullable|integer|min:1', // Añadido soporte para capturar la cantidad del modal
+            'qty' => 'nullable|integer|min:1',
         ]);
 
-        // Verify ownership
         if ($listaRegalo->user_id !== auth()->id()) {
             return response()->json([
                 'success' => false,
@@ -192,7 +209,6 @@ class RegaloController extends Controller
         if ($regaloPlantilla) {
             $regaloUsuario = $regaloPlantilla->replicate();
             
-            // CORREGIDO: Ajustado a las propiedades de tu esquema original
             $regaloUsuario->lista_regalos_id = $listaRegalo->id;
             $regaloUsuario->evento_id = $listaRegalo->evento_id; 
             $regaloUsuario->cantidad_solicitada = $validated['qty'] ?? 1;
@@ -207,7 +223,16 @@ class RegaloController extends Controller
     }
 
     /**
-     * Update gift list (assign to event or change name).
+     * Actualiza la información general y la lista de regalos asociados a una lista existente.
+     *
+     * Verifica la pertenencia de la lista al usuario autenticado. Valida los campos de la lista y los
+     * nuevos regalos a asociar. Actualiza el nombre, descripción y evento. Limpia todos los registros
+     * de regalos asociados previamente a la lista y re-crea cada regalo del catálogo maestro con los
+     * nuevos detalles. Retorna la respuesta en formato JSON.
+     *
+     * @param \Illuminate\Http\Request $request Solicitud HTTP con la información de actualización.
+     * @param \App\Models\ListaRegalo $listaRegalo Lista de regalos a modificar.
+     * @return \Illuminate\Http\JsonResponse Respuesta JSON con el resultado de la operación.
      */
     public function updateLista(Request $request, ListaRegalo $listaRegalo)
     {
@@ -236,31 +261,30 @@ class RegaloController extends Controller
             'evento_id' => $validated['evento_id'] ?? null,
         ]);
 
-        $listaRegalo -> regalos()-> delete();
+        $listaRegalo->regalos()->delete();
 
         if (!empty($request->regalos)) {
-        foreach ($request->regalos as $item) {
-            
-            $idRegalo = $item['regalocatalogo'];
-            $cantidad = $item['qty'];
+            foreach ($request->regalos as $item) {
+                $idRegalo = $item['regalocatalogo'];
+                $cantidad = $item['qty'];
 
-            $regaloPlantilla = Regalo::find($idRegalo);
+                $regaloPlantilla = Regalo::find($idRegalo);
 
-            if ($regaloPlantilla) {
-                $regaloUsuario = $regaloPlantilla->replicate();
+                if ($regaloPlantilla) {
+                    $regaloUsuario = $regaloPlantilla->replicate();
 
-                $regaloUsuario->lista_regalos_id = $listaRegalo->id;
-                $regaloUsuario->evento_id = $listaRegalo->evento_id;
-                $regaloUsuario->cantidad_solicitada = $cantidad;
+                    $regaloUsuario->lista_regalos_id = $listaRegalo->id;
+                    $regaloUsuario->evento_id = $listaRegalo->evento_id;
+                    $regaloUsuario->cantidad_solicitada = $cantidad;
 
-                $regaloUsuario->link_referencia = $item['link_referencia'] ?? null;
-                $regaloUsuario->link_referencia_2 = $item['link_referencia_2'] ?? null;
-                $regaloUsuario->link_referencia_3 = $item['link_referencia_3'] ?? null;
-                
-                $regaloUsuario->save();
+                    $regaloUsuario->link_referencia = $item['link_referencia'] ?? null;
+                    $regaloUsuario->link_referencia_2 = $item['link_referencia_2'] ?? null;
+                    $regaloUsuario->link_referencia_3 = $item['link_referencia_3'] ?? null;
+                    
+                    $regaloUsuario->save();
+                }
             }
         }
-    }
 
         return response()->json([
             'success' => true,
@@ -270,7 +294,13 @@ class RegaloController extends Controller
     }
 
     /**
-     * Delete gift list.
+     * Elimina una lista de regalos específica del almacenamiento de la base de datos.
+     *
+     * Valida la propiedad de la lista con respecto al usuario actual, ejecuta el método delete
+     * en el modelo y devuelve una respuesta confirmando la eliminación en formato JSON.
+     *
+     * @param \App\Models\ListaRegalo $listaRegalo Instancia de la lista de regalos a eliminar.
+     * @return \Illuminate\Http\JsonResponse Respuesta JSON indicando el éxito de la operación.
      */
     public function destroyLista(ListaRegalo $listaRegalo)
     {
@@ -290,42 +320,65 @@ class RegaloController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Muestra el formulario para crear un recurso de regalos individual. (Función de recurso no utilizada).
+     *
+     * @return void
      */
     public function create()
     {
-        //
     }
 
     /**
-     * Display the specified resource.
+     * Muestra los detalles de un recurso de regalo individual. (Función de recurso no utilizada).
+     *
+     * @param string $id Identificador del regalo.
+     * @return void
      */
     public function show(string $id)
     {
-        //
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Muestra el formulario de edición de un recurso de regalo individual. (Función de recurso no utilizada).
+     *
+     * @param string $id Identificador del regalo.
+     * @return void
      */
     public function edit(string $id)
     {
-        //
     }
 
     /**
-     * Update the specified resource in storage.
+     * Actualiza un recurso de regalo individual en el almacenamiento. (Función de recurso no utilizada).
+     *
+     * @param \Illuminate\Http\Request $request Solicitud HTTP.
+     * @param string $id Identificador del regalo.
+     * @return void
      */
     public function update(Request $request, string $id)
     {
-        //
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Remueve un recurso de regalo individual del almacenamiento. (Función de recurso no utilizada).
+     *
+     * @param string $id Identificador del regalo.
+     * @return void
      */
     public function destroy(string $id)
     {
-        //
     }   
+
+    /**
+     * Muestra la interfaz de propuestas de regalos (Sección próximamente).
+     *
+     * Retorna una vista informativa indicando que la sección de propuestas de regalos
+     * estará disponible próximamente en la plataforma.
+     *
+     * @return \Illuminate\View\View Vista temporal de la sección próximamente.
+     */
+    public function propuestas()
+    {
+        return view('regalos.propuestas-proximamente');
+    }
 }

@@ -9,11 +9,24 @@ use App\Models\Regalo;
 
 class DashboardController extends Controller
 {
+    /**
+     * Procesa y muestra la pantalla principal del panel de control (Dashboard).
+     * 
+     * Esta función recupera todos los eventos activos del usuario autenticado (excluyendo aquellos
+     * con estado 'Cancelado' o 'Finalizado' y que no hayan sido eliminados lógicamente), determina
+     * el evento seleccionado para visualización mediante el parámetro 'evento' en la solicitud,
+     * calcula las estadísticas clave del evento (total de invitados, confirmados, pendientes,
+     * regalos totales, regalos pendientes y los días restantes para la fecha del evento), y
+     * obtiene el historial de actividad más reciente (las últimas dos acciones entre confirmaciones
+     * de asistencia y regalos seleccionados de cualquiera de sus eventos).
+     *
+     * @param \Illuminate\Http\Request $request Objeto de la solicitud HTTP que puede contener un índice para seleccionar un evento específico.
+     * @return \Illuminate\View\View Retorna la vista 'dashboard' con los datos de eventos, estadísticas y actividades recientes.
+     */
     public function index(Request $request)
     {
         $user = Auth::user();
 
-        // Cargar todos los eventos activos (no borrados, no cancelados) del usuario
         $eventos = $user->eventos()
             ->whereNotIn('estado', ['Cancelado', 'Finalizado'])
             ->whereNull('deleted_at')
@@ -21,7 +34,6 @@ class DashboardController extends Controller
             ->orderBy('fecha_evento', 'asc')
             ->get();
 
-        // Determinar cuál evento mostrar (puede cambiar con un query param)
         $eventoIndex = (int) $request->get('evento', 0);
         if ($eventoIndex >= $eventos->count()) {
             $eventoIndex = 0;
@@ -29,7 +41,6 @@ class DashboardController extends Controller
 
         $evento = $eventos->count() > 0 ? $eventos[$eventoIndex] : null;
 
-        // Estadísticas del evento seleccionado
         $stats = [
             'total_invitados'    => 0,
             'confirmados'        => 0,
@@ -57,8 +68,6 @@ class DashboardController extends Controller
             );
         }
 
-        // Actividad reciente: últimas 2 entre confirmaciones de invitados y regalos seleccionados
-        // que pertenecen a eventos del usuario
         $eventoIds = $user->eventos()->pluck('id');
 
         $confirmaciones = Invitado::whereIn('evento_id', $eventoIds)
