@@ -12,13 +12,16 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('regalos', function (Blueprint $table) {
-            $table->binary('id')->default('uuid_to_bin(uuid(),1)')->primary();
-            $table->binary('evento_id')->index('idx_regalos_evento');
-            $table->binary('categoria_id')->nullable()->index('idx_regalos_categoria');
+            $table->id()->primary();
+            $table->bigInteger('evento_id')->unsigned()->nullable()->index('idx_regalos_evento');
+            $table->bigInteger('categoria_id')->unsigned()->nullable()->index('idx_regalos_categoria');
+            $table->bigInteger('lista_regalos_id')->unsigned()->nullable()->index('idx_regalos_lista');
             $table->string('nombre_regalo', 200);
             $table->longText('descripcion')->nullable();
             $table->enum('prioridad', ['Baja', 'Media', 'Alta', 'Urgente'])->nullable()->default('Media');
             $table->string('link_referencia', 500)->nullable();
+            $table->string('link_referencia_2', 500)->nullable();
+            $table->string('link_referencia_3', 500)->nullable();
             $table->decimal('precio_estimado', 12)->nullable();
             $table->integer('cantidad_solicitada')->nullable()->default(1);
             $table->integer('cantidad_completada')->nullable()->default(0);

@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('regalos_historial_cambios', function (Blueprint $table) {
             $table->bigInteger('id', true);
-            $table->binary('regalo_id')->index('idx_historial_regalo');
+            $table->bigInteger('regalo_id')->unsigned()->index('idx_historial_regalo');
             $table->string('campo_modificado', 100)->nullable();
             $table->longText('valor_anterior')->nullable();
             $table->longText('valor_nuevo')->nullable();

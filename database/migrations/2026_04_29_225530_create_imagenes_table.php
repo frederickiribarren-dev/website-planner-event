@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('imagenes', function (Blueprint $table) {
-            $table->binary('id')->default('uuid_to_bin(uuid(),1)')->primary();
-            $table->binary('imagenable_id')->index('idx_imagenes_imagenable');
+            $table->id()->primary();
+            $table->bigInteger('imagenable_id')->unsigned()->index('idx_imagenes_imagenable');
             $table->string('url', 500);
             $table->string('nombre_archivo')->nullable();
             $table->string('alt_text')->nullable();

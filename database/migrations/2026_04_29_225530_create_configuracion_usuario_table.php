@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('configuracion_usuario', function (Blueprint $table) {
-            $table->binary('usuario_id')->primary();
+            $table->bigInteger('usuario_id')->unsigned()->primary();
             $table->boolean('notificaciones_push')->nullable()->default(true);
             $table->boolean('notificaciones_email')->nullable()->default(true);
             $table->char('idioma', 5)->nullable()->default('es-CL');

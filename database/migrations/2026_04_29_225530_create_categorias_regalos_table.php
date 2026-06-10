@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('categorias_regalos', function (Blueprint $table) {
-            $table->binary('id')->default('uuid_to_bin(uuid(),1)')->primary();
-            $table->string('nombre', 100)->unique('nombre');
+            $table->id()->primary();
+            $table->enum('nombre', ['Ropa', 'Utensilios', 'Accesorios', 'Grupal'])->unique('nombre');
             $table->string('icono_url')->nullable();
             $table->timestamp('created_at')->nullable()->useCurrent();
             $table->timestamp('updated_at')->useCurrentOnUpdate()->nullable()->useCurrent();

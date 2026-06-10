@@ -12,9 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('regalos_reservas', function (Blueprint $table) {
-            $table->binary('id')->default('uuid_to_bin(uuid(),1)')->primary();
-            $table->binary('regalo_id')->index('idx_reservas_regalo');
-            $table->binary('invitado_id')->index('idx_reservas_invitado');
+            $table->id()->primary();
+            $table->bigInteger('regalo_id')->unsigned()->index('idx_reservas_regalo');
+            $table->bigInteger('invitado_id')->unsigned()->index('idx_reservas_invitado');
             $table->integer('cantidad_reservada')->nullable()->default(1);
             $table->string('comprobante_url', 500)->nullable();
             $table->timestamp('fecha_reserva')->nullable()->useCurrent();
