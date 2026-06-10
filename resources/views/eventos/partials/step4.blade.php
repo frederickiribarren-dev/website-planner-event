@@ -11,14 +11,26 @@
                             <input type="text" id="email_subject" name="email_subject" oninput="updatePreview()" class="w-full bg-gray-50 border-none rounded-2xl px-6 py-4 focus:ring-2 focus:ring-cyan-600 transition text-gray-900" placeholder="¡Estás invitado al Baby Shower!">
                         </div>
                         <div>
+                            <style>
+                                #email_message_editor:empty::before {
+                                    content: attr(placeholder);
+                                    color: #a1a1aa; /* text-zinc-400 */
+                                    pointer-events: none;
+                                }
+                                #email_message_editor, #preview_message {
+                                    word-break: break-word !important;
+                                    overflow-wrap: break-word !important;
+                                }
+                            </style>
                             <label class="block text-sm font-bold text-gray-700 mb-3">Mensaje</label>
                             <div class="bg-gray-50 rounded-2xl overflow-hidden border border-gray-100">
-                                <div class="flex items-center gap-4 px-6 py-3 border-b border-gray-200 bg-gray-100/50">
-                                    <button type="button" class="text-gray-400 font-bold hover:text-gray-600">B</button>
-                                    <button type="button" class="text-gray-400 hover:text-gray-600 italic">I</button>
-                                    <button type="button" class="text-gray-400 hover:text-gray-600 underline">U</button>
+                                <div class="flex items-center gap-2 px-6 py-3 border-b border-gray-200 bg-gray-100/50">
+                                    <button type="button" onclick="formatText('bold')" class="text-gray-400 font-bold hover:text-gray-600 w-8 h-8 rounded-lg hover:bg-gray-200/60 transition-colors flex items-center justify-center text-sm">B</button>
+                                    <button type="button" onclick="formatText('italic')" class="text-gray-400 hover:text-gray-600 italic w-8 h-8 rounded-lg hover:bg-gray-200/60 transition-colors flex items-center justify-center text-sm">I</button>
+                                    <button type="button" onclick="formatText('underline')" class="text-gray-400 hover:text-gray-600 underline w-8 h-8 rounded-lg hover:bg-gray-200/60 transition-colors flex items-center justify-center text-sm">U</button>
                                 </div>
-                                <textarea id="email_message" name="mensaje_invitacion" oninput="updatePreview()" rows="8" class="w-full bg-transparent border-none px-6 py-4 focus:ring-0 transition text-gray-900 resize-none" placeholder="Escribe aquí tu mensaje cálido..."></textarea>
+                                <div id="email_message_editor" contenteditable="true" oninput="syncEditorContent()" class="w-full bg-transparent border-none px-6 py-4 focus:outline-none transition text-gray-900 min-h-[180px] overflow-y-auto" placeholder="Escribe aquí tu mensaje cálido..."></div>
+                                <input type="hidden" id="email_message" name="mensaje_invitacion">
                             </div>
                         </div>
                     </div>
@@ -33,7 +45,7 @@
                                     <div class="p-6 text-center space-y-6">
                                         <span class="inline-block px-4 py-1.5 bg-[#EEF5F5] text-[#427A79] rounded-full text-[10px] font-bold uppercase tracking-widest">Estás Invitado</span>
                                         <h4 class="text-2xl font-bold text-gray-800" id="preview_title">Baby Shower de <br><span class="italic text-[#427A79] font-medium">Leo</span></h4>
-                                        <p class="text-xs text-gray-500 leading-relaxed font-medium" id="preview_message">Estamos muy emocionados de compartir este momento tan especial contigo. Acompáñanos a celebrar la llegada de nuestro pequeño.</p>
+                                        <p class="text-xs text-gray-500 leading-relaxed font-medium break-words" id="preview_message">Estamos muy emocionados de compartir este momento tan especial contigo. Acompáñanos a celebrar la llegada de nuestro pequeño.</p>
                                     </div>
                                 </div>
                             </div>
