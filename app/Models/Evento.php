@@ -2,12 +2,15 @@
 
 namespace App\Models;
 
+use Database\Factories\EventoFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Evento extends Model
 {
-    use SoftDeletes;
+    /** @use HasFactory<EventoFactory> */
+    use HasFactory, SoftDeletes;
     protected $fillable = [
         'usuario_id',
         'slug',
