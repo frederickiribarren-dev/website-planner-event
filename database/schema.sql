@@ -6,6 +6,7 @@ DROP TABLE IF EXISTS regalos_historial_cambios;
 DROP TABLE IF EXISTS auditoria_eventos;
 DROP TABLE IF EXISTS regalos;
 DROP TABLE IF EXISTS invitados;
+DROP TABLE IF EXISTS listas_regalos;
 DROP TABLE IF EXISTS listas_invitados;
 DROP TABLE IF EXISTS configuracion_usuario;
 DROP TABLE IF EXISTS eventos;
@@ -50,10 +51,14 @@ CREATE TABLE eventos (
     color_tema VARCHAR(7) NULL DEFAULT '#60A5FA',
     estado ENUM('Borrador', 'Publicado', 'Finalizado', 'Cancelado') NULL DEFAULT 'Borrador',
     imagen_portada_url VARCHAR(500) NULL,
+    lista_invitado_id BIGINT UNSIGNED NULL,
+    lista_regalos_id BIGINT UNSIGNED NULL,
     created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     deleted_at TIMESTAMP NULL,
     KEY `idx_eventos_usuario` (`usuario_id`),
+    KEY `idx_eventos_lista_invitado` (`lista_invitado_id`),
+    KEY `idx_eventos_lista_regalos` (`lista_regalos_id`),
     CONSTRAINT `fk_eventos_usuario` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -82,7 +87,24 @@ CREATE TABLE listas_invitados (
     CONSTRAINT `fk_listas_invitados_evento` FOREIGN KEY (`evento_id`) REFERENCES `eventos` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- 6. Tabla de Invitados (Depende de eventos y listas_invitados)
+-- 6. Tabla de Listas de Regalos (Depende de usuarios y eventos)
+CREATE TABLE listas_regalos (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    user_id BIGINT UNSIGNED NOT NULL,
+    evento_id BIGINT UNSIGNED NULL,
+    nombre VARCHAR(150) NOT NULL,
+    descripcion TEXT NULL,
+    estado ENUM('Borrador', 'Activa', 'Completada') NULL DEFAULT 'Borrador',
+    created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    deleted_at TIMESTAMP NULL,
+    KEY `idx_listas_regalos_user` (`user_id`),
+    KEY `idx_listas_regalos_evento` (`evento_id`),
+    CONSTRAINT `fk_listas_regalos_user` FOREIGN KEY (`user_id`) REFERENCES `usuarios` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
+    CONSTRAINT `fk_listas_regalos_evento` FOREIGN KEY (`evento_id`) REFERENCES `eventos` (`id`) ON DELETE SET NULL ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 7. Tabla de Invitados (Depende de eventos y listas_invitados)
 CREATE TABLE invitados (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     evento_id BIGINT UNSIGNED NOT NULL,
@@ -106,15 +128,18 @@ CREATE TABLE invitados (
     CONSTRAINT `fk_invitados_lista_invitado` FOREIGN KEY (`lista_invitado_id`) REFERENCES `listas_invitados` (`id`) ON DELETE SET NULL ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- 7. Tabla de Regalos (Depende de eventos y categorias_regalos)
+-- 8. Tabla de Regalos (Depende de eventos, categorias_regalos y listas_regalos)
 CREATE TABLE regalos (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     evento_id BIGINT UNSIGNED NOT NULL,
     categoria_id BIGINT UNSIGNED NULL,
+    lista_regalos_id BIGINT UNSIGNED NULL,
     nombre_regalo VARCHAR(200) NOT NULL,
     descripcion LONGTEXT NULL,
     prioridad ENUM('Baja', 'Media', 'Alta', 'Urgente') NULL DEFAULT 'Media',
     link_referencia VARCHAR(500) NULL,
+    link_referencia_2 VARCHAR(500) NULL,
+    link_referencia_3 VARCHAR(500) NULL,
     precio_estimado DECIMAL(12,2) NULL,
     cantidad_solicitada INT NULL DEFAULT 1,
     cantidad_completada INT NULL DEFAULT 0,
@@ -125,11 +150,13 @@ CREATE TABLE regalos (
     deleted_at TIMESTAMP NULL,
     KEY `idx_regalos_evento` (`evento_id`),
     KEY `idx_regalos_categoria` (`categoria_id`),
+    KEY `idx_regalos_lista` (`lista_regalos_id`),
     CONSTRAINT `fk_regalos_evento` FOREIGN KEY (`evento_id`) REFERENCES `eventos` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
-    CONSTRAINT `fk_regalos_categoria` FOREIGN KEY (`categoria_id`) REFERENCES `categorias_regalos` (`id`) ON DELETE SET NULL ON UPDATE NO ACTION
+    CONSTRAINT `fk_regalos_categoria` FOREIGN KEY (`categoria_id`) REFERENCES `categorias_regalos` (`id`) ON DELETE SET NULL ON UPDATE NO ACTION,
+    CONSTRAINT `fk_regalos_lista_regalos` FOREIGN KEY (`lista_regalos_id`) REFERENCES `listas_regalos` (`id`) ON DELETE SET NULL ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- 8. Tabla de Auditoría de Eventos (Depende de eventos)
+-- 9. Tabla de Auditoría de Eventos (Depende de eventos)
 CREATE TABLE auditoria_eventos (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     evento_id BIGINT UNSIGNED NOT NULL,
@@ -144,7 +171,7 @@ CREATE TABLE auditoria_eventos (
     CONSTRAINT `fk_auditoria_evento` FOREIGN KEY (`evento_id`) REFERENCES `eventos` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- 9. Tabla de Historial de Cambios de Regalos (Depende de regalos)
+-- 10. Tabla de Historial de Cambios de Regalos (Depende de regalos)
 CREATE TABLE regalos_historial_cambios (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     regalo_id BIGINT UNSIGNED NOT NULL,
@@ -156,7 +183,7 @@ CREATE TABLE regalos_historial_cambios (
     CONSTRAINT `fk_historial_regalo` FOREIGN KEY (`regalo_id`) REFERENCES `regalos` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- 10. Tabla de Reservas de Regalos (Depende de regalos e invitados)
+-- 11. Tabla de Reservas de Regalos (Depende de regalos e invitados)
 CREATE TABLE regalos_reservas (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     regalo_id BIGINT UNSIGNED NOT NULL,
@@ -173,7 +200,7 @@ CREATE TABLE regalos_reservas (
     CONSTRAINT `fk_reserva_invitado` FOREIGN KEY (`invitado_id`) REFERENCES `invitados` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- 11. Tabla de Imagenables (Polimórfica) (Depende de usuarios, eventos y regalos)
+-- 12. Tabla de Imagenables (Polimórfica) (Depende de usuarios, eventos y regalos)
 CREATE TABLE imagenables (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     usuario_id BIGINT UNSIGNED NULL,
@@ -190,7 +217,7 @@ CREATE TABLE imagenables (
     CONSTRAINT `fk_imagenables_regalo` FOREIGN KEY (`regalo_id`) REFERENCES `regalos` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- 12. Tabla de Imágenes (Depende de imagenables)
+-- 13. Tabla de Imágenes (Depende de imagenables)
 CREATE TABLE imagenes (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     imagenable_id BIGINT UNSIGNED NOT NULL,
@@ -207,3 +234,7 @@ CREATE TABLE imagenes (
     KEY `idx_imagenes_primary` (`imagenable_id`, `is_primary`),
     CONSTRAINT `fk_imagenes_imagenable` FOREIGN KEY (`imagenable_id`) REFERENCES `imagenables` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Dependencias circulares (Agregadas al final)
+ALTER TABLE eventos ADD CONSTRAINT `fk_eventos_lista_invitado` FOREIGN KEY (`lista_invitado_id`) REFERENCES `listas_invitados` (`id`) ON DELETE SET NULL ON UPDATE NO ACTION;
+ALTER TABLE eventos ADD CONSTRAINT `fk_eventos_lista_regalos` FOREIGN KEY (`lista_regalos_id`) REFERENCES `listas_regalos` (`id`) ON DELETE SET NULL ON UPDATE NO ACTION;

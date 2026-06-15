@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+  <testsuite name="C:\laragon\www\website-planner-event\phpunit.xml" tests="28" assertions="84" errors="0" failures="0" skipped="0" time="2.074460">
+    <testsuite name="Unit" tests="1" assertions="1" errors="0" failures="0" skipped="0" time="0.011830">
+      <testsuite name="Tests\Unit\ExampleTest" file="tests\Unit\ExampleTest.php" tests="1" assertions="1" errors="0" failures="0" skipped="0" time="0.011830">
+        <testcase name="that true is true" file="tests\Unit\ExampleTest.php::that true is true" class="Tests\Unit\ExampleTest" classname="Tests.Unit.ExampleTest" assertions="1" time="0.011830"/>
+      </testsuite>
+    </testsuite>
+    <testsuite name="Feature" tests="27" assertions="83" errors="0" failures="0" skipped="0" time="2.062629">
+      <testsuite name="Tests\Feature\Auth\AuthenticationTest" file="tests\Feature\Auth\AuthenticationTest.php" tests="4" assertions="8" errors="0" failures="0" skipped="0" time="0.652687">
+        <testcase name="login screen can be rendered" file="tests\Feature\Auth\AuthenticationTest.php::login screen can be rendered" class="Tests\Feature\Auth\AuthenticationTest" classname="Tests.Feature.Auth.AuthenticationTest" assertions="1" time="0.363878"/>
+        <testcase name="users can authenticate using the login screen" file="tests\Feature\Auth\AuthenticationTest.php::users can authenticate using the login screen" class="Tests\Feature\Auth\AuthenticationTest" classname="Tests.Feature.Auth.AuthenticationTest" assertions="3" time="0.053345"/>
+        <testcase name="users can not authenticate with invalid password" file="tests\Feature\Auth\AuthenticationTest.php::users can not authenticate with invalid password" class="Tests\Feature\Auth\AuthenticationTest" classname="Tests.Feature.Auth.AuthenticationTest" assertions="1" time="0.216484"/>
+        <testcase name="users can logout" file="tests\Feature\Auth\AuthenticationTest.php::users can logout" class="Tests\Feature\Auth\AuthenticationTest" classname="Tests.Feature.Auth.AuthenticationTest" assertions="3" time="0.018979"/>
+      </testsuite>
+      <testsuite name="Tests\Feature\Auth\EmailVerificationTest" file="tests\Feature\Auth\EmailVerificationTest.php" tests="3" assertions="6" errors="0" failures="0" skipped="0" time="0.069724">
+        <testcase name="email verification screen can be rendered" file="tests\Feature\Auth\EmailVerificationTest.php::email verification screen can be rendered" class="Tests\Feature\Auth\EmailVerificationTest" classname="Tests.Feature.Auth.EmailVerificationTest" assertions="1" time="0.023899"/>
+        <testcase name="email can be verified" file="tests\Feature\Auth\EmailVerificationTest.php::email can be verified" class="Tests\Feature\Auth\EmailVerificationTest" classname="Tests.Feature.Auth.EmailVerificationTest" assertions="4" time="0.022164"/>
+        <testcase name="email is not verified with invalid hash" file="tests\Feature\Auth\EmailVerificationTest.php::email is not verified with invalid hash" class="Tests\Feature\Auth\EmailVerificationTest" classname="Tests.Feature.Auth.EmailVerificationTest" assertions="1" time="0.023661"/>
+      </testsuite>
+      <testsuite name="Tests\Feature\Auth\PasswordConfirmationTest" file="tests\Feature\Auth\PasswordConfirmationTest.php" tests="3" assertions="4" errors="0" failures="0" skipped="0" time="0.288145">
+        <testcase name="confirm password screen can be rendered" file="tests\Feature\Auth\PasswordConfirmationTest.php::confirm password screen can be rendered" class="Tests\Feature\Auth\PasswordConfirmationTest" classname="Tests.Feature.Auth.PasswordConfirmationTest" assertions="1" time="0.033669"/>
+        <testcase name="password can be confirmed" file="tests\Feature\Auth\PasswordConfirmationTest.php::password can be confirmed" class="Tests\Feature\Auth\PasswordConfirmationTest" classname="Tests.Feature.Auth.PasswordConfirmationTest" assertions="2" time="0.021243"/>
+        <testcase name="password is not confirmed with invalid password" file="tests\Feature\Auth\PasswordConfirmationTest.php::password is not confirmed with invalid password" class="Tests\Feature\Auth\PasswordConfirmationTest" classname="Tests.Feature.Auth.PasswordConfirmationTest" assertions="1" time="0.233232"/>
+      </testsuite>
+      <testsuite name="Tests\Feature\Auth\PasswordResetTest" file="tests\Feature\Auth\PasswordResetTest.php" tests="4" assertions="8" errors="0" failures="0" skipped="0" time="0.702126">
+        <testcase name="reset password link screen can be rendered" file="tests\Feature\Auth\PasswordResetTest.php::reset password link screen can be rendered" class="Tests\Feature\Auth\PasswordResetTest" classname="Tests.Feature.Auth.PasswordResetTest" assertions="1" time="0.025962"/>
+        <testcase name="reset password link can be requested" file="tests\Feature\Auth\PasswordResetTest.php::reset password link can be requested" class="Tests\Feature\Auth\PasswordResetTest" classname="Tests.Feature.Auth.PasswordResetTest" assertions="1" time="0.233637"/>
+        <testcase name="reset password screen can be rendered" file="tests\Feature\Auth\PasswordResetTest.php::reset password screen can be rendered" class="Tests\Feature\Auth\PasswordResetTest" classname="Tests.Feature.Auth.PasswordResetTest" assertions="2" time="0.225308"/>
+        <testcase name="password can be reset with valid token" file="tests\Feature\Auth\PasswordResetTest.php::password can be reset with valid token" class="Tests\Feature\Auth\PasswordResetTest" classname="Tests.Feature.Auth.PasswordResetTest" assertions="4" time="0.217218"/>
+      </testsuite>
+      <testsuite name="Tests\Feature\Auth\PasswordUpdateTest" file="tests\Feature\Auth\PasswordUpdateTest.php" tests="2" assertions="8" errors="0" failures="0" skipped="0" time="0.045025">
+        <testcase name="password can be updated" file="tests\Feature\Auth\PasswordUpdateTest.php::password can be updated" class="Tests\Feature\Auth\PasswordUpdateTest" classname="Tests.Feature.Auth.PasswordUpdateTest" assertions="4" time="0.025222"/>
+        <testcase name="correct password must be provided to update password" file="tests\Feature\Auth\PasswordUpdateTest.php::correct password must be provided to update password" class="Tests\Feature\Auth\PasswordUpdateTest" classname="Tests.Feature.Auth.PasswordUpdateTest" assertions="4" time="0.019803"/>
+      </testsuite>
+      <testsuite name="Tests\Feature\Auth\RegistrationTest" file="tests\Feature\Auth\RegistrationTest.php" tests="2" assertions="4" errors="0" failures="0" skipped="0" time="0.051828">
+        <testcase name="registration screen can be rendered" file="tests\Feature\Auth\RegistrationTest.php::registration screen can be rendered" class="Tests\Feature\Auth\RegistrationTest" classname="Tests.Feature.Auth.RegistrationTest" assertions="1" time="0.032112"/>
+        <testcase name="new users can register" file="tests\Feature\Auth\RegistrationTest.php::new users can register" class="Tests\Feature\Auth\RegistrationTest" classname="Tests.Feature.Auth.RegistrationTest" assertions="3" time="0.019715"/>
+      </testsuite>
+      <testsuite name="Tests\Feature\EventoCreationTest" file="tests\Feature\EventoCreationTest.php" tests="1" assertions="5" errors="0" failures="0" skipped="0" time="0.027838">
+        <testcase name="authenticated user can create an event" file="tests\Feature\EventoCreationTest.php::authenticated user can create an event" class="Tests\Feature\EventoCreationTest" classname="Tests.Feature.EventoCreationTest" assertions="5" time="0.027838"/>
+      </testsuite>
+      <testsuite name="Tests\Feature\ExampleTest" file="tests\Feature\ExampleTest.php" tests="1" assertions="1" errors="0" failures="0" skipped="0" time="0.046922">
+        <testcase name="it returns a successful response" file="tests\Feature\ExampleTest.php::it returns a successful response" class="Tests\Feature\ExampleTest" classname="Tests.Feature.ExampleTest" assertions="1" time="0.046922"/>
+      </testsuite>
+      <testsuite name="Tests\Feature\ListaInvitadoTest" file="tests\Feature\ListaInvitadoTest.php" tests="1" assertions="10" errors="0" failures="0" skipped="0" time="0.030051">
+        <testcase name="user can create a guest list and add a guest to it" file="tests\Feature\ListaInvitadoTest.php::user can create a guest list and add a guest to it" class="Tests\Feature\ListaInvitadoTest" classname="Tests.Feature.ListaInvitadoTest" assertions="10" time="0.030051"/>
+      </testsuite>
+      <testsuite name="Tests\Feature\ListaRegaloTest" file="tests\Feature\ListaRegaloTest.php" tests="1" assertions="8" errors="0" failures="0" skipped="0" time="0.027087">
+        <testcase name="user can create a gift list with items from the catalog" file="tests\Feature\ListaRegaloTest.php::user can create a gift list with items from the catalog" class="Tests\Feature\ListaRegaloTest" classname="Tests.Feature.ListaRegaloTest" assertions="8" time="0.027087"/>
+      </testsuite>
+      <testsuite name="Tests\Feature\ProfileTest" file="tests\Feature\ProfileTest.php" tests="5" assertions="21" errors="0" failures="0" skipped="0" time="0.121196">
+        <testcase name="profile page is displayed" file="tests\Feature\ProfileTest.php::profile page is displayed" class="Tests\Feature\ProfileTest" classname="Tests.Feature.ProfileTest" assertions="1" time="0.036691"/>
+        <testcase name="profile information can be updated" file="tests\Feature\ProfileTest.php::profile information can be updated" class="Tests\Feature\ProfileTest" classname="Tests.Feature.ProfileTest" assertions="6" time="0.020570"/>
+        <testcase name="email verification status is unchanged when the email address is unchanged" file="tests\Feature\ProfileTest.php::email verification status is unchanged when the email address is unchanged" class="Tests\Feature\ProfileTest" classname="Tests.Feature.ProfileTest" assertions="4" time="0.019866"/>
+        <testcase name="user can delete their account" file="tests\Feature\ProfileTest.php::user can delete their account" class="Tests\Feature\ProfileTest" classname="Tests.Feature.ProfileTest" assertions="5" time="0.021041"/>
+        <testcase name="correct password must be provided to delete account" file="tests\Feature\ProfileTest.php::correct password must be provided to delete account" class="Tests\Feature\ProfileTest" classname="Tests.Feature.ProfileTest" assertions="5" time="0.023028"/>
+      </testsuite>
+    </testsuite>
+  </testsuite>
+</testsuites>

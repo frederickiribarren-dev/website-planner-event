@@ -59,7 +59,7 @@
                                     $allListas = $allListas->merge($evento->listasInvitados);
                                 }
                                 // Add standalone lists (evento_id = null)
-                                $standaloneListasQuery = \App\Models\ListaInvitado::where('evento_id', null)->get();
+                                $standaloneListasQuery = \App\Models\ListaInvitado::whereNull('evento_id')->get();
                                 $allListas = $allListas->merge($standaloneListasQuery);
                             @endphp
                             @if($allListas->isEmpty())
@@ -85,7 +85,7 @@
                                             @endif
                                         </td>
                                             <td class="px-8 py-5 text-right space-x-2 whitespace-nowrap">
-                                                <button onclick="verListaDetalle('{{ $lista->id }}', '{{ addslashes($lista->nombre) }}', {{ $lista->invitados->count() }})" class="px-4 py-2 bg-slate-100 text-cyan-700 text-xs font-bold rounded-xl hover:bg-cyan-600 hover:text-white transition-all">Ver lista</button>
+                                                <a href="{{ route('listas-invitados.show', $lista->id) }}" class="inline-block px-4 py-2 bg-slate-100 text-cyan-700 text-xs font-bold rounded-xl hover:bg-cyan-600 hover:text-white transition-all">Ver lista</a>
                                                 <a href="{{ route('listas-invitados.edit', $lista->id) }}" class="inline-block px-4 py-2 bg-white border border-slate-200 text-slate-600 text-xs font-bold rounded-xl hover:border-cyan-500 hover:text-cyan-600 transition-all">Editar</a>
                                                 <button class="p-2 bg-red-50 text-red-400 hover:text-red-600 rounded-xl transition-all" onclick="if(confirm('¿Estás seguro de eliminar esta lista? Esta acción no se puede deshacer.')) document.getElementById('delete-form-{{ $lista->id }}').submit();">
                                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
@@ -256,192 +256,252 @@
                     </div>
                 </div>
             </div>
-        </div>
-
-    </div>
-
-    <script>
-        let tempGuests = [];
-        let selectedEventId = {!! optional($eventos->first())->id ?? 'null' !!};
-        const eventsData = {!! json_encode($eventos->map(function($evento) {
-            return [
-                'id' => $evento->id,
-                'name' => $evento->nombre_bebe,
-                'lists' => $evento->listasInvitados->map(function($lista) {
+           <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            /**
+             * GuestListManager
+             * Encapsula la lógica de gestión de invitados, previniendo fuga de variables al scope global (window).
+             */
+            const GuestListManager = (() => {
+                // Estado Local
+                let tempGuests = [];
+                
+                // Inyección de datos desde Blade (Serializados de forma segura)
+                const eventsData = {!! json_encode($eventos->map(function($evento) {
                     return [
-                        'id' => $lista->id,
-                        'category' => $lista->categoria,
-                        'guests' => $lista->invitados->map(function($guest) {
+                        'id' => $evento->id,
+                        'name' => $evento->nombre_bebe,
+                        'lists' => $evento->listasInvitados->map(function($lista) {
                             return [
-                                'name' => $guest->nombre,
-                                'contact' => $guest->email ?: $guest->telefono ?: '---',
-                                'status' => $guest->estado_asistencia ?: 'Sin responder',
-                                'inv' => $guest->estado_invitacion ?: 'Pendiente'
+                                'id' => $lista->id,
+                                'category' => $lista->categoria,
+                                'guests' => $lista->invitados->map(function($guest) {
+                                    return [
+                                        'name' => $guest->nombre,
+                                        'contact' => $guest->email ?: $guest->telefono ?: '---',
+                                        'status' => $guest->estado_asistencia ?: 'Sin responder',
+                                        'inv' => $guest->estado_invitacion ?: 'Pendiente'
+                                    ];
+                                })->all()
                             ];
                         })->all()
                     ];
-                })->all()
-            ];
-        })->all()) !!};
+                })->all(), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) !!};
 
-        /**
-         * Muestra un modal en pantalla cambiando su estilo a bloque.
-         */
-        function openModal(id) {
-            const el = document.getElementById(id);
-            if (el) el.style.display = 'block';
-        }
+                // Helpers de Seguridad (Previene DOM-Based XSS)
+                const escapeHTML = (str) => {
+                    if (!str) return '';
+                    const div = document.createElement('div');
+                    div.textContent = str;
+                    return div.innerHTML;
+                };
 
-        /**
-         * Oculta un modal de la pantalla cambiando su estilo a none.
-         */
-        function closeModal(id) {
-            const el = document.getElementById(id);
-            if (el) el.style.display = 'none';
-        }
+                // Validadores
+                const Validators = {
+                    isValidEmail: (email) => email === '' || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email),
+                    isValidPhone: (phone) => phone === '' || /^\+?[\d\s-]{7,20}$/.test(phone)
+                };
 
-        /**
-         * Alterna entre las diferentes vistas de la interfaz ocultando y mostrando el contenido.
-         */
-        function showView(view) {
-            document.querySelectorAll('.view-content').forEach(v => v.classList.add('hidden'));
-            document.getElementById('view-' + view).classList.remove('hidden');
+                // Referencias al DOM
+                const DOM = {
+                    eventDetailBody: document.getElementById('event-guests-body'),
+                    tempGuestsBody: document.getElementById('temp-guests-body'),
+                    detailSummary: document.getElementById('detail-summary'),
+                    tempCount: document.getElementById('temp-count'),
+                    manualForm: {
+                        name: document.getElementById('manual_name'),
+                        email: document.getElementById('manual_email'),
+                        phone: document.getElementById('manual_phone')
+                    },
+                    submitForm: {
+                        form: document.getElementById('createListForm'),
+                        guestsJson: document.getElementById('guests_json'),
+                        listName: document.getElementById('list_name')
+                    }
+                };
 
-            const title = document.getElementById('view-title');
-            const subtitle = document.getElementById('view-subtitle');
-            const toggleBtn = document.getElementById('btn-toggle-view');
-            const toggleText = document.getElementById('btn-toggle-text');
-            const toggleIcon = document.getElementById('btn-toggle-icon');
+                /**
+                 * Muestra los detalles de un evento seleccionado usando plantillas seguras.
+                 */
+                const loadEventDetail = (eventId) => {
+                    const event = eventsData.find(e => e.id === eventId);
+                    if (!event) return;
 
-            if (view === 'lists') {
-                title.innerText = 'Listas de Invitados';
-                subtitle.innerText = 'Gestiona tus grupos de invitados de forma organizada.';
-                toggleBtn.setAttribute('onclick', "showView('events')");
-                toggleText.innerText = 'Ver por eventos';
-                toggleIcon.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>';
-            } else if (view === 'events') {
-                title.innerText = 'Ver Listas por Eventos';
-                subtitle.innerText = 'Consulta quiénes están invitados a cada uno de tus eventos.';
-                toggleBtn.setAttribute('onclick', "showView('lists')");
-                toggleText.innerText = 'Ver por listas';
-                toggleIcon.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>';
-            } else if (view === 'create') {
-                title.innerText = 'Nueva Lista de Invitados';
-                subtitle.innerText = 'Crea un grupo de personas para asignar a tus eventos.';
-                toggleBtn.setAttribute('onclick', "showView('lists')");
-                toggleText.innerText = 'Volver a listas';
-                toggleIcon.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>';
-            }
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
+                    DOM.eventDetailBody.innerHTML = '';
+                    let totalGuests = 0;
 
-        /**
-         * Muestra el detalle de invitados de un evento en específico renderizando la tabla correspondiente.
-         */
-        function showEventDetail(eventId) {
-            const event = eventsData.find(e => e.id === eventId);
-            if (!event) return;
+                    event.lists.forEach(list => {
+                        list.guests.forEach(g => {
+                            totalGuests++;
+                            const tr = document.createElement('tr');
+                            tr.className = 'hover:bg-slate-50/50 transition-colors';
+                            
+                            const statusColor = g.status === 'Confirmado' 
+                                ? 'bg-emerald-100 text-emerald-700' 
+                                : 'bg-slate-100 text-slate-400';
 
-            selectedEventId = eventId;
-            document.getElementById('evento_id').value = eventId;
+                            // Renderizado seguro previniendo inyección de etiquetas HTML
+                            tr.innerHTML = `
+                                <td class="px-8 py-5 text-sm font-bold text-slate-700">${escapeHTML(g.name)}</td>
+                                <td class="px-8 py-5 text-xs text-slate-500 font-medium">${escapeHTML(g.contact)}</td>
+                                <td class="px-8 py-5"><span class="px-3 py-1 bg-cyan-50 text-cyan-700 rounded-full text-[10px] font-black uppercase tracking-widest">${escapeHTML(g.inv)}</span></td>
+                                <td class="px-8 py-5"><span class="px-3 py-1 ${statusColor} rounded-full text-[10px] font-black uppercase tracking-widest">${escapeHTML(g.status)}</span></td>
+                                <td class="px-8 py-5"><span class="px-3 py-1 bg-slate-100 text-slate-500 rounded-full text-[10px] font-black uppercase tracking-widest">${escapeHTML(list.category || 'Sin categoría')}</span></td>
+                            `;
+                            DOM.eventDetailBody.appendChild(tr);
+                        });
+                    });
 
-            document.querySelectorAll('.view-content').forEach(v => v.classList.add('hidden'));
-            document.getElementById('view-event-detail').classList.remove('hidden');
-            document.getElementById('detail-event-name').innerText = event.name;
-            const eventoSelect = document.getElementById('evento_select');
-            if (eventoSelect) {
-                eventoSelect.value = eventId;
-            }
+                    DOM.detailSummary.textContent = `Mostrando ${totalGuests} invitados confirmados`;
+                };
 
-            const body = document.getElementById('event-guests-body');
-            body.innerHTML = '';
-            let totalGuests = 0;
+                /**
+                 * Renderiza la tabla temporal usando métodos seguros del DOM.
+                 */
+                const renderTempTable = () => {
+                    DOM.tempGuestsBody.innerHTML = '';
 
-            event.lists.forEach(list => {
-                list.guests.forEach(g => {
-                    totalGuests += 1;
-                    const row = document.createElement('tr');
-                    row.className = 'hover:bg-slate-50/50 transition-colors';
-                    const statusColor = g.status === 'Confirmado' ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-400';
-                    row.innerHTML = `
-                        <td class="px-8 py-5 text-sm font-bold text-slate-700">${g.name}</td>
-                        <td class="px-8 py-5 text-xs text-slate-500 font-medium">${g.contact}</td>
-                        <td class="px-8 py-5"><span class="px-3 py-1 bg-cyan-50 text-cyan-700 rounded-full text-[10px] font-black uppercase tracking-widest">${g.inv}</span></td>
-                        <td class="px-8 py-5"><span class="px-3 py-1 ${statusColor} rounded-full text-[10px] font-black uppercase tracking-widest">${g.status}</span></td>
-                        <td class="px-8 py-5"><span class="px-3 py-1 bg-slate-100 text-slate-500 rounded-full text-[10px] font-black uppercase tracking-widest">${list.category || 'Sin categoría'}</span></td>
-                    `;
-                    body.appendChild(row);
-                });
-            });
+                    tempGuests.forEach(g => {
+                        const tr = document.createElement('tr');
+                        tr.className = 'hover:bg-slate-50/50 transition-colors';
+                        
+                        tr.innerHTML = `
+                            <td class="px-8 py-4 text-sm font-bold text-slate-700">${escapeHTML(g.name)}</td>
+                            <td class="px-8 py-4 text-xs text-slate-500">${escapeHTML(g.contact)}</td>
+                            <td class="px-8 py-4 text-right">
+                                <button type="button" class="btn-remove-temp p-2 text-slate-300 hover:text-red-500 transition-colors" data-id="${g.id}">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                </button>
+                            </td>
+                        `;
+                        
+                        // Añadimos Event Listener sin usar atributos onclick en línea
+                        tr.querySelector('.btn-remove-temp').addEventListener('click', (e) => {
+                            const id = parseInt(e.currentTarget.getAttribute('data-id'), 10);
+                            removeTempGuest(id);
+                        });
 
-            document.getElementById('detail-summary').innerText = `Mostrando ${totalGuests} invitados confirmados`;
-        }
+                        DOM.tempGuestsBody.appendChild(tr);
+                    });
+                    
+                    DOM.tempCount.textContent = `${tempGuests.length} Invitados`;
+                };
 
-        /**
-         * Añade un nuevo invitado temporal de forma manual tomando la información del formulario.
-         */
-        function addGuestManual() {
-            const name = document.getElementById('manual_name').value;
-            const email = document.getElementById('manual_email').value;
-            const phone = document.getElementById('manual_phone').value;
+                const removeTempGuest = (id) => {
+                    tempGuests = tempGuests.filter(g => g.id !== id);
+                    renderTempTable();
+                };
 
-            if (!name) return alert('El nombre es obligatorio');
+                const addTempGuest = () => {
+                    const name = DOM.manualForm.name.value.trim();
+                    const email = DOM.manualForm.email.value.trim();
+                    const phone = DOM.manualForm.phone.value.trim();
 
-            tempGuests.unshift({ id: Date.now(), name, email, phone, contact: email || phone || '---' });
-            document.getElementById('manual_name').value = '';
-            document.getElementById('manual_email').value = '';
-            document.getElementById('manual_phone').value = '';
-            renderTempGuests();
-        }
+                    // Validación Cliente
+                    if (!name || name.length > 100) return alert('Por favor, ingresa un nombre válido (máx 100 caracteres).');
+                    if (!Validators.isValidEmail(email)) return alert('Por favor, ingresa un correo electrónico válido.');
+                    if (!Validators.isValidPhone(phone)) return alert('Por favor, ingresa un número de teléfono válido.');
+                    if (!email && !phone) return alert('Debes proporcionar al menos un correo o número telefónico de contacto.');
 
-        /**
-         * Elimina un invitado de la lista temporal utilizando su identificador único.
-         */
-        function removeTempGuest(id) {
-            tempGuests = tempGuests.filter(g => g.id !== id);
-            renderTempGuests();
-        }
+                    tempGuests.unshift({ 
+                        id: Date.now(), 
+                        name, 
+                        email, 
+                        phone, 
+                        contact: email || phone || '---' 
+                    });
 
-        /**
-         * Actualiza el listado visual en tabla de invitados que están guardados temporalmente en la creación.
-         */
-        function renderTempGuests() {
-            const body = document.getElementById('temp-guests-body');
-            const count = document.getElementById('temp-count');
-            body.innerHTML = '';
+                    DOM.manualForm.name.value = '';
+                    DOM.manualForm.email.value = '';
+                    DOM.manualForm.phone.value = '';
+                    
+                    renderTempTable();
+                };
 
-            tempGuests.forEach(g => {
-                const row = document.createElement('tr');
-                row.className = 'hover:bg-slate-50/50 transition-colors';
-                row.innerHTML = `
-                    <td class="px-8 py-4 text-sm font-bold text-slate-700">${g.name}</td>
-                    <td class="px-8 py-4 text-xs text-slate-500">${g.contact}</td>
-                    <td class="px-8 py-4 text-right">
-                        <button type="button" onclick="removeTempGuest(${g.id})" class="p-2 text-slate-300 hover:text-red-500 transition-colors">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                        </button>
-                    </td>
-                `;
-                body.appendChild(row);
-            });
-            count.innerText = `${tempGuests.length} Invitados`;
-        }
+                const saveFinalList = () => {
+                    if (tempGuests.length === 0) return alert('Añade al menos un invitado.');
+                    
+                    const listName = DOM.submitForm.listName.value.trim();
+                    if (!listName) return alert('Ingresa un nombre para la lista.');
 
-        /**
-         * Empaqueta la lista temporal y la envía a través del formulario para ser almacenada permanentemente.
-         */
-        function saveList() {
-            if (tempGuests.length === 0) return alert('Añade al menos un invitado');
+                    // Generamos payload limpio para la API/Backend
+                    const payload = tempGuests.map(({ name, email, phone }) => ({ name, email, phone }));
+                    DOM.submitForm.guestsJson.value = JSON.stringify(payload);
+                    DOM.submitForm.form.submit();
+                };
 
-            const listName = document.getElementById('list_name').value.trim();
-            if (!listName) {
-                return alert('Ingresa un nombre para la lista.');
-            }
+                // API Pública
+                return {
+                    loadEventDetail,
+                    addTempGuest,
+                    saveFinalList
+                };
+            })();
 
-            const guestsPayload = tempGuests.map(g => ({ name: g.name, email: g.email, phone: g.phone }));
-            document.getElementById('guests_json').value = JSON.stringify(guestsPayload);
-            document.getElementById('createListForm').submit();
-        }
+            // === VINCULACIÓN AL ENTORNO GLOBAL PARA COMPATIBILIDAD DE VISTAS (MODALS) ===
+            // Como el diseño usa funciones onclick en el HTML actual, exportamos de forma segura.
+            window.showEventDetail = (id) => {
+                const eventInput = document.getElementById('evento_id');
+                const eventSelect = document.getElementById('evento_select');
+                if(eventInput) eventInput.value = id;
+                if(eventSelect) eventSelect.value = id;
+                
+                showView('event-detail');
+                
+                // Nombre del evento
+                const btnToggleText = document.getElementById('detail-event-name');
+                const eventoData = document.querySelector(`tr[onclick="showEventDetail(${id})"]`);
+                
+                GuestListManager.loadEventDetail(id);
+            };
+
+            window.addGuestManual = GuestListManager.addTempGuest;
+            window.saveList = GuestListManager.saveFinalList;
+
+            // Manejo de UI de Modals & Vistas
+            window.openModal = (id) => {
+                const el = document.getElementById(id);
+                if (el) el.style.display = 'block';
+            };
+
+            window.closeModal = (id) => {
+                const el = document.getElementById(id);
+                if (el) el.style.display = 'none';
+            };
+
+            window.showView = (view) => {
+                document.querySelectorAll('.view-content').forEach(v => v.classList.add('hidden'));
+                const viewEl = document.getElementById('view-' + view);
+                if(viewEl) viewEl.classList.remove('hidden');
+
+                const title = document.getElementById('view-title');
+                const subtitle = document.getElementById('view-subtitle');
+                const toggleBtn = document.getElementById('btn-toggle-view');
+                const toggleText = document.getElementById('btn-toggle-text');
+                const toggleIcon = document.getElementById('btn-toggle-icon');
+
+                if (view === 'lists') {
+                    title.innerText = 'Listas de Invitados';
+                    subtitle.innerText = 'Gestiona tus grupos de invitados de forma organizada.';
+                    toggleBtn.setAttribute('onclick', "showView('events')");
+                    toggleText.innerText = 'Ver por eventos';
+                    toggleIcon.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>';
+                } else if (view === 'events') {
+                    title.innerText = 'Ver Listas por Eventos';
+                    subtitle.innerText = 'Consulta quiénes están invitados a cada uno de tus eventos.';
+                    toggleBtn.setAttribute('onclick', "showView('lists')");
+                    toggleText.innerText = 'Ver por listas';
+                    toggleIcon.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>';
+                } else if (view === 'create') {
+                    title.innerText = 'Nueva Lista de Invitados';
+                    subtitle.innerText = 'Crea un grupo de personas para asignar a tus eventos.';
+                    toggleBtn.setAttribute('onclick', "showView('lists')");
+                    toggleText.innerText = 'Volver a listas';
+                    toggleIcon.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>';
+                }
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            };
+        });
     </script>
 
     @include('invitados.partials.modal-seleccion')
