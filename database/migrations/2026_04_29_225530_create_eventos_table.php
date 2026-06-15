@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('eventos', function (Blueprint $table) {
            
-            $table->id()->primary();
+            $table->id();
             $table->bigInteger('usuario_id')->unsigned()->index('idx_eventos_usuario');
             $table->string('slug', 100)->unique('slug');
             $table->string('nombre_bebe', 100)->nullable();

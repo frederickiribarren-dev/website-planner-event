@@ -21,20 +21,6 @@ class User extends Authenticatable
     protected $table = 'usuarios';
 
     /**
-     * El tipo de clave primaria.
-     *
-     * @var string
-     */
-    protected $keyType = 'string';
-
-    /**
-     * Indica si el ID es autoincremental.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
      * The attributes that are mass assignable.
      *
      * @var list<string>
@@ -45,6 +31,7 @@ class User extends Authenticatable
         'password', // Alias para 'password_hash'
         'nombre',
         'password_hash',
+        'email_verified_at',
         'telefono',
         'estado',
         'imagen_portada_url',
@@ -118,6 +105,7 @@ class User extends Authenticatable
     protected function password(): Attribute
     {
         return Attribute::make(
+            get: fn () => $this->password_hash,
             set: fn (string $value) => [
                 'password_hash' => $value,
             ],

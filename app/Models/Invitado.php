@@ -2,12 +2,15 @@
 
 namespace App\Models;
 
+use Database\Factories\InvitadoFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Invitado extends Model
 {
-    use SoftDeletes;
+    /** @use HasFactory<InvitadoFactory> */
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'evento_id',

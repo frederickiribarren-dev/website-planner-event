@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('imagenables', function (Blueprint $table) {
-            $table->id()->primary();
+            $table->id();
             $table->bigInteger('usuario_id')->unsigned()->nullable()->index('idx_imagenables_usuario');
             $table->bigInteger('evento_id')->unsigned()->nullable()->index('idx_imagenables_evento');
             $table->bigInteger('regalo_id')->unsigned()->nullable()->index('idx_imagenables_regalo');

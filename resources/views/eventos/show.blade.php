@@ -37,7 +37,7 @@
                             <div class="p-6 text-center space-y-6">
                                 <span class="inline-block px-4 py-1.5 bg-[#EEF5F5] text-[#427A79] rounded-full text-[10px] font-bold uppercase tracking-widest">Estás Invitado</span>
                                 <h4 class="text-2xl font-bold text-gray-800">{{ $evento->slug ?? 'Baby Shower' }} de <br><span class="italic text-[#427A79] font-medium">{{ $evento->nombre_bebe }}</span></h4>
-                                <p class="text-xs text-gray-500 leading-relaxed font-medium break-words" style="word-break: break-word; overflow-wrap: break-word;">{!! $evento->mensaje_invitacion ?? 'Estamos muy emocionados de compartir este momento tan especial contigo. Acompáñanos a celebrar.' !!}</p>
+                                <p class="text-xs text-gray-500 leading-relaxed font-medium break-words" style="word-break: break-word; overflow-wrap: break-word;">{{ $evento->mensaje_invitacion ?? 'Estamos muy emocionados de compartir este momento tan especial contigo. Acompáñanos a celebrar.' }}</p>
                                 
                                 <div class="bg-[#F8F9FA] rounded-2xl p-4 text-left space-y-4 border border-gray-100">
                                     <div class="flex items-start gap-3">

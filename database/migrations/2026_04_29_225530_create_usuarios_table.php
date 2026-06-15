@@ -12,10 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('usuarios', function (Blueprint $table) {
-            $table->id()->primary();
+            $table->id();
             $table->string('nombre', 100);
             $table->string('email')->unique('email');
             $table->string('password_hash');
+            $table->timestamp('email_verified_at')->nullable();
+            $table->string('remember_token', 100)->nullable();
             $table->string('telefono', 20)->nullable();
             $table->enum('estado', ['Activo', 'Suspendido', 'Eliminado'])->nullable()->default('Activo');
             $table->string('imagen_portada_url', 500)->nullable();

@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('invitados', function (Blueprint $table) {
-            $table->id()->primary();
+            $table->id();
             $table->bigInteger('evento_id')->unsigned()->nullable()->index('idx_invitados_evento');
             $table->string('nombre', 100);
             $table->string('email')->nullable();
